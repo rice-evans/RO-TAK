@@ -94,6 +94,17 @@
   html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #palette { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
+  #sympanel { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px;
+    padding: 8px; width: 392px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y;
+    background: rgba(20,20,22,.94); border-radius: 14px; }
+  #sympanel.open { display: flex; }
+  #sympanel .row { display: flex; gap: 4px; flex-wrap: wrap; }
+  #sympanel .row + .row { padding-top: 6px; border-top: 1px solid #333; }
+  #sympanel button { border: 0; background: #26282b; border-radius: 8px; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 14px; }
+  #sympanel button:hover { background: #33363a; }
+  #sympanel button.on { background: #3b82f6; }
+  #sympanel canvas { display: block; }
+  html.web #sympanel { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
   @media (pointer: coarse) {
     #toolbar button { width: 40px; height: 40px; }
     #toolbar svg { width: 20px; height: 20px; }
@@ -117,6 +128,7 @@
         <div class="pill" id="clock">--:--</div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
+        <div id="sympanel"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
@@ -148,6 +160,7 @@ const ICONS = {
   undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11',
   clear: 'M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6',
   menu: 'M4 6h16M4 12h16M4 18h16',
+  sym: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
 };
 
 let tool = 'pen', color = COLORS[0], si = 1;
@@ -155,6 +168,139 @@ let img = null, name = 'ATAK';
 let items = [], hist = [];
 let v = { x: 0, y: 0, s: 1 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
+
+
+/* ---------- military symbols ---------- */
+const AFF = { friend: '#00e5ff', hostile: '#ff1f1f', neutral: '#00e000', unknown: '#ffee00' };
+const DIMS = ['ground', 'sea', 'air', 'sub'];
+const ECHS = ['none', 'team', 'squad', 'section', 'platoon', 'company', 'battalion', 'regiment'];
+const circ = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
+const ell = (x, y, a, b) => `M${x - a} ${y}a${a} ${b} 0 1 0 ${2 * a} 0a${a} ${b} 0 1 0 ${-2 * a} 0`;
+const INF = 'M-60-40L60 40M-60 40L60-40';
+/* icon box is 120 x 80, centered. s = stroked, f = filled, t = text */
+const SYMS = {
+  blank: ['Frame only', {}],
+  inf: ['Infantry', { s: INF }],
+  mech: ['Mechanized infantry', { s: INF + ell(0, 0, 30, 14) }],
+  moto: ['Motorized infantry', { s: INF + 'M0 40V6' }],
+  armor: ['Armor', { s: ell(0, 0, 32, 17) }],
+  recon: ['Reconnaissance', { s: 'M-60 40L60-40' }],
+  atk: ['Anti-tank', { s: 'M-60 40L0-40L60 40' }],
+  art: ['Field artillery', { f: circ(0, 0, 11) }],
+  rocket: ['Rocket artillery', { s: circ(0, 10, 9) + 'M0 0V-32M-9-22L0-32L9-22' }],
+  mortar: ['Mortar', { s: 'M0-26V12' + circ(0, 19, 7) }],
+  ad: ['Air defense', { s: 'M-40 34Q0-26 40 34' }],
+  avn: ['Aviation, rotary wing', { f: 'M-36-16L0 0L-36 16ZM36-16L0 0L36 16Z' }],
+  fw: ['Aviation, fixed wing', { s: 'M0 0C-14-20-40-16-40 0C-40 16-14 20 0 0C14-20 40-16 40 0C40 16 14 20 0 0Z' }],
+  uav: ['Unmanned aerial vehicle', { s: 'M-34-18L0 8L34-18M0 8V24' }],
+  eng: ['Engineer', { s: 'M-34 18V-12H-16V4H16V-12H34V18' }],
+  sf: ['Special forces', { t: 'SF' }],
+  sof: ['Special operations forces', { t: 'SOF', fs: 28 }],
+  mp: ['Military police', { t: 'MP' }],
+  sig: ['Signals', { s: 'M-10-30L-24 6H-4L-14 30L24-10H2L14-30Z' }],
+  ew: ['Electronic warfare', { t: 'EW' }],
+  rad: ['Radar', { s: 'M-28 28L18-18M-28-8Q-28 28 8 28M10-24H20V-14' }],
+  psy: ['Psychological operations', { s: 'M-30-8H-16L6-22V22L-16 8H-30ZM18-12Q26 0 18 12' }],
+  med: ['Medical', { s: 'M-60 0H60M0-40V40' }],
+  hosp: ['Hospital', { s: 'M-60 0H60M-18-22V22M0-22V22M18-22V22' }],
+  ccs: ['Combat service support', { s: 'M60-40L10 0L60 40' }],
+  sup: ['Supply', { s: 'M-60 22H60' }],
+  fuel: ['Fuel (POL)', { s: 'M0-30V30M-12-30L0-16L12-30' }],
+  mnt: ['Maintenance', { s: 'M-28 0H28' + circ(-31, 0, 4) + circ(31, 0, 4) }],
+  trn: ['Transportation', { s: circ(0, 0, 17) + 'M-17 0H17M0-17V17' }],
+  amm: ['Ammunition', { s: 'M-6 20V-8Q0-24 6-8V20Z' }],
+  eod: ['Explosive ordnance disposal', { s: circ(0, 0, 14) + 'M0-14V-24M0 14V24M-14 0H-24M14 0H24' }],
+  nbc: ['NBC defense', { s: 'M-14 28L14-8M14 28L-14-8', f: circ(14, -14, 8) + circ(-14, -14, 8) }],
+  met: ['Meteorological', { t: 'MET', fs: 30 }],
+  msl: ['Missile', { s: 'M-8 30V-14Q0-34 8-14V30Z' }],
+  nav: ['Navy', { s: 'M0-22V26M-12-12H12M-22 8Q0 34 22 8' + circ(0, -27, 4) }],
+  topo: ['Topographical', { s: 'M0-26L-22 22H22Z' }],
+  hq: ['Headquarters', { s: 'M-60-24H60' }],
+  cp: ['Command post', { t: 'CP' }],
+  op: ['Observation post', { t: 'OP' }],
+  lz: ['Landing zone', { t: 'LZ' }],
+  rp: ['Rally point', { t: 'RP' }],
+};
+const SYM_PATHS = {};
+for (const k in SYMS) { const o = SYMS[k][1]; SYM_PATHS[k] = { s: o.s ? new Path2D(o.s) : null, f: o.f ? new Path2D(o.f) : null }; }
+
+/* frame outlines. Air shapes are mirrored for subsurface. */
+function frameDef(aff, dim) {
+  const sea = dim === 'sea', flip = dim === 'sub', air = dim === 'air' || flip;
+  const poly = d => ({ path: new Path2D(d) });
+  let d;
+  if (aff === 'friend') {
+    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
+    else if (air) d = { parts: [poly('M-55 40C-55-20-30-50 0-50C30-50 55-20 55 40Z')], top: -50, bot: 40, ic: [0, 14, .6] };
+    else d = { parts: [poly('M-60-40H60V40H-60Z')], top: -40, bot: 40, ic: [0, 0, 1] };
+  } else if (aff === 'hostile') {
+    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
+    else if (air) d = { parts: [poly('M-50 45V-8L0-55L50-8V45Z')], top: -55, bot: 45, ic: [0, 14, .58] };
+    else d = { parts: [poly('M0-60L60 0L0 60L-60 0Z')], top: -60, bot: 60, ic: [0, 0, .5] };
+  } else if (aff === 'neutral') {
+    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
+    else d = { parts: [poly('M-45-45H45V45H-45Z')], top: -45, bot: 45, ic: [0, 0, .7] };
+  } else {
+    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
+    else if (air) d = { parts: [poly(circ(-24, 14, 28)), poly(circ(24, 14, 28)), poly(circ(0, -14, 28)), poly('M-24-14H24V38H-24Z')], clip: 38, top: -42, bot: 38, ic: [0, 10, .5] };
+    else d = { parts: [poly(circ(0, -32, 28)), poly(circ(32, 0, 28)), poly(circ(0, 32, 28)), poly(circ(-32, 0, 28)), poly('M-32-32H32V32H-32Z')], top: -60, bot: 60, ic: [0, 0, .5] };
+  }
+  d.flip = flip;
+  if (flip) { const t = d.top; d.top = -d.bot; d.bot = -t; d.ic = [d.ic[0], -d.ic[1], d.ic[2]]; }
+  return d;
+}
+
+function drawEch(c, ech, y) {
+  const i = ECHS.indexOf(ech);
+  if (i < 1) return;
+  const pass = (col, w) => {
+    c.strokeStyle = c.fillStyle = col; c.lineWidth = w;
+    if (ech === 'team') { c.beginPath(); c.arc(0, y - 8, 7, 0, 7); c.moveTo(-6, y - 1); c.lineTo(6, y - 15); c.stroke(); return; }
+    if (i <= 4) {
+      const n = i - 1, gap = 17;
+      for (let k = 0; k < n; k++) { c.beginPath(); c.arc((k - (n - 1) / 2) * gap, y - 8, 5, 0, 7); c.fill(); if (w > 4) c.stroke(); }
+    } else {
+      const n = i - 4, gap = 14;
+      for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * gap; c.beginPath(); c.moveTo(x, y - 2); c.lineTo(x, y - 22); c.stroke(); }
+    }
+  };
+  pass('#fff', 9); pass('#000', 4.5);
+}
+
+/* it: {aff, dim, ic, ech}; (cx, cy) is the frame center, size the frame width */
+function drawSym(c, it, cx, cy, size) {
+  const d = frameDef(it.aff, it.dim);
+  c.save();
+  c.translate(cx, cy); c.scale(size / 120, size / 120);
+  c.lineJoin = c.lineCap = 'round';
+  c.save();
+  if (d.flip) c.scale(1, -1);
+  if (d.clip) { c.beginPath(); c.rect(-100, -100, 200, 100 + d.clip); c.clip(); }
+  c.lineWidth = 4; c.strokeStyle = '#000'; c.fillStyle = AFF[it.aff];
+  d.parts.forEach(q => c.stroke(q.path));
+  d.parts.forEach(q => c.fill(q.path));
+  if (d.clip) { c.beginPath(); c.moveTo(-39, d.clip); c.lineTo(39, d.clip); c.stroke(); }
+  c.restore();
+  const def = SYMS[it.ic];
+  if (def) {
+    c.save();
+    c.translate(d.ic[0], d.ic[1]); c.scale(d.ic[2], d.ic[2]);
+    c.strokeStyle = c.fillStyle = '#000'; c.lineWidth = 5;
+    const o = def[1], pp = SYM_PATHS[it.ic];
+    if (pp.s) c.stroke(pp.s);
+    if (pp.f) c.fill(pp.f);
+    if (o.t) {
+      c.font = `800 ${o.fs || 34}px -apple-system, "Segoe UI", Arial, sans-serif`;
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(o.t, 0, 3);
+    }
+    c.restore();
+  }
+  drawEch(c, it.ech, d.top - 4);
+  c.restore();
+}
+const symR = it => it.s * 0.6;
+const unit = () => img ? Math.max(img.width, img.height) / 500 : 1;
 
 /* ---------- toolbar ---------- */
 const tb = $('toolbar');
@@ -168,17 +314,57 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['eraser', 'Erase']]
+[['pan', 'Move'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
-mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('palette').classList.toggle('open'); });
+mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('sympanel').classList.remove('open'); $('palette').classList.toggle('open'); });
 mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
 sep();
 mk('undo', svg(ICONS.undo), 'Undo', undo);
 mk('clear', svg(ICONS.clear), 'Clear', () => room && items.length ? confirmTap('clear', clearAll) : clearAll());
 sep();
-mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('menu').classList.toggle('open'); });
+mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('sympanel').classList.remove('open'); $('menu').classList.toggle('open'); });
 $('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
+
+/* ---------- symbol picker ---------- */
+let symAff = 'friend', symDim = 'ground', symIc = 'inf', symEch = 'none';
+const sp = $('sympanel');
+function thumb(w, h, fn) {
+  const cv = document.createElement('canvas'), r = window.devicePixelRatio || 1;
+  cv.width = w * r; cv.height = h * r; cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const x = cv.getContext('2d'); x.scale(r, r); fn(x, w, h); return cv;
+}
+function symBtn(title, cv, on, fn) {
+  const b = document.createElement('button');
+  b.title = title; b.appendChild(cv); if (on) b.className = 'on'; b.onclick = fn; return b;
+}
+function refreshSym() {
+  const top = sp.scrollTop;
+  sp.innerHTML = '';
+  const row = () => { const r = document.createElement('div'); r.className = 'row'; sp.appendChild(r); return r; };
+  let r = row();
+  Object.keys(AFF).forEach(a => r.appendChild(symBtn(a, thumb(46, 40, (x, w, h) => drawSym(x, { aff: a, dim: symDim }, w / 2, h / 2, 34)),
+    a === symAff, () => { symAff = a; refreshSym(); })));
+  r = row();
+  DIMS.forEach(m => r.appendChild(symBtn(m, thumb(46, 40, (x, w, h) => drawSym(x, { aff: symAff, dim: m }, w / 2, h / 2, 34)),
+    m === symDim, () => { symDim = m; refreshSym(); })));
+  r = row();
+  ECHS.forEach(e => r.appendChild(symBtn(e, thumb(36, 30, (x, w, h) => {
+    if (e === 'none') { x.fillStyle = '#ddd'; x.font = '700 16px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('-', w / 2, h / 2); return; }
+    x.translate(w / 2, h / 2 + 8); x.scale(.55, .55); drawEch(x, e, 0);
+  }), e === symEch, () => { symEch = e; refreshSym(); })));
+  r = row();
+  Object.keys(SYMS).forEach(k => r.appendChild(symBtn(SYMS[k][0], thumb(44, 44, (x, w, h) => drawSym(x, { aff: symAff, dim: symDim, ic: k, ech: 'none' }, w / 2, h / 2, 38)),
+    k === symIc, () => { symIc = k; refreshSym(); })));
+  sp.scrollTop = top;
+}
+$('b-sym').onclick = () => {
+  const was = tool === 'sym', open = sp.classList.contains('open');
+  $('palette').classList.remove('open'); $('menu').classList.remove('open');
+  setTool('sym');
+  sp.classList.toggle('open', was ? !open : true);
+  if (sp.classList.contains('open')) refreshSym();
+};
 
 COLORS.forEach(col => {
   const s = document.createElement('div');
@@ -230,7 +416,8 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'box', 'text', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'box', 'text', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  if (t !== 'sym') sp.classList.remove('open');
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
 
@@ -257,6 +444,7 @@ function drawItem(it) {
   ctx.lineCap = ctx.lineJoin = 'round';
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
+  if (it.type === 'sym') { drawSym(ctx, it, it.x, it.y, it.s); return; }
   if (it.type === 'pen') {
     ctx.beginPath();
     it.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
@@ -310,6 +498,7 @@ function segDist(p, a, b) {
   return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
 function hit(it, p, tol) {
+  if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR(it) + tol;
   if (it.type === 'pen') {
     for (let i = 0; i < it.pts.length; i++)
       if (segDist(p, it.pts[i], it.pts[i + 1] || it.pts[i]) < tol + it.w / 2) return true;
@@ -370,10 +559,11 @@ c.addEventListener('pointerdown', e => {
     return;
   }
   if (e.button !== 0) return;
-  const p = world(e), w = SIZES[si] / v.s;
+  const p = world(e), w = SIZES[si] * unit();
   if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
   else if (tool === 'line' || tool === 'box') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
   else if (tool === 'text') openText(e);
+  else if (tool === 'sym') placeSym(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
   draw();
 });
@@ -424,6 +614,11 @@ c.addEventListener('wheel', e => {
   draw(); save();
 }, { passive: false });
 
+function placeSym(p) {
+  const it = { id: uuid(), type: 'sym', aff: symAff, dim: symDim, ic: symIc, ech: symEch, x: p[0], y: p[1], s: SIZES[si] * unit() * 14 };
+  items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
+}
+
 /* ---------- text ---------- */
 const txt = $('txt');
 function openText(e) {
@@ -441,7 +636,7 @@ function commitText() {
   if (!tp) return;
   const t = txt.value.trim();
   if (t) {
-    const it = { id: uuid(), type: 'text', color, t, x: tp.p[0], y: tp.p[1], fs: 18 / v.s };
+    const it = { id: uuid(), type: 'text', color, t, x: tp.p[0], y: tp.p[1], fs: 18 * unit() };
     items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
   }
   tp = null; txt.style.display = 'none'; txt.value = '';
@@ -585,6 +780,10 @@ function cleanItem(d, id) {
   if (d.type === 'line' || d.type === 'box') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
     return { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
+  }
+  if (d.type === 'sym') {
+    if (!AFF[d.aff] || !DIMS.includes(d.dim) || !SYMS[d.ic] || !ECHS.includes(d.ech) || !num(d.x) || !num(d.y) || !num(d.s) || d.s <= 0 || d.s > 100000) return null;
+    return { id, type: 'sym', aff: d.aff, dim: d.dim, ic: d.ic, ech: d.ech, x: d.x, y: d.y, s: d.s };
   }
   if (d.type === 'text') {
     if (typeof d.t !== 'string' || !num(d.x) || !num(d.y) || !num(d.fs)) return null;
