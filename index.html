@@ -94,6 +94,13 @@
   html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #palette { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
+  #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 22px; }
+  #selbar.open { display: flex; }
+  #selbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  #selbar button:hover { background: #333; }
+  #selbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  html.web #selbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
+  @media (pointer: coarse) { #selbar button { width: 40px; height: 40px; } }
   #sympanel { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px;
     padding: 8px; width: 392px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y;
     background: rgba(20,20,22,.94); border-radius: 14px; }
@@ -129,6 +136,7 @@
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
         <div id="sympanel"></div>
+        <div id="selbar"><button id="selDn" title="Smaller"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button id="selUp" title="Larger"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></button></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
@@ -171,7 +179,7 @@ let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 
 
 /* ---------- military symbols ---------- */
-const AFF = { friend: '#00e5ff', hostile: '#ff1f1f', neutral: '#00e000', unknown: '#ffee00' };
+const AFF = { friend: '#3b82f6', hostile: '#ef4444', neutral: '#22c55e', unknown: '#facc15' };
 const DIMS = ['ground', 'sea', 'air', 'sub'];
 const ECHS = ['none', 'team', 'squad', 'section', 'platoon', 'company', 'battalion', 'regiment'];
 const circ = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
@@ -314,7 +322,7 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('sympanel').classList.remove('open'); $('palette').classList.toggle('open'); });
@@ -383,6 +391,7 @@ const BINDS = IS_ELECTRON ? [
   ['Quit', MOD + '+Shift+Q'],
   ['Undo', MOD + '+Z'],
   ['Paste map', MOD + '+V'],
+  ['Move / scale item', 'Move tool, click it'],
   ['Zoom map', 'Scroll'],
   ['Pan map', 'Right / middle drag'],
   ['Move phone', 'Drag frame or header'],
@@ -391,10 +400,12 @@ const BINDS = IS_ELECTRON ? [
   ['Draw', 'One finger'],
   ['Zoom and pan map', 'Two fingers'],
   ['Pan with one finger', 'Move tool'],
+  ['Move / scale item', 'Move tool, tap it'],
   ['Confirm text', 'Enter'],
 ] : [
   ['Undo', MOD + '+Z'],
   ['Paste map', MOD + '+V'],
+  ['Move / scale item', 'Move tool, click it'],
   ['Zoom map', 'Scroll'],
   ['Pan map', 'Right / middle drag'],
   ['Confirm / cancel text', 'Enter / Esc'],
@@ -418,6 +429,7 @@ function setTool(t) {
   tool = t;
   ['pan', 'pen', 'line', 'box', 'text', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
   if (t !== 'sym') sp.classList.remove('open');
+  if (t !== 'pan') { endDrag(); sel = null; draw(); }
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
 
@@ -483,6 +495,13 @@ function draw() {
   if (img) ctx.drawImage(img, 0, 0);
   items.forEach(drawItem);
   if (cur) drawItem(cur);
+  if (sel && !items.includes(sel)) sel = null;
+  if (sel) {
+    const b = bbox(sel), pad = 5 / v.s;
+    ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
+    ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad); ctx.restore();
+  }
+  $('selbar').classList.toggle('open', !!sel && tool === 'pan');
 }
 
 /* ---------- interaction ---------- */
@@ -549,10 +568,18 @@ c.addEventListener('contextmenu', e => e.preventDefault());
 c.addEventListener('pointerdown', e => {
   if ($('menu').classList.contains('open')) { $('menu').classList.remove('open'); return; }
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  if (ptrs.size === 2) { commitText(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
+  if (ptrs.size === 2) { commitText(); endDrag(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
   if (ptrs.size > 2 || ignore) return;
   if (tool !== 'text') commitText();
   c.setPointerCapture(e.pointerId);
+  if (tool === 'pan' && e.button === 0) {
+    const p = world(e), tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
+    let h = null;
+    for (let i = items.length - 1; i >= 0; i--) if (hit(items[i], p, tol)) { h = items[i]; break; }
+    sel = h;
+    if (h) { drag = { it: h, before: clone(h), p0: p, moved: false }; draw(); return; }
+    draw();
+  }
   if (e.button === 1 || e.button === 2 || tool === 'pan') {
     pan = { sx: e.clientX, sy: e.clientY, vx: v.x, vy: v.y };
     c.style.cursor = 'grabbing';
@@ -572,6 +599,11 @@ c.addEventListener('pointermove', e => {
   if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pinch) { updatePinch(); return; }
   if (ignore) return;
+  if (drag) {
+    const p = world(e);
+    moveFrom(drag.it, drag.before, p[0] - drag.p0[0], p[1] - drag.p0[1]);
+    drag.moved = true; draw(); return;
+  }
   if (pan) {
     v.x = pan.vx + (e.clientX - pan.sx);
     v.y = pan.vy + (e.clientY - pan.sy);
@@ -588,6 +620,7 @@ function endPointer(e) {
   ptrs.delete(e.pointerId);
   if (pinch) { if (ptrs.size < 2) { pinch = null; save(); } if (!ptrs.size) ignore = false; return; }
   if (ignore) { if (!ptrs.size) ignore = false; return; }
+  if (drag) { endDrag(); return; }
   if (pan) {
     pan = null;
     c.style.cursor = tool === 'pan' ? 'grab' : tool === 'text' ? 'text' : 'crosshair';
@@ -613,6 +646,46 @@ c.addEventListener('wheel', e => {
   v.s = ns;
   draw(); save();
 }, { passive: false });
+
+let sel = null, drag = null;
+const clone = o => JSON.parse(JSON.stringify(o));
+function bbox(it) {
+  if (it.type === 'pen') {
+    let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
+    it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
+    return [a - it.w / 2, b - it.w / 2, x + it.w / 2, y + it.w / 2];
+  }
+  if (it.type === 'line' || it.type === 'box') {
+    const h = it.w / 2;
+    return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
+  }
+  if (it.type === 'sym') return [it.x - it.s * .55, it.y - it.s * .6, it.x + it.s * .55, it.y + it.s * .5];
+  ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+  return [it.x, it.y, it.x + ctx.measureText(it.t).width, it.y + it.fs];
+}
+function moveFrom(it, b, dx, dy) {
+  if (it.type === 'pen') it.pts = b.pts.map(q => [q[0] + dx, q[1] + dy]);
+  else if (it.type === 'line' || it.type === 'box') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
+  else { it.x = b.x + dx; it.y = b.y + dy; }
+}
+function scaleSel(f) {
+  if (!sel) return;
+  const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
+  const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
+  if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
+  else if (sel.type === 'line' || sel.type === 'box') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'sym') sel.s = Math.min(100000, Math.max(4, sel.s * f));
+  else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
+  hist.push({ t: 'mod', it: sel, before });
+  pushUpd(sel); save(); draw();
+}
+function endDrag() {
+  if (!drag) return;
+  if (drag.moved) { hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it); save(); }
+  drag = null;
+}
+$('selDn').onclick = () => scaleSel(1 / 1.15);
+$('selUp').onclick = () => scaleSel(1.15);
 
 function placeSym(p) {
   const it = { id: uuid(), type: 'sym', aff: symAff, dim: symDim, ic: symIc, ech: symEch, x: p[0], y: p[1], s: SIZES[si] * unit() * 14 };
@@ -656,6 +729,7 @@ function undo() {
   if (h.t === 'add') { const i = items.indexOf(h.it); if (i > -1) items.splice(i, 1); pushDel([h.it.id]); }
   else if (h.t === 'del') { items.splice(h.i, 0, h.it); pushAdd(h.it); }
   else if (h.t === 'clear') { items = h.list; pushAdd(h.list); }
+  else if (h.t === 'mod') { for (const k in h.it) delete h.it[k]; Object.assign(h.it, h.before); pushUpd(h.it); }
   save(); draw();
 }
 function clearAll() {
@@ -797,6 +871,10 @@ function pushAdd(list) {
   const rows = (Array.isArray(list) ? list : [list]).map(it => ({ id: it.id, room, data: it }));
   if (rows.length) db().from('marks').upsert(rows, { onConflict: 'id', ignoreDuplicates: true }).then(r => r.error && fail(r.error));
 }
+function pushUpd(it) {
+  if (!room) return;
+  db().from('marks').update({ data: it }).eq('id', it.id).then(r => r.error && fail(r.error));
+}
 function pushDel(ids) {
   if (!room || !ids.length) return;
   db().from('marks').delete().in('id', ids).then(r => r.error && fail(r.error));
@@ -810,6 +888,13 @@ function onInsert(row) {
   if (!row || items.some(i => i.id === row.id)) return;
   const it = cleanItem(row.data, row.id);
   if (it) { items.push(it); draw(); }
+}
+function onUpdate(row) {
+  if (!row) return;
+  const it = items.find(i => i.id === row.id);
+  if (!it || (drag && drag.it === it)) return;
+  const n = cleanItem(row.data, row.id);
+  if (n) { for (const k in it) delete it[k]; Object.assign(it, n); draw(); }
 }
 function onDelete(old) {
   if (!old) return;
@@ -915,6 +1000,7 @@ async function joinRoom(code, nick) {
     channel = db().channel('atak:' + code, { config: { presence: { key: clientId } } });
     channel
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'marks', filter: 'room=eq.' + code }, p => onInsert(p.new))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'marks', filter: 'room=eq.' + code }, p => onUpdate(p.new))
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'marks' }, p => onDelete(p.old))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'code=eq.' + code }, p => onRoom(p.new))
       .on('presence', { event: 'sync' }, () => renderPresence(channel.presenceState()))
