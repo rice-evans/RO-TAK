@@ -1,5 +1,5 @@
-const CACHE = 'atak-v4';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './supabase.js', './icon-192.png', './icon-512.png'];
+const CACHE = 'atak-v6';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './supabase.js', './milsymbol.js', './symdata.js', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

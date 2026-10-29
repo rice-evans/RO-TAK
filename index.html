@@ -12,6 +12,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='.9em' font-size='90' text-anchor='middle'%3E%F0%9F%8D%8C%3C/text%3E%3C/svg%3E">
+<script src="milsymbol.js"></script>
+<script src="symdata.js"></script>
 <script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';</script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
@@ -76,6 +78,11 @@
   #binds { display: grid; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 7px 26px; }
   #binds div { display: flex; justify-content: space-between; align-items: center; gap: 16px; white-space: nowrap; }
   #binds b { font: 600 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
+  #menu { max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; }
+  #legend { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 18px; align-items: center; justify-items: start; border-top: 1px solid #333; padding-top: 10px; }
+  #legend .lg { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+  #legend .lgh { color: #888; justify-self: center; }
+  #legend .lgfr { grid-column: 1 / -1; display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 4px 6px; align-items: center; justify-items: center; }
   #toolbar button.arm { background: #dc2626; color: #fff; }
 
   #txt { position: absolute; display: none; font: 700 18px -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
@@ -96,21 +103,36 @@
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
   #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 22px; }
   #selbar.open { display: flex; }
+  #selNum { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 14px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #selNum:disabled { opacity: .4; }
   #selbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   #selbar button:hover { background: #333; }
   #selbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
   html.web #selbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
-  @media (pointer: coarse) { #selbar button { width: 40px; height: 40px; } }
+  @media (pointer: coarse) { #selNum { height: 36px; width: 90px; font-size: 16px; } }
   #sympanel { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px;
     padding: 8px; width: 392px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y;
     background: rgba(20,20,22,.94); border-radius: 14px; }
   #sympanel.open { display: flex; }
-  #sympanel .row { display: flex; gap: 4px; flex-wrap: wrap; }
-  #sympanel .row + .row { padding-top: 6px; border-top: 1px solid #333; }
-  #sympanel button { border: 0; background: #26282b; border-radius: 8px; padding: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ddd; font-size: 14px; }
-  #sympanel button:hover { background: #33363a; }
-  #sympanel button.on { background: #3b82f6; }
-  #sympanel canvas { display: block; }
+  #stage.hassel #sympanel { bottom: 100px; max-height: calc(100% - 190px); }
+  html.web #stage.hassel #sympanel { bottom: calc(var(--tb, 44px) + 70px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 150px); }
+  #sympanel { width: 430px; gap: 8px; font-size: 12px; color: #ddd; }
+  #sympanel .sb-head { position: sticky; top: -8px; z-index: 2; background: #141416; display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+  #sympanel .sb-code { font: 600 11px ui-monospace, Menlo, Consolas, monospace; color: #aaa; word-break: break-all; user-select: text; -webkit-user-select: text; }
+  #sympanel .sb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+  #sympanel .sb-f { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  #sympanel .sb-f span { color: #888; font-size: 10px; }
+  #sympanel select, #sympanel input[type=text], #sympanel input[type=search] { width: 100%; min-width: 0; height: 28px; background: #2a2a2d; color: #fff; border: 0; border-radius: 6px; padding: 0 6px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #sympanel select:disabled { opacity: .4; }
+  #sympanel .sb-chk { display: flex; gap: 16px; }
+  #sympanel .sb-chk label { display: flex; align-items: center; gap: 5px; }
+  #sympanel .sb-list { height: 190px; overflow-y: auto; background: #1a1a1c; border-radius: 8px; flex: none; touch-action: pan-y; }
+  #sympanel .sb-row { display: flex; align-items: center; gap: 8px; padding: 2px 8px; min-height: 34px; cursor: pointer; }
+  #sympanel .sb-row canvas { flex: none; }
+  #sympanel .sb-row:hover { background: #26282b; }
+  #sympanel .sb-row.on { background: #3b82f6; }
+  #sympanel summary { cursor: pointer; padding: 4px 0; }
+  #sympanel .sb-txt .sb-grid { margin-top: 6px; }
   html.web #sympanel { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
   @media (pointer: coarse) {
     #toolbar button { width: 40px; height: 40px; }
@@ -136,11 +158,12 @@
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selDn" title="Smaller"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><button id="selUp" title="Larger"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></button></div>
+        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selNum" type="number" min="1" step="1" inputmode="numeric" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
           <div id="binds"></div>
+          <div id="legend"></div>
         </div>
         <div id="toolbar"></div>
       </div>
@@ -162,6 +185,7 @@ const ICONS = {
   pan: 'M12 2v20M2 12h20M15 19l-3 3-3-3M9 5l3-3 3 3M19 9l3 3-3 3M5 9l-3 3 3 3',
   pen: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4',
   line: 'M5 19L19 5',
+  arrow: 'M7 7h10v10M7 17L17 7',
   box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
   text: 'M4 7V4h16v3M9 20h6M12 4v16',
   eraser: 'M7 21l-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21M22 21H7M5 11l9 9',
@@ -178,134 +202,69 @@ let v = { x: 0, y: 0, s: 1 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 
 
-/* ---------- military symbols ---------- */
-const AFF = { friend: '#3b82f6', hostile: '#ef4444', neutral: '#22c55e', unknown: '#facc15' };
-const DIMS = ['ground', 'sea', 'air', 'sub'];
-const ECHS = ['none', 'team', 'squad', 'section', 'platoon', 'company', 'battalion', 'regiment'];
-const circ = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`;
-const ell = (x, y, a, b) => `M${x - a} ${y}a${a} ${b} 0 1 0 ${2 * a} 0a${a} ${b} 0 1 0 ${-2 * a} 0`;
-const INF = 'M-60-40L60 40M-60 40L60-40';
-/* icon box is 120 x 80, centered. s = stroked, f = filled, t = text */
-const SYMS = {
-  blank: ['Frame only', {}],
-  inf: ['Infantry', { s: INF }],
-  mech: ['Mechanized infantry', { s: INF + ell(0, 0, 30, 14) }],
-  moto: ['Motorized infantry', { s: INF + 'M0 40V6' }],
-  armor: ['Armor', { s: ell(0, 0, 32, 17) }],
-  recon: ['Reconnaissance', { s: 'M-60 40L60-40' }],
-  atk: ['Anti-tank', { s: 'M-60 40L0-40L60 40' }],
-  art: ['Field artillery', { f: circ(0, 0, 11) }],
-  rocket: ['Rocket artillery', { s: circ(0, 10, 9) + 'M0 0V-32M-9-22L0-32L9-22' }],
-  mortar: ['Mortar', { s: 'M0-26V12' + circ(0, 19, 7) }],
-  ad: ['Air defense', { s: 'M-40 34Q0-26 40 34' }],
-  avn: ['Aviation, rotary wing', { f: 'M-36-16L0 0L-36 16ZM36-16L0 0L36 16Z' }],
-  fw: ['Aviation, fixed wing', { s: 'M0 0C-14-20-40-16-40 0C-40 16-14 20 0 0C14-20 40-16 40 0C40 16 14 20 0 0Z' }],
-  uav: ['Unmanned aerial vehicle', { s: 'M-34-18L0 8L34-18M0 8V24' }],
-  eng: ['Engineer', { s: 'M-34 18V-12H-16V4H16V-12H34V18' }],
-  sf: ['Special forces', { t: 'SF' }],
-  sof: ['Special operations forces', { t: 'SOF', fs: 28 }],
-  mp: ['Military police', { t: 'MP' }],
-  sig: ['Signals', { s: 'M-10-30L-24 6H-4L-14 30L24-10H2L14-30Z' }],
-  ew: ['Electronic warfare', { t: 'EW' }],
-  rad: ['Radar', { s: 'M-28 28L18-18M-28-8Q-28 28 8 28M10-24H20V-14' }],
-  psy: ['Psychological operations', { s: 'M-30-8H-16L6-22V22L-16 8H-30ZM18-12Q26 0 18 12' }],
-  med: ['Medical', { s: 'M-60 0H60M0-40V40' }],
-  hosp: ['Hospital', { s: 'M-60 0H60M-18-22V22M0-22V22M18-22V22' }],
-  ccs: ['Combat service support', { s: 'M60-40L10 0L60 40' }],
-  sup: ['Supply', { s: 'M-60 22H60' }],
-  fuel: ['Fuel (POL)', { s: 'M0-30V30M-12-30L0-16L12-30' }],
-  mnt: ['Maintenance', { s: 'M-28 0H28' + circ(-31, 0, 4) + circ(31, 0, 4) }],
-  trn: ['Transportation', { s: circ(0, 0, 17) + 'M-17 0H17M0-17V17' }],
-  amm: ['Ammunition', { s: 'M-6 20V-8Q0-24 6-8V20Z' }],
-  eod: ['Explosive ordnance disposal', { s: circ(0, 0, 14) + 'M0-14V-24M0 14V24M-14 0H-24M14 0H24' }],
-  nbc: ['NBC defense', { s: 'M-14 28L14-8M14 28L-14-8', f: circ(14, -14, 8) + circ(-14, -14, 8) }],
-  met: ['Meteorological', { t: 'MET', fs: 30 }],
-  msl: ['Missile', { s: 'M-8 30V-14Q0-34 8-14V30Z' }],
-  nav: ['Navy', { s: 'M0-22V26M-12-12H12M-22 8Q0 34 22 8' + circ(0, -27, 4) }],
-  topo: ['Topographical', { s: 'M0-26L-22 22H22Z' }],
-  hq: ['Headquarters', { s: 'M-60-24H60' }],
-  cp: ['Command post', { t: 'CP' }],
-  op: ['Observation post', { t: 'OP' }],
-  lz: ['Landing zone', { t: 'LZ' }],
-  rp: ['Rally point', { t: 'RP' }],
-};
-const SYM_PATHS = {};
-for (const k in SYMS) { const o = SYMS[k][1]; SYM_PATHS[k] = { s: o.s ? new Path2D(o.s) : null, f: o.f ? new Path2D(o.f) : null }; }
+/* ---------- military symbols (MIL-STD-2525D / APP-6D via milsymbol) ---------- */
+const MS = window.ms || (typeof module === 'object' && module && module.exports && (module.exports.ms || module.exports)) || null;
+const SD = window.SYMDATA || {};
+const MS_COLORS = { Civilian: '#a855f7', Friend: '#3b82f6', Hostile: '#ef4444', Neutral: '#22c55e', Unknown: '#facc15', Suspect: '#f59e0b' };
+const TEXT_KEYS = [
+  ['uniqueDesignation', 'Unit name / designation'], ['higherFormation', 'Higher formation'], ['additionalInformation', 'Additional information'],
+  ['type', 'Type'], ['staffComments', 'Staff comments'], ['quantity', 'Quantity'], ['altitudeDepth', 'Altitude / depth'], ['speed', 'Speed'],
+  ['direction', 'Direction (degrees)'], ['dtg', 'Date time group'], ['location', 'Location'], ['combatEffectiveness', 'Combat effectiveness'],
+  ['commonIdentifier', 'Common identifier'], ['evaluationRating', 'Evaluation rating'], ['iffSif', 'IFF / SIF / AIS'],
+  ['signatureEquipment', 'Signature equipment'], ['specialHeadquarters', 'Special headquarters'], ['platformType', 'Platform type'],
+  ['guardedUnit', 'Guarded unit'], ['specialDesignator', 'Special designator'], ['equipmentTeardownTime', 'Equipment teardown time'],
+];
+const CTX = [['0', 'Reality'], ['1', 'Exercise'], ['2', 'Simulation']];
+const SI = [['3', 'Friend'], ['6', 'Hostile'], ['4', 'Neutral'], ['1', 'Unknown'], ['2', 'Assumed friend'], ['5', 'Suspect'], ['0', 'Pending']];
+const STATUS = [['0', 'Present'], ['1', 'Planned / anticipated'], ['2', 'Present, fully capable'], ['3', 'Present, damaged'], ['4', 'Present, destroyed'], ['5', 'Present, full to capacity']];
+const HQTFD = [['0', 'None'], ['1', 'Feint / dummy'], ['2', 'Headquarters'], ['3', 'Feint / dummy headquarters'], ['4', 'Task force'], ['5', 'Feint / dummy task force'], ['6', 'Task force headquarters'], ['7', 'Feint / dummy task force headquarters']];
+const ECHS = [['00', 'None'], ['11', 'Team / crew'], ['12', 'Squad'], ['13', 'Section'], ['14', 'Platoon / detachment'], ['15', 'Company / battery / troop'], ['16', 'Battalion / squadron'], ['17', 'Regiment / group'], ['18', 'Brigade'], ['21', 'Division'], ['22', 'Corps'], ['23', 'Army'], ['24', 'Army group / front'], ['25', 'Region / theater'], ['26', 'Command']];
+const MOBS = [['00', 'None'], ['31', 'Wheeled, limited cross-country'], ['32', 'Wheeled, cross-country'], ['33', 'Tracked'], ['34', 'Wheeled and tracked'], ['35', 'Towed'], ['36', 'Rail'], ['37', 'Pack animals'], ['41', 'Over snow, prime mover'], ['42', 'Sled'], ['51', 'Barge'], ['52', 'Amphibious']];
+const AMP_SETS = { '10': ECHS, '11': ECHS, '15': MOBS };
+const COLOR_MODES = [['palette', 'App colors'], ['Light', 'Light'], ['Medium', 'Medium'], ['Dark', 'Dark']];
+const RR = [['', 'None'], ['R', 'Reinforced'], ['D', 'Reduced'], ['RD', 'Reinforced and reduced']];
+const sidc20 = (si, set, f) => { f = f || {}; return '10' + (f.ctx || '0') + si + set + (f.status || '0') + (f.hqtfd || '0') + (f.amp || '00') + (f.icon || '000000') + (f.m1 || '00') + (f.m2 || '00'); };
 
-/* frame outlines. Air shapes are mirrored for subsurface. */
-function frameDef(aff, dim) {
-  const sea = dim === 'sea', flip = dim === 'sub', air = dim === 'air' || flip;
-  const poly = d => ({ path: new Path2D(d) });
-  let d;
-  if (aff === 'friend') {
-    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
-    else if (air) d = { parts: [poly('M-55 40C-55-20-30-50 0-50C30-50 55-20 55 40Z')], top: -50, bot: 40, ic: [0, 14, .6] };
-    else d = { parts: [poly('M-60-40H60V40H-60Z')], top: -40, bot: 40, ic: [0, 0, 1] };
-  } else if (aff === 'hostile') {
-    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
-    else if (air) d = { parts: [poly('M-50 45V-8L0-55L50-8V45Z')], top: -55, bot: 45, ic: [0, 14, .58] };
-    else d = { parts: [poly('M0-60L60 0L0 60L-60 0Z')], top: -60, bot: 60, ic: [0, 0, .5] };
-  } else if (aff === 'neutral') {
-    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
-    else d = { parts: [poly('M-45-45H45V45H-45Z')], top: -45, bot: 45, ic: [0, 0, .7] };
-  } else {
-    if (sea) d = { parts: [poly(circ(0, 0, 45))], top: -45, bot: 45, ic: [0, 0, .6] };
-    else if (air) d = { parts: [poly(circ(-24, 14, 28)), poly(circ(24, 14, 28)), poly(circ(0, -14, 28)), poly('M-24-14H24V38H-24Z')], clip: 38, top: -42, bot: 38, ic: [0, 10, .5] };
-    else d = { parts: [poly(circ(0, -32, 28)), poly(circ(32, 0, 28)), poly(circ(0, 32, 28)), poly(circ(-32, 0, 28)), poly('M-32-32H32V32H-32Z')], top: -60, bot: 60, ic: [0, 0, .5] };
-  }
-  d.flip = flip;
-  if (flip) { const t = d.top; d.top = -d.bot; d.bot = -t; d.ic = [d.ic[0], -d.ic[1], d.ic[2]]; }
-  return d;
+function symOpts(it, size) {
+  const o = it.o || {};
+  const opt = { size, standard: it.std === 'APP6' ? 'APP6' : '2525', colorMode: (!o.colorMode || o.colorMode === 'palette') ? MS_COLORS : o.colorMode,
+    fill: o.fill !== false, frame: o.frame !== false, icon: o.icon !== false, outlineWidth: 3, outlineColor: 'rgb(255,255,255)', strokeWidth: 4,
+    infoFields: true, infoOutlineWidth: 4, infoOutlineColor: 'rgb(255,255,255)' };
+  TEXT_KEYS.forEach(([k]) => {
+    if (o[k] === undefined || o[k] === '') return;
+    if (k === 'direction') { const n = parseFloat(o[k]); if (isFinite(n)) opt[k] = n; } else opt[k] = String(o[k]);
+  });
+  if (o.stack > 1) opt.stack = o.stack;
+  if (o.reinforcedReduced) opt.reinforcedReduced = o.reinforcedReduced;
+  return opt;
 }
-
-function drawEch(c, ech, y) {
-  const i = ECHS.indexOf(ech);
-  if (i < 1) return;
-  const pass = (col, w) => {
-    c.strokeStyle = c.fillStyle = col; c.lineWidth = w;
-    if (ech === 'team') { c.beginPath(); c.arc(0, y - 8, 7, 0, 7); c.moveTo(-6, y - 1); c.lineTo(6, y - 15); c.stroke(); return; }
-    if (i <= 4) {
-      const n = i - 1, gap = 17;
-      for (let k = 0; k < n; k++) { c.beginPath(); c.arc((k - (n - 1) / 2) * gap, y - 8, 5, 0, 7); c.fill(); if (w > 4) c.stroke(); }
-    } else {
-      const n = i - 4, gap = 14;
-      for (let k = 0; k < n; k++) { const x = (k - (n - 1) / 2) * gap; c.beginPath(); c.moveTo(x, y - 2); c.lineTo(x, y - 22); c.stroke(); }
-    }
-  };
-  pass('#fff', 9); pass('#000', 4.5);
+const symCache = new Map();
+function symImg(it, size, ratio) {
+  const k = it.sidc + '|' + it.std + '|' + JSON.stringify(it.o || {}) + '|' + size + '|' + ratio;
+  if (symCache.has(k)) return symCache.get(k);
+  let r = null;
+  try {
+    const m = new MS.Symbol(it.sidc, symOpts(it, size));
+    const a = m.getAnchor(), z = m.getSize();
+    r = { cv: m.asCanvas(ratio), ax: a.x, ay: a.y, w: z.width, h: z.height };
+  } catch (e) {}
+  if (symCache.size > 400) symCache.clear();
+  symCache.set(k, r);
+  return r;
 }
-
-/* it: {aff, dim, ic, ech}; (cx, cy) is the frame center, size the frame width */
-function drawSym(c, it, cx, cy, size) {
-  const d = frameDef(it.aff, it.dim);
-  c.save();
-  c.translate(cx, cy); c.scale(size / 120, size / 120);
-  c.lineJoin = c.lineCap = 'round';
-  c.save();
-  if (d.flip) c.scale(1, -1);
-  if (d.clip) { c.beginPath(); c.rect(-100, -100, 200, 100 + d.clip); c.clip(); }
-  c.lineWidth = 4; c.strokeStyle = '#000'; c.fillStyle = AFF[it.aff];
-  d.parts.forEach(q => c.stroke(q.path));
-  d.parts.forEach(q => c.fill(q.path));
-  if (d.clip) { c.beginPath(); c.moveTo(-39, d.clip); c.lineTo(39, d.clip); c.stroke(); }
-  c.restore();
-  const def = SYMS[it.ic];
-  if (def) {
-    c.save();
-    c.translate(d.ic[0], d.ic[1]); c.scale(d.ic[2], d.ic[2]);
-    c.strokeStyle = c.fillStyle = '#000'; c.lineWidth = 5;
-    const o = def[1], pp = SYM_PATHS[it.ic];
-    if (pp.s) c.stroke(pp.s);
-    if (pp.f) c.fill(pp.f);
-    if (o.t) {
-      c.font = `800 ${o.fs || 34}px -apple-system, "Segoe UI", Arial, sans-serif`;
-      c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillText(o.t, 0, 3);
-    }
-    c.restore();
-  }
-  drawEch(c, it.ech, d.top - 4);
-  c.restore();
+/* s = frame size in world units */
+function drawSym(c, it, x, y, s) {
+  if (!MS || !it.sidc) return;
+  const r = symImg(it, 100, 3);
+  if (!r) return;
+  const k = s / 100;
+  c.drawImage(r.cv, x - r.ax * k, y - r.ay * k, r.w * k, r.h * k);
+}
+function drawThumb(x, it, w, h) {
+  const r = MS && symImg(it, 40, 3);
+  if (!r) return;
+  const k = Math.min((w - 4) / r.w, (h - 4) / r.h);
+  x.drawImage(r.cv, (w - r.w * k) / 2, (h - r.h * k) / 2, r.w * k, r.h * k);
 }
 const symR = it => it.s * 0.6;
 const unit = () => img ? Math.max(img.width, img.height) / 500 : 1;
@@ -322,56 +281,192 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
-mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('sympanel').classList.remove('open'); $('palette').classList.toggle('open'); });
+mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
 mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
 sep();
 mk('undo', svg(ICONS.undo), 'Undo', undo);
 mk('clear', svg(ICONS.clear), 'Clear', () => room && items.length ? confirmTap('clear', clearAll) : clearAll());
 sep();
-mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('sympanel').classList.remove('open'); $('menu').classList.toggle('open'); });
+mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
 $('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
 
-/* ---------- symbol picker ---------- */
-let symAff = 'friend', symDim = 'ground', symIc = 'inf', symEch = 'none';
-const sp = $('sympanel');
+let legendDone = false;
 function thumb(w, h, fn) {
   const cv = document.createElement('canvas'), r = window.devicePixelRatio || 1;
   cv.width = w * r; cv.height = h * r; cv.style.width = w + 'px'; cv.style.height = h + 'px';
   const x = cv.getContext('2d'); x.scale(r, r); fn(x, w, h); return cv;
 }
-function symBtn(title, cv, on, fn) {
-  const b = document.createElement('button');
-  b.title = title; b.appendChild(cv); if (on) b.className = 'on'; b.onclick = fn; return b;
+function buildLegend() {
+  const L = $('legend');
+  if (legendDone || !MS) return;
+  legendDone = true;
+  const add = (cls, cv, text) => { const d = document.createElement('div'); d.className = cls; d.appendChild(cv); if (text) { const t = document.createElement('span'); t.textContent = text; d.appendChild(t); } L.appendChild(d); return d; };
+  const fr = document.createElement('div'); fr.className = 'lgfr';
+  fr.appendChild(document.createElement('span'));
+  ['Ground', 'Sea', 'Air', 'Subsurface'].forEach(n => { const h = document.createElement('span'); h.className = 'lgh'; h.textContent = n; fr.appendChild(h); });
+  SI.forEach(([si, name]) => {
+    const n = document.createElement('span'); n.textContent = name; n.style.justifySelf = 'start'; fr.appendChild(n);
+    ['10', '30', '01', '35'].forEach(set => fr.appendChild(thumb(40, 34, (x, w, h) => drawThumb(x, { sidc: sidc20(si, set), std: '2525' }, w, h))));
+  });
+  L.appendChild(fr);
+  const item = (f, name) => add('lg', thumb(34, 30, (x, w, h) => drawThumb(x, { sidc: sidc20('3', '10', Object.assign({ icon: '121100' }, f)), std: '2525' }, w, h)), name);
+  ECHS.slice(1).forEach(([c, n]) => item({ amp: c }, n));
+  HQTFD.slice(1).forEach(([c, n]) => item({ hqtfd: c }, n));
+  STATUS.slice(1).forEach(([c, n]) => item({ status: c }, n));
+  CTX.slice(1).forEach(([c, n]) => item({ ctx: c }, n));
 }
-function refreshSym() {
-  const top = sp.scrollTop;
-  sp.innerHTML = '';
-  const row = () => { const r = document.createElement('div'); r.className = 'row'; sp.appendChild(r); return r; };
-  let r = row();
-  Object.keys(AFF).forEach(a => r.appendChild(symBtn(a, thumb(46, 40, (x, w, h) => drawSym(x, { aff: a, dim: symDim }, w / 2, h / 2, 34)),
-    a === symAff, () => { symAff = a; refreshSym(); })));
-  r = row();
-  DIMS.forEach(m => r.appendChild(symBtn(m, thumb(46, 40, (x, w, h) => drawSym(x, { aff: symAff, dim: m }, w / 2, h / 2, 34)),
-    m === symDim, () => { symDim = m; refreshSym(); })));
-  r = row();
-  ECHS.forEach(e => r.appendChild(symBtn(e, thumb(36, 30, (x, w, h) => {
-    if (e === 'none') { x.fillStyle = '#ddd'; x.font = '700 16px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('-', w / 2, h / 2); return; }
-    x.translate(w / 2, h / 2 + 8); x.scale(.55, .55); drawEch(x, e, 0);
-  }), e === symEch, () => { symEch = e; refreshSym(); })));
-  r = row();
-  Object.keys(SYMS).forEach(k => r.appendChild(symBtn(SYMS[k][0], thumb(44, 44, (x, w, h) => drawSym(x, { aff: symAff, dim: symDim, ic: k, ech: 'none' }, w / 2, h / 2, 38)),
-    k === symIc, () => { symIc = k; refreshSym(); })));
-  sp.scrollTop = top;
+
+/* ---------- symbol builder ---------- */
+const sp = $('sympanel');
+const SB = { std: '2525', ctx: '0', si: '3', set: '10', status: '0', hqtfd: '0', amp: '00', icon: '121100', m1: '00', m2: '00',
+  o: { colorMode: 'palette', fill: true, frame: true, icon: true, stack: 1, reinforcedReduced: '' } };
+let sbEdit = null, sbBefore = null, sbBuilt = false, sbUpdT = 0;
+const sbSidc = () => sidc20(SB.si, SB.set, SB);
+function sbItem() {
+  const o = {};
+  Object.keys(SB.o).forEach(k => { if (SB.o[k] !== '' && SB.o[k] !== undefined) o[k] = SB.o[k]; });
+  return { sidc: sbSidc(), std: SB.std, o: clone(o) };
+}
+const E = {};
+function mkEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+function field(label, el) { const f = mkEl('label', 'sb-f'); f.appendChild(mkEl('span', '', label)); f.appendChild(el); return f; }
+function mkSelect(opts, val, on) {
+  const e = document.createElement('select');
+  opts.forEach(([v, n]) => { const o = document.createElement('option'); o.value = v; o.textContent = n; e.appendChild(o); });
+  e.value = val; e.onchange = () => on(e.value); return e;
+}
+function fillSelect(e, opts, val, grouped) {
+  e.innerHTML = '';
+  let g = null, gname = null;
+  opts.forEach(o => {
+    const cat = grouped ? o[2] : '';
+    if (cat !== gname) { gname = cat; g = cat ? document.createElement('optgroup') : null; if (g) { g.label = cat; e.appendChild(g); } }
+    const op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; (g || e).appendChild(op);
+  });
+  e.value = opts.some(o => o[0] === val) ? val : (opts[0] ? opts[0][0] : '');
+}
+function sbData() { return (SD[SB.std] || {})[SB.set] || { i: [], a: [], b: [] }; }
+function sbDirty() {
+  if (sbEdit) {
+    const n = sbItem();
+    sbEdit.sidc = n.sidc; sbEdit.std = n.std; sbEdit.o = n.o;
+    draw();
+    clearTimeout(sbUpdT); sbUpdT = setTimeout(() => { pushUpd(sbEdit); save(); }, 350);
+  }
+  sbPreview();
+}
+function sbPreview() {
+  const it = sbItem();
+  const cv = E.prev, x = cv.getContext('2d'), r = window.devicePixelRatio || 1;
+  x.setTransform(r, 0, 0, r, 0, 0); x.clearRect(0, 0, cv.width, cv.height);
+  drawThumb(x, it, cv.width / r, cv.height / r);
+  E.code.textContent = it.sidc;
+}
+function sbIcons() {
+  const q = E.q.value.trim().toLowerCase(), list = sbData().i.filter(e => !q || e[1].toLowerCase().includes(q) || e[0].includes(q)).slice(0, 150);
+  E.list.innerHTML = '';
+  if (E.io) E.io.disconnect();
+  E.io = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    const d = en.target; E.io.unobserve(d);
+    d.prepend(thumb(34, 30, (x, w, h) => drawThumb(x, { sidc: sidc20(SB.si, SB.set, { icon: d.dataset.c, ctx: SB.ctx }), std: SB.std }, w, h)));
+  }), { root: E.list });
+  list.forEach(([c, n]) => {
+    const d = mkEl('div', 'sb-row' + (c === SB.icon ? ' on' : ''));
+    d.dataset.c = c; d.appendChild(mkEl('span', '', n));
+    d.onclick = () => { SB.icon = c; E.list.querySelectorAll('.on').forEach(e => e.classList.remove('on')); d.classList.add('on'); sbDirty(); };
+    E.list.appendChild(d); E.io.observe(d);
+  });
+}
+function sbSet() {
+  const d = sbData(), amps = AMP_SETS[SB.set];
+  if (!d.i.some(e => e[0] === SB.icon)) SB.icon = d.i.length ? d.i[0][0] : '000000';
+  fillSelect(E.m1, [['00', 'Unspecified']].concat(d.a.filter(m => m[0] !== '00')), SB.m1, true); SB.m1 = E.m1.value;
+  fillSelect(E.m2, [['00', 'Unspecified']].concat(d.b.filter(m => m[0] !== '00')), SB.m2, true); SB.m2 = E.m2.value;
+  if (amps) { fillSelect(E.amp, amps, SB.amp); SB.amp = E.amp.value; } else { fillSelect(E.amp, [['00', 'Not available']], '00'); SB.amp = '00'; }
+  E.amp.disabled = !amps;
+  E.m1.disabled = d.a.length < 2; E.m2.disabled = d.b.length < 2;
+  sbIcons();
+}
+function sbSync() {
+  E.std.value = SB.std; E.ctx.value = SB.ctx; E.si.value = SB.si; E.set.value = SB.set; E.status.value = SB.status; E.hqtfd.value = SB.hqtfd;
+  sbSet();
+  E.m1.value = SB.m1; E.m2.value = SB.m2; E.amp.value = SB.amp;
+  E.cm.value = SB.o.colorMode || 'palette'; E.fill.checked = SB.o.fill !== false; E.frame.checked = SB.o.frame !== false; E.icon.checked = SB.o.icon !== false;
+  E.stack.value = String(SB.o.stack || 1); E.rr.value = SB.o.reinforcedReduced || '';
+  TEXT_KEYS.forEach(([k]) => { E['t_' + k].value = SB.o[k] === undefined ? '' : SB.o[k]; });
+  sbPreview();
+}
+function sbBuild() {
+  if (sbBuilt) return;
+  sbBuilt = true;
+  const setOpts = () => Object.keys(SD[SB.std] || {}).map(k => [k, SD[SB.std][k].n]);
+  const on = k => v => { SB[k] = v; sbDirty(); };
+  const head = mkEl('div', 'sb-head');
+  E.prev = document.createElement('canvas'); E.prev.width = 150 * (window.devicePixelRatio || 1); E.prev.height = 96 * (window.devicePixelRatio || 1); E.prev.style.width = '150px'; E.prev.style.height = '96px';
+  head.appendChild(E.prev); E.code = mkEl('div', 'sb-code'); head.appendChild(E.code);
+  sp.appendChild(head);
+  const g = mkEl('div', 'sb-grid'); sp.appendChild(g);
+  E.std = mkSelect([['2525', 'MIL-STD-2525D'], ['APP6', 'APP-6D']], SB.std, v => { SB.std = v; fillSelect(E.set, setOpts(), SB.set); SB.set = E.set.value; sbSet(); sbDirty(); });
+  E.ctx = mkSelect(CTX, SB.ctx, on('ctx')); E.si = mkSelect(SI, SB.si, on('si'));
+  E.set = mkSelect(setOpts(), SB.set, v => { SB.set = v; SB.icon = ''; SB.m1 = SB.m2 = SB.amp = '00'; sbSet(); sbDirty(); });
+  E.status = mkSelect(STATUS, SB.status, on('status')); E.hqtfd = mkSelect(HQTFD, SB.hqtfd, on('hqtfd'));
+  E.amp = mkSelect(ECHS, SB.amp, on('amp'));
+  E.m1 = mkSelect([['00', 'Unspecified']], '00', on('m1')); E.m2 = mkSelect([['00', 'Unspecified']], '00', on('m2'));
+  const oo = (k, f) => v => { SB.o[k] = f ? f(v) : v; sbDirty(); };
+  E.cm = mkSelect(COLOR_MODES, SB.o.colorMode, oo('colorMode'));
+  E.stack = mkSelect([1, 2, 3, 4, 5, 6].map(n => [String(n), String(n)]), '1', oo('stack', Number));
+  E.rr = mkSelect(RR, '', oo('reinforcedReduced'));
+  [['Standard', E.std], ['Context', E.ctx], ['Affiliation', E.si], ['Symbol set', E.set], ['Status', E.status], ['Headquarters / task force', E.hqtfd],
+   ['Echelon / mobility', E.amp], ['Modifier 1', E.m1], ['Modifier 2', E.m2], ['Reinforced / reduced', E.rr], ['Stack', E.stack], ['Colors', E.cm]]
+    .forEach(([l, e]) => g.appendChild(field(l, e)));
+  const chk = mkEl('div', 'sb-chk'); sp.appendChild(chk);
+  [['fill', 'Fill'], ['frame', 'Frame'], ['icon', 'Icon']].forEach(([k, l]) => {
+    const lb = mkEl('label'), cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = true; cb.onchange = () => { SB.o[k] = cb.checked; sbDirty(); };
+    E[k] = cb; lb.appendChild(cb); lb.appendChild(mkEl('span', '', l)); chk.appendChild(lb);
+  });
+  E.q = document.createElement('input'); E.q.type = 'search'; E.q.placeholder = 'Search symbols'; E.q.className = 'sb-q'; E.q.oninput = sbIcons;
+  sp.appendChild(E.q);
+  E.list = mkEl('div', 'sb-list'); sp.appendChild(E.list);
+  const det = mkEl('details', 'sb-txt'); det.appendChild(mkEl('summary', '', 'Text'));
+  const tg = mkEl('div', 'sb-grid'); det.appendChild(tg);
+  TEXT_KEYS.forEach(([k, l]) => {
+    const inp = document.createElement('input'); inp.type = 'text'; inp.maxLength = 60; inp.oninput = () => { SB.o[k] = inp.value; sbDirty(); };
+    inp.onkeydown = e => e.stopPropagation(); E['t_' + k] = inp; tg.appendChild(field(l, inp));
+  });
+  sp.appendChild(det);
+  E.q.onkeydown = e => e.stopPropagation();
+  sbSet();
+}
+function openSym(edit) {
+  sbBuild();
+  $('palette').classList.remove('open'); $('menu').classList.remove('open');
+  if (edit) {
+    const m = /^10(\d)(\d)(\d\d)(\d)(\d)(\d\d)(\d{6})(\d\d)(\d\d)$/.exec(edit.sidc);
+    if (!m) return;
+    sbEdit = edit; sbBefore = clone(edit);
+    Object.assign(SB, { ctx: m[1], si: m[2], set: m[3], status: m[4], hqtfd: m[5], amp: m[6], icon: m[7], m1: m[8], m2: m[9], std: edit.std || '2525' });
+    SB.o = Object.assign({ colorMode: 'palette', fill: true, frame: true, icon: true, stack: 1, reinforcedReduced: '' }, edit.o || {});
+    fillSelect(E.set, Object.keys(SD[SB.std] || {}).map(k => [k, SD[SB.std][k].n]), SB.set);
+  } else { sbEdit = null; sbBefore = null; }
+  sp.classList.add('open');
+  sbSync();
+}
+function closeSym() {
+  clearTimeout(sbUpdT);
+  if (sbEdit) {
+    if (JSON.stringify(sbBefore) !== JSON.stringify(sbEdit)) { hist.push({ t: 'mod', it: sbEdit, before: sbBefore }); pushUpd(sbEdit); save(); }
+    sbEdit = null; sbBefore = null;
+  }
+  sp.classList.remove('open');
 }
 $('b-sym').onclick = () => {
-  const was = tool === 'sym', open = sp.classList.contains('open');
-  $('palette').classList.remove('open'); $('menu').classList.remove('open');
+  const was = tool === 'sym', open = sp.classList.contains('open') && !sbEdit;
   setTool('sym');
-  sp.classList.toggle('open', was ? !open : true);
-  if (sp.classList.contains('open')) refreshSym();
+  if (was && open) closeSym(); else openSym(null);
 };
 
 COLORS.forEach(col => {
@@ -427,8 +522,8 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'box', 'text', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
-  if (t !== 'sym') sp.classList.remove('open');
+  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  if (t !== 'sym') closeSym();
   if (t !== 'pan') { endDrag(); sel = null; draw(); }
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
@@ -464,6 +559,14 @@ function drawItem(it) {
     ctx.stroke();
   } else if (it.type === 'line') {
     ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.stroke();
+  } else if (it.type === 'arrow') {
+    const [ax, ay] = it.a, [bx, by] = it.b, ln = Math.hypot(bx - ax, by - ay);
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    const an = Math.atan2(by - ay, bx - ax), hl = Math.min(Math.max(it.w * 5, 6), ln * 0.6), sp2 = 0.45;
+    ctx.beginPath(); ctx.moveTo(bx, by);
+    ctx.lineTo(bx - hl * Math.cos(an - sp2), by - hl * Math.sin(an - sp2));
+    ctx.lineTo(bx - hl * Math.cos(an + sp2), by - hl * Math.sin(an + sp2));
+    ctx.closePath(); ctx.fill(); ctx.stroke();
   } else if (it.type === 'box') {
     ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
       Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
@@ -502,6 +605,10 @@ function draw() {
     ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad); ctx.restore();
   }
   $('selbar').classList.toggle('open', !!sel && tool === 'pan');
+  $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
+  paintSelNum();
+  $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
+  if (sbEdit && sel !== sbEdit) closeSym();
 }
 
 /* ---------- interaction ---------- */
@@ -523,7 +630,7 @@ function hit(it, p, tol) {
       if (segDist(p, it.pts[i], it.pts[i + 1] || it.pts[i]) < tol + it.w / 2) return true;
     return false;
   }
-  if (it.type === 'line') return segDist(p, it.a, it.b) < tol + it.w / 2;
+  if (it.type === 'line' || it.type === 'arrow') return segDist(p, it.a, it.b) < tol + it.w / 2;
   if (it.type === 'box') {
     const [x1, y1] = it.a, [x2, y2] = it.b;
     const k = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
@@ -588,7 +695,7 @@ c.addEventListener('pointerdown', e => {
   if (e.button !== 0) return;
   const p = world(e), w = SIZES[si] * unit();
   if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
-  else if (tool === 'line' || tool === 'box') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
+  else if (tool === 'line' || tool === 'box' || tool === 'arrow') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
   else if (tool === 'text') openText(e);
   else if (tool === 'sym') placeSym(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
@@ -655,7 +762,7 @@ function bbox(it) {
     it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
     return [a - it.w / 2, b - it.w / 2, x + it.w / 2, y + it.w / 2];
   }
-  if (it.type === 'line' || it.type === 'box') {
+  if (it.type === 'line' || it.type === 'box' || it.type === 'arrow') {
     const h = it.w / 2;
     return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
   }
@@ -665,15 +772,25 @@ function bbox(it) {
 }
 function moveFrom(it, b, dx, dy) {
   if (it.type === 'pen') it.pts = b.pts.map(q => [q[0] + dx, q[1] + dy]);
-  else if (it.type === 'line' || it.type === 'box') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
+  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
   else { it.x = b.x + dx; it.y = b.y + dy; }
 }
+function gdim(it) {
+  if (it.type === 'sym') return it.s;
+  if (it.type === 'text') { ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
+  if (it.type === 'pen') {
+    let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
+    it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
+    return Math.max(x - a, y - b);
+  }
+  return Math.max(Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
+}
 function scaleSel(f) {
-  if (!sel) return;
+  if (!sel || !isFinite(f) || f <= 0 || f === 1) return;
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
-  else if (sel.type === 'line' || sel.type === 'box') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
   else if (sel.type === 'sym') sel.s = Math.min(100000, Math.max(4, sel.s * f));
   else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
   hist.push({ t: 'mod', it: sel, before });
@@ -684,11 +801,25 @@ function endDrag() {
   if (drag.moved) { hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it); save(); }
   drag = null;
 }
-$('selDn').onclick = () => scaleSel(1 / 1.15);
-$('selUp').onclick = () => scaleSel(1.15);
+$('selEdit').onclick = () => { if (sel && sel.type === 'sym') openSym(sel); };
+const selNum = $('selNum');
+function paintSelNum() {
+  if (!sel || document.activeElement === selNum) return;
+  const g = gdim(sel);
+  selNum.disabled = !(g > 0);
+  selNum.value = g > 0 ? Math.max(1, Math.round(g / unit())) : '';
+}
+function applySelNum() {
+  if (!sel) return;
+  const n = parseFloat(selNum.value), g = gdim(sel);
+  if (n > 0 && g > 0) scaleSel(n * unit() / g);
+  selNum.blur(); paintSelNum();
+}
+selNum.onchange = applySelNum;
+selNum.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') applySelNum(); };
 
 function placeSym(p) {
-  const it = { id: uuid(), type: 'sym', aff: symAff, dim: symDim, ic: symIc, ech: symEch, x: p[0], y: p[1], s: SIZES[si] * unit() * 14 };
+  const it = Object.assign({ id: uuid(), type: 'sym' }, sbItem(), { x: p[0], y: p[1], s: SIZES[si] * unit() * 14 });
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
 }
 
@@ -844,6 +975,16 @@ function confirmTap(id, fn) {
 /* remote data is untrusted: validate before it reaches the canvas */
 const num = n => typeof n === 'number' && isFinite(n);
 const pt = p => Array.isArray(p) && p.length === 2 && num(p[0]) && num(p[1]);
+function cleanOpts(o) {
+  const r = {};
+  if (!o || typeof o !== 'object') return r;
+  TEXT_KEYS.forEach(([k]) => { const v = o[k]; if (typeof v === 'string' || typeof v === 'number') { const t = String(v).slice(0, 60); if (t) r[k] = t; } });
+  if (COLOR_MODES.some(c => c[0] === o.colorMode)) r.colorMode = o.colorMode;
+  ['fill', 'frame', 'icon'].forEach(k => { if (typeof o[k] === 'boolean') r[k] = o[k]; });
+  if (Number.isInteger(o.stack) && o.stack >= 1 && o.stack <= 6) r.stack = o.stack;
+  if (RR.some(x => x[0] === o.reinforcedReduced)) r.reinforcedReduced = o.reinforcedReduced;
+  return r;
+}
 function cleanItem(d, id) {
   if (!d || typeof d !== 'object' || typeof id !== 'string') return null;
   const color = typeof d.color === 'string' && /^#[0-9a-f]{3,8}$/i.test(d.color) ? d.color : '#ff7a1a';
@@ -851,13 +992,14 @@ function cleanItem(d, id) {
     if (!Array.isArray(d.pts) || !d.pts.length || d.pts.length > 5000 || !d.pts.every(pt) || !num(d.w)) return null;
     return { id, type: 'pen', color, w: d.w, pts: d.pts };
   }
-  if (d.type === 'line' || d.type === 'box') {
+  if (d.type === 'line' || d.type === 'box' || d.type === 'arrow') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
     return { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
   }
   if (d.type === 'sym') {
-    if (!AFF[d.aff] || !DIMS.includes(d.dim) || !SYMS[d.ic] || !ECHS.includes(d.ech) || !num(d.x) || !num(d.y) || !num(d.s) || d.s <= 0 || d.s > 100000) return null;
-    return { id, type: 'sym', aff: d.aff, dim: d.dim, ic: d.ic, ech: d.ech, x: d.x, y: d.y, s: d.s };
+    const okS = typeof d.sidc === 'string' && (/^\d{20}$/.test(d.sidc) || /^[A-Z][A-Z-]{3}[A-Z0-9-]{11}$/.test(d.sidc));
+    if (!okS || !num(d.x) || !num(d.y) || !num(d.s) || d.s <= 0 || d.s > 100000) return null;
+    return { id, type: 'sym', sidc: d.sidc, std: d.std === 'APP6' ? 'APP6' : '2525', o: cleanOpts(d.o), x: d.x, y: d.y, s: d.s };
   }
   if (d.type === 'text') {
     if (typeof d.t !== 'string' || !num(d.x) || !num(d.y) || !num(d.fs)) return null;
