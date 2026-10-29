@@ -1,0 +1,784 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ATAK</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATAK">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+  html, body { width: 860px; height: 600px; background: transparent; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+  /* ---------- phone frame ---------- */
+  #case { position: absolute; inset: 0; transition: opacity .15s; }
+  #case.locked { opacity: .7; }
+  #frame { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+  #screen { position: absolute; left: 6.985%; top: 11.121%; width: 79.164%; height: 54.577%; background: #111;
+    overflow: hidden; display: flex; flex-direction: column;
+    clip-path: polygon(4.37% 0.00%, 3.39% 0.94%, 2.26% 3.13%, 0.98% 6.43%, 0.53% 8.78%, 0.53% 9.56%, 0.45% 9.72%, 0.45% 13.64%, 0.38% 13.79%, 0.23% 31.50%, 0.15% 31.66%, 0.15% 37.62%, 0.08% 37.77%, 0.08% 43.89%, 0.00% 44.04%, 0.00% 55.80%, 0.08% 55.96%, 0.08% 62.07%, 0.15% 62.23%, 0.15% 68.18%, 0.23% 68.34%, 0.23% 74.29%, 0.30% 74.45%, 0.30% 80.25%, 0.38% 80.41%, 0.45% 90.13%, 0.53% 90.28%, 0.53% 91.07%, 0.75% 92.48%, 1.58% 95.14%, 3.17% 98.59%, 3.47% 99.06%, 4.37% 99.84%, 95.70% 99.84%, 96.91% 99.06%, 97.81% 97.81%, 98.57% 96.39%, 99.32% 94.67%, 99.77% 92.95%, 99.85% 91.85%, 99.92% 91.69%, 99.92% 90.75%, 100.00% 90.60%, 100.00% 78.37%, 99.92% 78.21%, 99.92% 76.96%, 99.47% 75.08%, 98.94% 73.98%, 96.98% 70.38%, 94.95% 67.08%, 93.36% 64.26%, 92.76% 63.01%, 92.38% 61.60%, 92.31% 60.34%, 92.23% 60.19%, 92.23% 39.66%, 92.31% 39.50%, 92.38% 38.24%, 92.76% 36.83%, 94.42% 33.70%, 97.96% 27.74%, 99.47% 24.76%, 99.77% 23.82%, 99.92% 22.88%, 99.92% 21.63%, 100.00% 21.47%, 100.00% 9.25%, 99.92% 9.09%, 99.92% 8.15%, 99.85% 7.99%, 99.77% 6.90%, 99.32% 5.17%, 97.51% 1.57%, 96.53% 0.47%, 95.63% 0.00%); }
+
+  /* ---------- header ---------- */
+  #bar { height: 32px; position: absolute; top: 10px; left: 26px; right: 26px; z-index: 2; border-radius: 10px; background: rgba(28,28,30,.94); color: #fff; display: flex; align-items: center;
+    padding: 0 14px; gap: 10px; font-size: 12px; font-weight: 700; letter-spacing: .3px; }
+  #title { flex: 1; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #bar svg { width: 16px; height: 16px; stroke: #ddd; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .av { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #1c1c1e; margin-left: -8px; display: flex; align-items: center; justify-content: center;
+    font: 700 10px -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  #avs { display: flex; padding-left: 8px; }
+  .av:nth-child(1) { background: radial-gradient(circle at 40% 40%, #777, #222); }
+  .av:nth-child(2) { background: radial-gradient(circle at 40% 40%, #c8b6ff, #5b3fa0); }
+
+  /* ---------- map stage ---------- */
+  #stage { position: absolute; inset: 0; }
+  #c { display: block; width: 100%; height: 100%; touch-action: none; }
+  .pill { position: absolute; top: 52px; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 12px; pointer-events: none; }
+  #clock { left: 26px; background: #d93025; color: #fff; }
+  #clock::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    border: 2px solid #fff; margin-right: 5px; vertical-align: -1px; }
+
+  #toolbar, #palette { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
+    gap: 3px; padding: 4px; background: rgba(20,20,22,.9); border-radius: 22px; }
+  #toolbar { bottom: 10px; }
+  #palette { bottom: 54px; gap: 6px; padding: 7px 9px; display: none; }
+  #palette.open { display: flex; }
+  #toolbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  #toolbar button:hover { background: #333; }
+  #toolbar button.on { background: #3b82f6; color: #fff; }
+  #toolbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sep { width: 1px; height: 18px; background: #444; margin: 0 3px; }
+  #colorBtn i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff8; display: block; }
+  #sizeBtn i { background: #ddd; border-radius: 50%; display: block; }
+  .sw { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,.5); cursor: pointer; }
+  .sw.on { border-color: #fff; }
+
+  #menu { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column;
+    gap: 12px; padding: 12px 16px; background: rgba(20,20,22,.94); border-radius: 14px; color: #ddd; font-size: 11px; }
+  #menu.open { display: flex; }
+  #join { display: flex; gap: 6px; align-items: center; }
+  #join input { flex: 1; min-width: 0; height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff;
+    padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #join input::placeholder { color: #777; }
+  #join input:read-only { color: #888; }
+  #join button { height: 26px; padding: 0 14px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff;
+    font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #join button.leave { background: #444; }
+  #joinErr { color: #f87171; display: none; max-width: 460px; white-space: normal; }
+  #binds { display: grid; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 7px 26px; }
+  #binds div { display: flex; justify-content: space-between; align-items: center; gap: 16px; white-space: nowrap; }
+  #binds b { font: 600 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
+  #toolbar button.arm { background: #dc2626; color: #fff; }
+
+  #txt { position: absolute; display: none; font: 700 18px -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
+    border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
+  #file { display: none; }
+
+  /* ---------- web / mobile ---------- */
+  html.web, html.web body { width: 100%; height: 100%; background: #0b0d0f; overscroll-behavior: none; }
+  html.web body { position: fixed; inset: 0; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+  html.web #frame { display: none; }
+  html.web #screen { left: 0; top: 0; width: 100%; height: 100%; clip-path: none; }
+  html.web #bar { top: calc(10px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); right: calc(14px + env(safe-area-inset-right)); }
+  html.web .pill { top: calc(52px + env(safe-area-inset-top)); }
+  html.web #clock { left: calc(14px + env(safe-area-inset-left)); }
+  html.web #toolbar, html.web #palette, html.web #menu { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; max-width: calc(100% - 16px); }
+  html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
+  html.web #palette { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
+  html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
+  @media (pointer: coarse) {
+    #toolbar button { width: 40px; height: 40px; }
+    #toolbar svg { width: 20px; height: 20px; }
+    .sw { width: 28px; height: 28px; }
+    #join input, #join button { height: 36px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="case">
+  <div id="screen">
+      <div id="bar">
+        <span id="title">ATAK</span>
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <div id="avs"><div class="av"></div><div class="av"></div></div>
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+      </div>
+
+      <div id="stage">
+        <canvas id="c"></canvas>
+        <div class="pill" id="clock">--:--</div>
+        <input id="txt" type="text" autocomplete="off" spellcheck="false">
+        <div id="palette"></div>
+        <div id="menu">
+          <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
+          <div id="joinErr"></div>
+          <div id="binds"></div>
+        </div>
+        <div id="toolbar"></div>
+      </div>
+  </div>
+  <img id="frame" draggable="false" alt="">
+</div>
+<input type="file" id="file" accept="image/*">
+
+<script>
+const IS_ELECTRON = typeof window.require === 'function';
+const ipcRenderer = IS_ELECTRON ? require('electron').ipcRenderer : null;
+const $ = id => document.getElementById(id);
+const c = $('c'), ctx = c.getContext('2d');
+
+const COLORS = ['#ff7a1a', '#ef4444', '#facc15', '#22c55e', '#22d3ee', '#3b82f6', '#ffffff', '#111111'];
+const SIZES = [2, 4, 8];
+const ICONS = {
+  open: 'M5 12h14M12 5v14',
+  pan: 'M12 2v20M2 12h20M15 19l-3 3-3-3M9 5l3-3 3 3M19 9l3 3-3 3M5 9l-3 3 3 3',
+  pen: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4',
+  line: 'M5 19L19 5',
+  box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
+  text: 'M4 7V4h16v3M9 20h6M12 4v16',
+  eraser: 'M7 21l-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21M22 21H7M5 11l9 9',
+  undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11',
+  clear: 'M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6',
+  menu: 'M4 6h16M4 12h16M4 18h16',
+};
+
+let tool = 'pen', color = COLORS[0], si = 1;
+let img = null, name = 'ATAK';
+let items = [], hist = [];
+let v = { x: 0, y: 0, s: 1 };
+let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
+
+/* ---------- toolbar ---------- */
+const tb = $('toolbar');
+function mk(id, html, title, fn) {
+  const b = document.createElement('button');
+  b.id = 'b-' + id; b.title = title; b.innerHTML = html; b.onclick = fn;
+  tb.appendChild(b); return b;
+}
+const svg = d => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+const sep = () => { const s = document.createElement('div'); s.className = 'sep'; tb.appendChild(s); };
+
+mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
+sep();
+[['pan', 'Move'], ['pen', 'Pen'], ['line', 'Line'], ['box', 'Box'], ['text', 'Text'], ['eraser', 'Erase']]
+  .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
+sep();
+mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('palette').classList.toggle('open'); });
+mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
+sep();
+mk('undo', svg(ICONS.undo), 'Undo', undo);
+mk('clear', svg(ICONS.clear), 'Clear', () => room && items.length ? confirmTap('clear', clearAll) : clearAll());
+sep();
+mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('menu').classList.toggle('open'); });
+$('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
+
+COLORS.forEach(col => {
+  const s = document.createElement('div');
+  s.className = 'sw'; s.style.background = col; s.dataset.c = col;
+  s.onclick = () => { color = col; paintColor(); $('palette').classList.remove('open'); };
+  $('palette').appendChild(s);
+});
+
+const MOD = /Mac/i.test(navigator.platform) ? 'Cmd' : 'Ctrl';
+const TOUCH = matchMedia('(pointer: coarse)').matches;
+const BINDS = IS_ELECTRON ? [
+  ['Click-through on / off', MOD + '+Shift+A'],
+  ['Show / hide', MOD + '+Shift+H'],
+  ['Scale', MOD + '+Shift+Up / Down'],
+  ['Opacity', MOD + '+Shift+Left / Right'],
+  ['Quit', MOD + '+Shift+Q'],
+  ['Undo', MOD + '+Z'],
+  ['Paste map', MOD + '+V'],
+  ['Zoom map', 'Scroll'],
+  ['Pan map', 'Right / middle drag'],
+  ['Move phone', 'Drag frame or header'],
+  ['Confirm / cancel text', 'Enter / Esc'],
+] : TOUCH ? [
+  ['Draw', 'One finger'],
+  ['Zoom and pan map', 'Two fingers'],
+  ['Pan with one finger', 'Move tool'],
+  ['Confirm text', 'Enter'],
+] : [
+  ['Undo', MOD + '+Z'],
+  ['Paste map', MOD + '+V'],
+  ['Zoom map', 'Scroll'],
+  ['Pan map', 'Right / middle drag'],
+  ['Confirm / cancel text', 'Enter / Esc'],
+];
+BINDS.forEach(([a, k]) => {
+  const r = document.createElement('div');
+  r.innerHTML = `<span>${a}</span><b>${k}</b>`;
+  $('binds').appendChild(r);
+});
+
+function paintColor() {
+  $('colorBtn').firstChild.style.background = color;
+  document.querySelectorAll('.sw').forEach(s => s.classList.toggle('on', s.dataset.c === color));
+}
+function paintSize() {
+  const i = $('sizeBtn').firstChild, d = [5, 9, 13][si];
+  i.style.width = i.style.height = d + 'px';
+}
+function setTool(t) {
+  commitText();
+  tool = t;
+  ['pan', 'pen', 'line', 'box', 'text', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
+}
+
+/* ---------- canvas ---------- */
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  const r = c.getBoundingClientRect();
+  c.width = Math.round(r.width * dpr);
+  c.height = Math.round(r.height * dpr);
+  draw();
+}
+new ResizeObserver(resize).observe(c);
+window.addEventListener('resize', resize);
+
+function fit() {
+  if (!img) return;
+  const r = c.getBoundingClientRect();
+  const T = 46, h = r.height - T;
+  const s = Math.min(r.width / img.width, h / img.height);
+  v = { s, x: (r.width - img.width * s) / 2, y: T + (h - img.height * s) / 2 };
+}
+
+function drawItem(it) {
+  ctx.lineCap = ctx.lineJoin = 'round';
+  ctx.strokeStyle = ctx.fillStyle = it.color;
+  ctx.lineWidth = it.w || 1;
+  if (it.type === 'pen') {
+    ctx.beginPath();
+    it.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+    if (it.pts.length === 1) ctx.lineTo(it.pts[0][0] + 0.01, it.pts[0][1]);
+    ctx.stroke();
+  } else if (it.type === 'line') {
+    ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.stroke();
+  } else if (it.type === 'box') {
+    ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
+      Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
+  } else if (it.type === 'text') {
+    ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+    ctx.textBaseline = 'top';
+    ctx.strokeStyle = '#000'; ctx.lineWidth = it.fs / 6;
+    ctx.strokeText(it.t, it.x, it.y);
+    ctx.fillText(it.t, it.x, it.y);
+  }
+}
+
+function draw() {
+  const w = c.width, h = c.height;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#14171a';
+  ctx.fillRect(0, 0, w, h);
+
+  if (!img) {
+    ctx.strokeStyle = '#1f2428'; ctx.lineWidth = 1;
+    const g = 40 * dpr;
+    ctx.beginPath();
+    for (let x = 0; x < w; x += g) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+    for (let y = 0; y < h; y += g) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+    ctx.stroke();
+  }
+
+  ctx.setTransform(dpr * v.s, 0, 0, dpr * v.s, dpr * v.x, dpr * v.y);
+  if (img) ctx.drawImage(img, 0, 0);
+  items.forEach(drawItem);
+  if (cur) drawItem(cur);
+}
+
+/* ---------- interaction ---------- */
+const world = e => {
+  const r = c.getBoundingClientRect();
+  return [(e.clientX - r.left - v.x) / v.s, (e.clientY - r.top - v.y) / v.s];
+};
+
+function segDist(p, a, b) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy;
+  let t = l ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+}
+function hit(it, p, tol) {
+  if (it.type === 'pen') {
+    for (let i = 0; i < it.pts.length; i++)
+      if (segDist(p, it.pts[i], it.pts[i + 1] || it.pts[i]) < tol + it.w / 2) return true;
+    return false;
+  }
+  if (it.type === 'line') return segDist(p, it.a, it.b) < tol + it.w / 2;
+  if (it.type === 'box') {
+    const [x1, y1] = it.a, [x2, y2] = it.b;
+    const k = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
+    return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
+  }
+  ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+  const tw = ctx.measureText(it.t).width;
+  return p[0] > it.x - tol && p[0] < it.x + tw + tol && p[1] > it.y - tol && p[1] < it.y + it.fs + tol;
+}
+function erase(p) {
+  const tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
+  for (let i = items.length - 1; i >= 0; i--) {
+    if (hit(items[i], p, tol)) {
+      hist.push({ t: 'del', it: items[i], i });
+      pushDel([items[i].id]);
+      items.splice(i, 1);
+      save(); draw();
+      return;
+    }
+  }
+}
+
+const ptrs = new Map();
+let pinch = null, ignore = false;
+function pinchNow() {
+  const a = [...ptrs.values()], r = c.getBoundingClientRect();
+  return { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, mx: (a[0].x + a[1].x) / 2 - r.left, my: (a[0].y + a[1].y) / 2 - r.top };
+}
+function startPinch() { pinch = { ...pinchNow(), v: { ...v } }; ignore = true; }
+function updatePinch() {
+  if (ptrs.size < 2) return;
+  const n = pinchNow();
+  const s = Math.min(20, Math.max(0.02, pinch.v.s * n.d / pinch.d));
+  const wx = (pinch.mx - pinch.v.x) / pinch.v.s, wy = (pinch.my - pinch.v.y) / pinch.v.s;
+  v.s = s; v.x = n.mx - wx * s; v.y = n.my - wy * s;
+  draw();
+}
+
+c.addEventListener('mousedown', e => e.preventDefault());
+c.addEventListener('contextmenu', e => e.preventDefault());
+
+c.addEventListener('pointerdown', e => {
+  if ($('menu').classList.contains('open')) { $('menu').classList.remove('open'); return; }
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 2) { commitText(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
+  if (ptrs.size > 2 || ignore) return;
+  if (tool !== 'text') commitText();
+  c.setPointerCapture(e.pointerId);
+  if (e.button === 1 || e.button === 2 || tool === 'pan') {
+    pan = { sx: e.clientX, sy: e.clientY, vx: v.x, vy: v.y };
+    c.style.cursor = 'grabbing';
+    return;
+  }
+  if (e.button !== 0) return;
+  const p = world(e), w = SIZES[si] / v.s;
+  if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
+  else if (tool === 'line' || tool === 'box') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
+  else if (tool === 'text') openText(e);
+  else if (tool === 'eraser') { erasing = true; erase(p); }
+  draw();
+});
+
+c.addEventListener('pointermove', e => {
+  if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch) { updatePinch(); return; }
+  if (ignore) return;
+  if (pan) {
+    v.x = pan.vx + (e.clientX - pan.sx);
+    v.y = pan.vy + (e.clientY - pan.sy);
+    draw(); return;
+  }
+  if (erasing) { erase(world(e)); return; }
+  if (!cur) return;
+  const p = world(e);
+  if (cur.type === 'pen') cur.pts.push(p); else cur.b = p;
+  draw();
+});
+
+function endPointer(e) {
+  ptrs.delete(e.pointerId);
+  if (pinch) { if (ptrs.size < 2) { pinch = null; save(); } if (!ptrs.size) ignore = false; return; }
+  if (ignore) { if (!ptrs.size) ignore = false; return; }
+  if (pan) {
+    pan = null;
+    c.style.cursor = tool === 'pan' ? 'grab' : tool === 'text' ? 'text' : 'crosshair';
+    save(); return;
+  }
+  if (erasing) { erasing = false; return; }
+  if (cur) {
+    const real = cur.type === 'pen' || cur.a[0] !== cur.b[0] || cur.a[1] !== cur.b[1];
+    if (real) { items.push(cur); hist.push({ t: 'add', it: cur }); pushAdd(cur); }
+    cur = null; save(); draw();
+  }
+}
+c.addEventListener('pointerup', endPointer);
+c.addEventListener('pointercancel', endPointer);
+
+c.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = c.getBoundingClientRect();
+  const px = e.clientX - r.left, py = e.clientY - r.top;
+  const ns = Math.min(20, Math.max(0.02, v.s * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+  v.x = px - (px - v.x) * (ns / v.s);
+  v.y = py - (py - v.y) * (ns / v.s);
+  v.s = ns;
+  draw(); save();
+}, { passive: false });
+
+/* ---------- text ---------- */
+const txt = $('txt');
+function openText(e) {
+  commitText();
+  const r = c.getBoundingClientRect();
+  tp = { p: world(e) };
+  txt.style.display = 'block';
+  txt.style.left = (e.clientX - r.left) + 'px';
+  txt.style.top = (e.clientY - r.top) + 'px';
+  txt.style.color = color;
+  txt.value = '';
+  setTimeout(() => txt.focus(), 0);
+}
+function commitText() {
+  if (!tp) return;
+  const t = txt.value.trim();
+  if (t) {
+    const it = { id: uuid(), type: 'text', color, t, x: tp.p[0], y: tp.p[1], fs: 18 / v.s };
+    items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
+  }
+  tp = null; txt.style.display = 'none'; txt.value = '';
+  draw();
+}
+txt.onkeydown = e => {
+  if (e.key === 'Enter') commitText();
+  if (e.key === 'Escape') { txt.value = ''; commitText(); }
+};
+txt.onblur = commitText;
+
+/* ---------- history ---------- */
+function undo() {
+  commitText();
+  const h = hist.pop();
+  if (!h) return;
+  if (h.t === 'add') { const i = items.indexOf(h.it); if (i > -1) items.splice(i, 1); pushDel([h.it.id]); }
+  else if (h.t === 'del') { items.splice(h.i, 0, h.it); pushAdd(h.it); }
+  else if (h.t === 'clear') { items = h.list; pushAdd(h.list); }
+  save(); draw();
+}
+function clearAll() {
+  commitText();
+  if (!items.length) return;
+  hist.push({ t: 'clear', list: items.slice() });
+  items = [];
+  pushClear();
+  save(); draw();
+}
+addEventListener('keydown', e => {
+  if (e.target.tagName !== 'INPUT' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+});
+
+/* ---------- map loading ---------- */
+function setTitle() { $('title').textContent = room ? room.toUpperCase() : name; }
+function setImg(src, opt = {}) {
+  const i = new Image();
+  i.onload = () => {
+    if (opt.solo && room) return;
+    img = i;
+    if (opt.reset) { items = []; hist = []; }
+    if (opt.fit) fit();
+    if (opt.reset && !room) save();
+    setTitle();
+    draw();
+  };
+  i.src = src;
+}
+function loadFile(f) {
+  if (!f || !f.type.startsWith('image/')) return;
+  if (room) { uploadMap(f); return; }
+  name = f.name ? f.name.replace(/\.[^.]+$/, '') : 'ATAK';
+  const fr = new FileReader();
+  fr.onload = () => {
+    try { localStorage.setItem('atak-map', fr.result); } catch (e) { try { localStorage.removeItem('atak-map'); } catch (_) {} }
+    setImg(fr.result, { reset: true, fit: true });
+  };
+  fr.readAsDataURL(f);
+}
+$('file').onchange = e => { loadFile(e.target.files[0]); e.target.value = ''; };
+document.addEventListener('paste', e => {
+  for (const it of e.clipboardData.items) if (it.type.startsWith('image/')) loadFile(it.getAsFile());
+});
+addEventListener('dragover', e => e.preventDefault());
+addEventListener('drop', e => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
+
+/* ---------- persistence ---------- */
+function save() {
+  if (room) return;
+  try { localStorage.setItem('atak', JSON.stringify({ items, v, name })); } catch (e) {}
+}
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem('atak') || 'null');
+    const m = localStorage.getItem('atak-map');
+    if (d) { items = d.items || []; v = d.v || v; name = d.name || name; items.forEach(i => { i.id = i.id || uuid(); }); }
+    if (m) setImg(m, { solo: true });
+  } catch (e) {}
+}
+
+/* ---------- rooms ---------- */
+const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_7Voavi1b7JKDflmMJIU2TA_rsA8rZWN';
+let createClient = null;
+let libReady = Promise.resolve();
+if (IS_ELECTRON) {
+  try { ({ createClient } = require('@supabase/supabase-js')); } catch (e) {}
+} else {
+  libReady = new Promise(res => {
+    const sc = document.createElement('script');
+    sc.src = 'supabase.js';
+    sc.onload = () => { createClient = window.supabase && window.supabase.createClient; res(); };
+    sc.onerror = () => res();
+    document.head.appendChild(sc);
+  });
+}
+let sb = null, room = null, channel = null, curPath = null, roomHasMap = false, errTimer = null;
+const clientId = Math.random().toString(36).slice(2);
+const decorAvs = $('avs').innerHTML;
+
+const uuid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
+
+function db() {
+  if (!sb) sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { transport: WebSocket },
+  });
+  return sb;
+}
+
+function showErr(msg) {
+  const e = $('joinErr');
+  e.textContent = msg || '';
+  e.style.display = msg ? 'block' : 'none';
+}
+function fail(err) {
+  showErr((err && err.message) || String(err));
+  $('title').textContent = 'SYNC ERROR';
+  clearTimeout(errTimer);
+  errTimer = setTimeout(setTitle, 4000);
+}
+
+function confirmTap(id, fn) {
+  const b = $('b-' + id);
+  if (b.classList.contains('arm')) { b.classList.remove('arm'); fn(); return; }
+  b.classList.add('arm');
+  setTimeout(() => b.classList.remove('arm'), 3000);
+}
+
+/* remote data is untrusted: validate before it reaches the canvas */
+const num = n => typeof n === 'number' && isFinite(n);
+const pt = p => Array.isArray(p) && p.length === 2 && num(p[0]) && num(p[1]);
+function cleanItem(d, id) {
+  if (!d || typeof d !== 'object' || typeof id !== 'string') return null;
+  const color = typeof d.color === 'string' && /^#[0-9a-f]{3,8}$/i.test(d.color) ? d.color : '#ff7a1a';
+  if (d.type === 'pen') {
+    if (!Array.isArray(d.pts) || !d.pts.length || d.pts.length > 5000 || !d.pts.every(pt) || !num(d.w)) return null;
+    return { id, type: 'pen', color, w: d.w, pts: d.pts };
+  }
+  if (d.type === 'line' || d.type === 'box') {
+    if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
+    return { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
+  }
+  if (d.type === 'text') {
+    if (typeof d.t !== 'string' || !num(d.x) || !num(d.y) || !num(d.fs)) return null;
+    return { id, type: 'text', color, t: d.t.slice(0, 200), x: d.x, y: d.y, fs: d.fs };
+  }
+  return null;
+}
+
+function pushAdd(list) {
+  if (!room) return;
+  const rows = (Array.isArray(list) ? list : [list]).map(it => ({ id: it.id, room, data: it }));
+  if (rows.length) db().from('marks').upsert(rows, { onConflict: 'id', ignoreDuplicates: true }).then(r => r.error && fail(r.error));
+}
+function pushDel(ids) {
+  if (!room || !ids.length) return;
+  db().from('marks').delete().in('id', ids).then(r => r.error && fail(r.error));
+}
+function pushClear() {
+  if (!room) return;
+  db().from('marks').delete().eq('room', room).then(r => r.error && fail(r.error));
+}
+
+function onInsert(row) {
+  if (!row || items.some(i => i.id === row.id)) return;
+  const it = cleanItem(row.data, row.id);
+  if (it) { items.push(it); draw(); }
+}
+function onDelete(old) {
+  if (!old) return;
+  const i = items.findIndex(x => x.id === old.id);
+  if (i > -1) { items.splice(i, 1); draw(); }
+}
+function onRoom(r) {
+  if (!r) return;
+  roomHasMap = !!r.map_path;
+  if (r.map_path && r.map_path !== curPath) { hist = []; showRemoteMap(r.map_path); }
+}
+function showRemoteMap(path) {
+  if (typeof path !== 'string' || !/^[a-z0-9-]+\/[0-9]+\.[a-z0-9]+$/i.test(path)) return;
+  curPath = path;
+  const { data } = db().storage.from('maps').getPublicUrl(path);
+  setImg(data.publicUrl, { fit: true });
+}
+
+async function syncRoom() {
+  const r = await db().from('rooms').select('map_path').eq('code', room).single();
+  if (r.error) throw r.error;
+  roomHasMap = !!r.data.map_path;
+  if (r.data.map_path && r.data.map_path !== curPath) showRemoteMap(r.data.map_path);
+  const m = await db().from('marks').select('id,data').eq('room', room).order('created_at').limit(5000);
+  if (m.error) throw m.error;
+  items = m.data.map(x => cleanItem(x.data, x.id)).filter(Boolean);
+  hist = [];
+  draw();
+}
+
+async function uploadMap(f) {
+  const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
+  const path = room + '/' + Date.now() + '.' + ext;
+  showErr('');
+  const up = await db().storage.from('maps').upload(path, f, { contentType: f.type });
+  if (up.error) return fail(up.error);
+  curPath = path; roomHasMap = true;
+  items = []; hist = [];
+  setImg(URL.createObjectURL(f), { fit: true });
+  const d = await db().from('marks').delete().eq('room', room);
+  if (d.error) fail(d.error);
+  const u = await db().from('rooms').update({ map_path: path }).eq('code', room);
+  if (u.error) fail(u.error);
+}
+
+function hue(str) { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; }
+function renderPresence(state) {
+  const box = $('avs');
+  if (!state) { box.innerHTML = decorAvs; return; }
+  const people = Object.values(state).map(a => a[0] && a[0].name).filter(n => typeof n === 'string' && n);
+  box.textContent = '';
+  const add = (text, bg, title) => {
+    const d = document.createElement('div');
+    d.className = 'av'; d.style.background = bg; d.textContent = text;
+    if (title) d.title = title;
+    box.appendChild(d);
+  };
+  people.slice(0, 4).forEach(n => add(n.slice(0, 1).toUpperCase(), 'hsl(' + hue(n) + ',55%,42%)', n));
+  if (people.length > 4) add('+' + (people.length - 4), '#333');
+}
+
+let wake = null;
+async function keepAwake() {
+  try {
+    if (IS_ELECTRON || !room || !navigator.wakeLock || wake) return;
+    wake = await navigator.wakeLock.request('screen');
+    wake.addEventListener('release', () => { wake = null; });
+  } catch (e) {}
+}
+function releaseAwake() { try { if (wake) wake.release(); } catch (e) {} wake = null; }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && room) { syncRoom().catch(fail); keepAwake(); }
+});
+document.addEventListener('gesturestart', e => e.preventDefault());
+
+function setJoinedUI(on) {
+  $('joinBtn').textContent = on ? 'Leave' : 'Join';
+  $('joinBtn').classList.toggle('leave', on);
+  $('roomIn').readOnly = on;
+  $('nameIn').readOnly = on;
+}
+function teardown() {
+  if (channel) { try { db().removeChannel(channel); } catch (e) {} channel = null; }
+}
+
+async function joinRoom(code, nick) {
+  code = String(code || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24);
+  nick = String(nick || '').slice(0, 16) || 'Player' + Math.floor(100 + Math.random() * 900);
+  if (!code) return showErr('Enter a room code');
+  await libReady;
+  if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
+  if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
+  teardown();
+  room = code; curPath = null; roomHasMap = false;
+  items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1 };
+  $('roomIn').value = code; $('nameIn').value = nick;
+  setJoinedUI(true); showErr(''); setTitle(); draw();
+  try { localStorage.setItem('atak-room', JSON.stringify({ code, name: nick })); localStorage.setItem('atak-name', nick); } catch (e) {}
+  try {
+    const up = await db().from('rooms').upsert({ code }, { onConflict: 'code', ignoreDuplicates: true });
+    if (up.error) throw up.error;
+    if (room !== code) return;
+    channel = db().channel('atak:' + code, { config: { presence: { key: clientId } } });
+    channel
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'marks', filter: 'room=eq.' + code }, p => onInsert(p.new))
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'marks' }, p => onDelete(p.old))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'code=eq.' + code }, p => onRoom(p.new))
+      .on('presence', { event: 'sync' }, () => renderPresence(channel.presenceState()))
+      .subscribe(async (st, err) => {
+        if (room !== code) return;
+        if (st === 'SUBSCRIBED') {
+          channel.track({ name: nick });
+          keepAwake();
+          try { await syncRoom(); } catch (e) { fail(e); }
+        } else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') {
+          fail(err || new Error('Connection failed'));
+        }
+      });
+  } catch (e) { fail(e); }
+}
+
+function leaveRoom() {
+  teardown();
+  releaseAwake();
+  room = null; curPath = null; roomHasMap = false;
+  try { localStorage.removeItem('atak-room'); } catch (e) {}
+  setJoinedUI(false); showErr(''); renderPresence(null);
+  items = []; hist = []; img = null; name = 'ATAK'; v = { x: 0, y: 0, s: 1 };
+  load(); setTitle(); draw();
+}
+
+$('joinBtn').onclick = () => room ? leaveRoom() : joinRoom($('roomIn').value, $('nameIn').value.trim());
+['roomIn', 'nameIn'].forEach(id => $(id).addEventListener('keydown', e => {
+  e.stopPropagation();
+  if (e.key === 'Enter' && !room) $('joinBtn').click();
+}));
+
+/* ---------- misc ---------- */
+function tick() {
+  const d = new Date();
+  $('clock').textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+setInterval(tick, 10000); tick();
+
+if (ipcRenderer) ipcRenderer.on('locked', (e, l) => $('case').classList.toggle('locked', l));
+
+/* ---------- window drag ---------- */
+let dragging = false;
+function stopDrag() { if (dragging) { dragging = false; ipcRenderer.send('drag-end'); } }
+$('case').addEventListener('mousedown', e => {
+  if (!ipcRenderer || e.button !== 0 || e.target.closest('#stage')) return;
+  dragging = true;
+  ipcRenderer.send('drag-start');
+});
+addEventListener('mouseup', stopDrag);
+addEventListener('blur', stopDrag);
+
+if (IS_ELECTRON) $('frame').src = 'frame.png';
+new ResizeObserver(() => document.documentElement.style.setProperty('--tb', $('toolbar').offsetHeight + 'px')).observe($('toolbar'));
+if (!IS_ELECTRON && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
+paintColor(); paintSize(); setTool('pen');
+load();
+resize();
+try {
+  $('nameIn').value = localStorage.getItem('atak-name') || ('Player' + Math.floor(100 + Math.random() * 900));
+  const r = JSON.parse(localStorage.getItem('atak-room') || 'null');
+  if (r && r.code) joinRoom(r.code, $('nameIn').value);
+} catch (e) {}
+</script>
+</body>
+</html>
