@@ -1,5 +1,4 @@
 #!/bin/bash
-# Pushes the site (Vercel) and builds new installers (GitHub) with the next version number.
 set -e
 cd "$(dirname "$0")"
 git add -A

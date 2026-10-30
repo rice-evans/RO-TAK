@@ -60,20 +60,16 @@ function createWindow() {
     win.webContents.send('locked', locked);
   });
 
-  // Toggle click-through. Locked = clicks go to the game.
   globalShortcut.register('CommandOrControl+Shift+A', () => setLocked(!locked));
 
-  // Show / hide
   globalShortcut.register('CommandOrControl+Shift+H', () => {
     if (win.isVisible()) win.hide();
     else win.showInactive();
   });
 
-  // Scale
   globalShortcut.register('CommandOrControl+Shift+Up', () => applyScale(scale + 0.1));
   globalShortcut.register('CommandOrControl+Shift+Down', () => applyScale(scale - 0.1));
 
-  // Opacity
   globalShortcut.register('CommandOrControl+Shift+Left', () => {
     opacity = Math.max(0.3, Math.round((opacity - 0.1) * 10) / 10);
     win.setOpacity(opacity);
@@ -83,7 +79,6 @@ function createWindow() {
     win.setOpacity(opacity);
   });
 
-  // Quit
   globalShortcut.register('CommandOrControl+Shift+Q', () => app.quit());
 }
 

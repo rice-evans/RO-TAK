@@ -1,5 +1,3 @@
-// Edge function "upload-map": checks a map image for explicit content, then stores it.
-// POST multipart/form-data: room, file. Returns { path }.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { encodeBase64 } from "jsr:@std/encoding/base64";
 

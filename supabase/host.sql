@@ -1,6 +1,3 @@
--- Run once in the Supabase SQL editor (after moderation.sql).
--- The person who creates a room is its host. The host can lock the room,
--- clear it in bulk and replace its map. Everyone else can still draw unless it is locked.
 
 alter table public.rooms add column if not exists host_hash text;
 alter table public.rooms add column if not exists locked boolean not null default false;

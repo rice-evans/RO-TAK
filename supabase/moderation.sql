@@ -1,4 +1,3 @@
--- Word filter, enforced in the database.
 create or replace function public.is_bad(t text) returns boolean
 language plpgsql immutable as $$
 declare n text; w text; sq text;
@@ -35,7 +34,6 @@ drop trigger if exists rooms_bad on public.rooms;
 create trigger rooms_bad before insert or update on public.rooms
 for each row execute function public.reject_bad_room();
 
--- Map uploads must go through the upload-map function, so remove direct access to the maps bucket.
 do $$
 declare p record;
 begin

@@ -24,7 +24,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html, body { width: 860px; height: 600px; background: transparent; overflow: hidden;
     font-family: "IBM Plex Sans", system-ui, "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; }
 
-  /* ---------- phone frame ---------- */
   #case { position: absolute; inset: 0; transition: opacity .15s; }
   #case.locked { opacity: .7; }
   #frame { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
@@ -32,7 +31,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     overflow: hidden; display: flex; flex-direction: column;
     clip-path: polygon(4.37% 0.00%, 3.39% 0.94%, 2.26% 3.13%, 0.98% 6.43%, 0.53% 8.78%, 0.53% 9.56%, 0.45% 9.72%, 0.45% 13.64%, 0.38% 13.79%, 0.23% 31.50%, 0.15% 31.66%, 0.15% 37.62%, 0.08% 37.77%, 0.08% 43.89%, 0.00% 44.04%, 0.00% 55.80%, 0.08% 55.96%, 0.08% 62.07%, 0.15% 62.23%, 0.15% 68.18%, 0.23% 68.34%, 0.23% 74.29%, 0.30% 74.45%, 0.30% 80.25%, 0.38% 80.41%, 0.45% 90.13%, 0.53% 90.28%, 0.53% 91.07%, 0.75% 92.48%, 1.58% 95.14%, 3.17% 98.59%, 3.47% 99.06%, 4.37% 99.84%, 95.70% 99.84%, 96.91% 99.06%, 97.81% 97.81%, 98.57% 96.39%, 99.32% 94.67%, 99.77% 92.95%, 99.85% 91.85%, 99.92% 91.69%, 99.92% 90.75%, 100.00% 90.60%, 100.00% 78.37%, 99.92% 78.21%, 99.92% 76.96%, 99.47% 75.08%, 98.94% 73.98%, 96.98% 70.38%, 94.95% 67.08%, 93.36% 64.26%, 92.76% 63.01%, 92.38% 61.60%, 92.31% 60.34%, 92.23% 60.19%, 92.23% 39.66%, 92.31% 39.50%, 92.38% 38.24%, 92.76% 36.83%, 94.42% 33.70%, 97.96% 27.74%, 99.47% 24.76%, 99.77% 23.82%, 99.92% 22.88%, 99.92% 21.63%, 100.00% 21.47%, 100.00% 9.25%, 99.92% 9.09%, 99.92% 8.15%, 99.85% 7.99%, 99.77% 6.90%, 99.32% 5.17%, 97.51% 1.57%, 96.53% 0.47%, 95.63% 0.00%); }
 
-  /* ---------- header ---------- */
   #bar { height: 32px; position: absolute; top: 10px; left: 26px; right: 26px; z-index: 2; border-radius: 10px; background: rgba(28,28,30,.94); color: #fff; display: flex; align-items: center;
     padding: 0 14px; gap: 10px; font-size: 12px; font-weight: 700; letter-spacing: .3px; }
   #title { flex: 1; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -43,7 +41,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   .av:nth-child(1) { background: radial-gradient(circle at 40% 40%, #777, #222); }
   .av:nth-child(2) { background: radial-gradient(circle at 40% 40%, #c8b6ff, #5b3fa0); }
 
-  /* ---------- map stage ---------- */
   #stage { position: absolute; inset: 0; }
   #c { display: block; width: 100%; height: 100%; touch-action: none; }
   .pill { position: absolute; top: 52px; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 12px; pointer-events: none; }
@@ -100,7 +97,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
   #file { display: none; }
 
-  /* ---------- web / mobile ---------- */
   html.web, html.web body { width: 100%; height: 100%; background: #0b0d0f; overscroll-behavior: none; }
   html.web body { position: fixed; inset: 0; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
   html.web #frame { display: none; }
@@ -260,7 +256,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   .mbtn { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #side input[type=text], #side input[type=number], #side button.sb, #sideTabs button { height: 40px; font-size: 16px; } .mbtn { height: 36px; font-size: 14px; } }
 
-  /* ---------- landing (web only) ---------- */
   #landing { display: none; position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #080808; transition: opacity .4s ease; font-family: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: auto; }
   html.land #landing { display: block; }
   #landing.out { opacity: 0; pointer-events: none; }
@@ -459,7 +454,6 @@ let img = null, name = 'RO-TAK';
 let items = [], hist = [];
 let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
-/* view settings (per viewer, not synced): size of every symbol / number badge, in map units */
 const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
 const SET_RANGE = { sym: [1, 300], badge: [0.5, 120] };
@@ -468,8 +462,6 @@ let nextNum = 1, numPre = '';
 const TAU = Math.PI * 2;
 const normA = a => { a = ((a % TAU) + TAU) % TAU; return a > Math.PI ? a - TAU : a; };
 
-
-/* ---------- military symbols (MIL-STD-2525D / APP-6D via milsymbol) ---------- */
 const MS = window.ms || (typeof module === 'object' && module && module.exports && (module.exports.ms || module.exports)) || null;
 const SD = window.SYMDATA || {};
 const MS_COLORS = { Civilian: '#a855f7', Friend: '#3b82f6', Hostile: '#ef4444', Neutral: '#22c55e', Unknown: '#facc15', Suspect: '#f59e0b' };
@@ -519,7 +511,6 @@ function symImg(it, size, ratio) {
   symCache.set(k, r);
   return r;
 }
-/* s = frame size in world units */
 function drawSym(c, it, x, y, s) {
   if (!MS || !it.sidc) return;
   const r = symImg(it, 100, 3);
@@ -548,7 +539,6 @@ function badgeFont(c, d, n) {
 const inkFor = col => { const h = (col || '#fff').replace('#', ''); const f = h.length === 3 ? h.split('').map(x => x + x).join('') : h;
   const r = parseInt(f.slice(0, 2), 16), g = parseInt(f.slice(2, 4), 16), b = parseInt(f.slice(4, 6), 16); return (r * .299 + g * .587 + b * .114) > 150 ? '#111' : '#fff'; };
 
-/* ---------- toolbar ---------- */
 const tb = $('toolbar');
 function mk(id, html, title, fn) {
   const b = document.createElement('button');
@@ -598,7 +588,6 @@ function buildLegend() {
   CTX.slice(1).forEach(([c, n]) => item({ ctx: c }, n));
 }
 
-/* ---------- symbol builder ---------- */
 const sp = $('sympanel');
 const SB = { std: '2525', ctx: '0', si: '3', set: '10', status: '0', hqtfd: '0', amp: '00', icon: '121100', m1: '00', m2: '00',
   o: { colorMode: 'palette', fill: true, frame: true, icon: true, stack: 1, reinforcedReduced: '' } };
@@ -816,7 +805,6 @@ function setTool(t) {
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
 
-/* ---------- canvas ---------- */
 function resize() {
   dpr = window.devicePixelRatio || 1;
   const r = c.getBoundingClientRect();
@@ -930,13 +918,11 @@ function draw() {
   if (sbEdit && sel !== sbEdit) closeSym();
 }
 
-/* ---------- interaction ---------- */
 const toWorld = (px, py) => {
   const dx = px - v.x, dy = py - v.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
   return [(co * dx + si_ * dy) / v.s, (-si_ * dx + co * dy) / v.s];
 };
 const world = e => { const r = c.getBoundingClientRect(); return toWorld(e.clientX - r.left, e.clientY - r.top); };
-/* rotate the view to angle r2 (radians) keeping the screen point (px,py) fixed; default = centre */
 function recenter() {
   if (!img) return;
   const r = c.getBoundingClientRect(), T = 46, h = r.height - T - 56;
@@ -1015,9 +1001,9 @@ function updatePinch() {
   const n = pinchNow();
   const s = Math.min(150, Math.max(0.02, pinch.v.s * n.d / pinch.d));
   const da = normA(n.ang - pinch.ang);
-  if (!pinch.rot && Math.abs(da) > 0.2) { pinch.rot = true; pinch.off = da; }   /* ignore small twists while zooming */
+  if (!pinch.rot && Math.abs(da) > 0.2) { pinch.rot = true; pinch.off = da; }
   let r = pinch.v.r || 0;
-  if (pinch.rot) { r = normA(r + da - pinch.off); if (Math.abs(r) < 0.07) r = 0; }  /* snap to north-up */
+  if (pinch.rot) { r = normA(r + da - pinch.off); if (Math.abs(r) < 0.07) r = 0; }
   const w = [(Math.cos(pinch.v.r) * (pinch.mx - pinch.v.x) + Math.sin(pinch.v.r) * (pinch.my - pinch.v.y)) / pinch.v.s,
              (-Math.sin(pinch.v.r) * (pinch.mx - pinch.v.x) + Math.cos(pinch.v.r) * (pinch.my - pinch.v.y)) / pinch.v.s];
   v.s = s; v.r = r;
@@ -1198,8 +1184,6 @@ function placeSym(p) {
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
 }
 
-
-/* ---------- compass, rotation, settings, number badges ---------- */
 function paintNav() {
   const deg = v.r * 180 / Math.PI;
   $('compass').firstChild.style.transform = `rotate(${v.r}rad)`;
@@ -1276,7 +1260,6 @@ $('selLbl').onchange = () => {
 };
 buildSettings(); paintNum();
 
-/* ---------- text ---------- */
 const txt = $('txt');
 function openText(e) {
   commitText();
@@ -1306,7 +1289,6 @@ txt.onkeydown = e => {
 };
 txt.onblur = commitText;
 
-/* ---------- history ---------- */
 function undo() {
   commitText();
   const h = hist.pop();
@@ -1330,7 +1312,6 @@ addEventListener('keydown', e => {
   if (e.target.tagName !== 'INPUT' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
 });
 
-/* ---------- map loading ---------- */
 function setTitle() { $('title').textContent = room ? room.replace(/-/g, ' ').toUpperCase() + (roomLocked ? ' · LOCKED' : '') : name; }
 function setImg(src, opt = {}) {
   const i = new Image();
@@ -1366,7 +1347,6 @@ document.addEventListener('paste', e => {
 addEventListener('dragover', e => e.preventDefault());
 addEventListener('drop', e => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
 
-/* ---------- persistence ---------- */
 function save() {
   if (room) return;
   try { localStorage.setItem('atak', JSON.stringify({ items, v, name })); } catch (e) {}
@@ -1382,8 +1362,6 @@ function load() {
   } catch (e) {}
 }
 
-
-/* ---------- map from link + credit ---------- */
 let credit = null, pendCredit = null;
 const okUrl = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; } };
 function cleanCredit(c) {
@@ -1459,8 +1437,6 @@ async function saveCredit() {
 }
 paintCredit();
 
-
-/* ---------- grid coordinates (two-point calibration) ---------- */
 let grid = null, calib = null, gotoPt = null;
 const pt2 = a => Array.isArray(a) && a.length === 2 && a.every(n => typeof n === 'number' && isFinite(n));
 function cleanGrid(g) {
@@ -1483,7 +1459,6 @@ const pad = (n, l) => { n = Math.round(n); return (n < 0 ? '-' : '') + String(Ma
 const fmt8 = g => pad(g[0], 4) + ' ' + pad(g[1], 4);
 const fmt6 = g => pad(Math.floor(g[0] / 10), 3) + ' ' + pad(Math.floor(g[1] / 10), 3);
 
-/* "1234 5678", "12345678", "123 456" (6 digits = 100 m, read as its south-west corner) */
 function parseGrid(t) {
   const g = String(t || '').trim().split(/[^0-9]+/).filter(Boolean);
   let e, n, l;
@@ -1549,7 +1524,6 @@ function showCoord(p) {
 c.addEventListener('pointermove', e => { if (grid && !calib) showCoord(world(e)); });
 c.addEventListener('pointerdown', e => { if (grid) showCoord(world(e)); });
 
-/* calibration flow */
 const gbar = $('gridbar'), gbIn = $('gbIn');
 function gbShow(msg, input) { gbar.classList.add('open'); $('gbMsg').textContent = msg; gbIn.style.display = input ? 'block' : 'none'; $('gbOk').style.display = input ? 'block' : 'none'; if (input) { gbIn.value = ''; setTimeout(() => gbIn.focus(), 0); } }
 function calibEnd(msg) { calib = null; gbar.classList.remove('open'); gridMsg(msg || ''); paintGridUI(); draw(); }
@@ -1589,7 +1563,6 @@ async function pushGrid() {
   if (r.error) gridMsg('Calibration saved for you only. To share it, add the grid column in Supabase (see SQL).');
 }
 
-/* menu section */
 const GR = {};
 function gridMsg(t) { const e = $('gridMsg'); if (e) { e.textContent = t || ''; e.style.display = t ? 'block' : 'none'; } }
 function paintGridUI() { if (GR.st) { GR.st.textContent = grid ? 'Grid calibrated' : 'Not calibrated'; GR.show.checked = setg.showGrid; } if (!grid) coordEl.style.display = 'none'; }
@@ -1626,9 +1599,6 @@ function goGrid(mark) {
   paintGridUI();
 })();
 
-
-
-/* ---------- word filter ---------- */
 const BAD_TOK = /\b(?:nigg(?:er|a|ah|uh|az|as)s?|fag(?:s|got|gots|git|it|ot)?|dykes?|trann(?:y|ies)|shemales?|chinks?|gooks?|spic(?:s|k|ks)?|kikes?|coons?|wetbacks?|beaners?|pakis?|towelheads?|japs?|darkies?|retard(?:s|ed)?)\b/;
 const BAD_SQ = /n+i+g{2,}(?:e+r+|a+h+|a+(?!r))|f+a+g{2,}o+t+/;
 function normBad(t) { return String(t).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/0/g, 'o').replace(/[1!|]/g, 'i').replace(/3/g, 'e').replace(/[4@]/g, 'a').replace(/[5$]/g, 's').replace(/7/g, 't').replace(/8/g, 'b'); }
@@ -1640,7 +1610,6 @@ function toast(msg) {
   e.textContent = msg; e.style.opacity = '1'; clearTimeout(toastT); toastT = setTimeout(() => { e.style.opacity = '0'; }, 3200);
 }
 
-/* ---------- legal ---------- */
 const LEGAL = {
   privacy: ['Privacy policy', [
     ['p up', 'Last updated 30 October 2026.'],
@@ -1705,7 +1674,6 @@ $('lgX').onclick = closeLg;
 lg.onclick = e => { if (e.target === lg) closeLg(); };
 addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg(); e.preventDefault(); e.stopPropagation(); } }, true);
 
-/* ---------- landing ---------- */
 (function () {
   const L = $('landing');
   if (!L) return;
@@ -1823,7 +1791,6 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg
   $('lenter').onclick = enter;
 })();
 
-/* ---------- waypoints, timers, export ---------- */
 var sideReady = false;
 let wpN = 1;
 function _drawSide() { if (typeof sideReady === 'undefined' || !sideReady) return; paintSide(false); paintChips(false); }
@@ -1948,7 +1915,6 @@ function tickTimes() {
 setInterval(() => { if (timerList().length) tickTimes(); }, 500);
 sideReady = true;
 
-/* save as image */
 async function exportImage() {
   if (!img) return;
   const W = img.width, H = img.height, E = Math.max(1, Math.max(W, H) / 1200);
@@ -2014,7 +1980,6 @@ let roomUI = () => {};
 
 addEventListener('popstate', () => { if (!IS_ELECTRON && !/^\/play\/?$/.test(location.pathname)) location.reload(); });
 
-/* ---------- rooms ---------- */
 const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7Voavi1b7JKDflmMJIU2TA_rsA8rZWN';
 let createClient = null;
@@ -2074,7 +2039,6 @@ function confirmTap(id, fn) {
   setTimeout(() => b.classList.remove('arm'), 3000);
 }
 
-/* remote data is untrusted: validate before it reaches the canvas */
 const num = n => typeof n === 'number' && isFinite(n);
 const pt = p => Array.isArray(p) && p.length === 2 && num(p[0]) && num(p[1]);
 function cleanOpts(o) {
@@ -2339,7 +2303,6 @@ $('joinBtn').onclick = () => room ? leaveRoom() : joinRoom($('roomIn').value, $(
   if (e.key === 'Enter' && !room) $('joinBtn').click();
 }));
 
-/* ---------- misc ---------- */
 function tick() {
   const d = new Date();
   $('clock').textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -2348,7 +2311,6 @@ setInterval(tick, 10000); tick();
 
 if (ipcRenderer) ipcRenderer.on('locked', (e, l) => $('case').classList.toggle('locked', l));
 
-/* ---------- window drag ---------- */
 let dragging = false;
 function stopDrag() { if (dragging) { dragging = false; ipcRenderer.send('drag-end'); } }
 $('case').addEventListener('mousedown', e => {
