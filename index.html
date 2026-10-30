@@ -174,6 +174,18 @@
   #settings .sh { grid-column: 1 / -1; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
   #settings button { grid-column: 1 / -1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #settings input[type=number] { height: 36px; font-size: 16px; } #settings button { height: 36px; font-size: 14px; } }
+
+  #credit { position: absolute; top: 78px; left: 26px; max-width: 46%; font-size: 10px; color: #ddd; background: rgba(20,20,22,.82); padding: 2px 8px; border-radius: 10px; display: none; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 1; }
+  html.web #credit { top: calc(78px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
+  #source { display: grid; grid-template-columns: 1fr; gap: 6px; border-top: 1px solid #333; padding-top: 10px; }
+  #source .sh { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #source input { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; width: 100%; min-width: 0; user-select: text; -webkit-user-select: text; }
+  #source input::placeholder { color: #777; }
+  #source .srow { display: flex; gap: 6px; }
+  #source button { flex: 1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #source button.alt { background: #444; }
+  #srcMsg { color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
+  @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
 </style>
 </head>
 <body>
@@ -189,6 +201,7 @@
       <div id="stage">
         <canvas id="c"></canvas>
         <div class="pill" id="clock">--:--</div>
+        <div id="credit"></div>
         <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><button id="numTog" title="Show / hide building numbers">#</button><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
@@ -199,6 +212,7 @@
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
           <div id="settings"></div>
+          <div id="source"></div>
           <div id="binds"></div>
           <div id="legend"></div>
         </div>
@@ -1084,7 +1098,9 @@ function setImg(src, opt = {}) {
 }
 function loadFile(f) {
   if (!f || !f.type.startsWith('image/')) return;
-  if (room) { uploadMap(f); return; }
+  const cr = pendCredit; pendCredit = null;
+  if (room) { uploadMap(f, cr); return; }
+  setCredit(cr, true);
   name = f.name ? f.name.replace(/\.[^.]+$/, '') : 'ATAK';
   const fr = new FileReader();
   fr.onload = () => {
@@ -1111,8 +1127,99 @@ function load() {
     const m = localStorage.getItem('atak-map');
     if (d) { items = d.items || []; v = d.v || v; v.r = v.r || 0; name = d.name || name; items.forEach(i => { i.id = i.id || uuid(); }); }
     if (m) setImg(m, { solo: true });
+    setCredit(localStorage.getItem('atak-credit'));
   } catch (e) {}
 }
+
+
+/* ---------- map from link + credit ---------- */
+let credit = null, pendCredit = null;
+const okUrl = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; } };
+function cleanCredit(c) {
+  if (!c) return null;
+  if (typeof c === 'string') { try { c = JSON.parse(c); } catch (e) { return null; } }
+  if (!c || typeof c.t !== 'string' || !c.t.trim()) return null;
+  return { t: c.t.trim().slice(0, 160), u: okUrl(c.u || '').slice(0, 300) };
+}
+function paintCredit() {
+  const e = $('credit');
+  e.style.display = credit ? 'block' : 'none';
+  e.textContent = credit ? '© ' + credit.t : '';
+  e.title = credit && credit.u ? credit.u : '';
+  if ($('srcCredit') && document.activeElement !== $('srcCredit')) { $('srcCredit').value = credit ? credit.t : ''; $('srcLink').value = credit ? credit.u : ''; }
+}
+function setCredit(c, persist) {
+  credit = cleanCredit(c); paintCredit();
+  if (persist && !room) { try { credit ? localStorage.setItem('atak-credit', JSON.stringify(credit)) : localStorage.removeItem('atak-credit'); } catch (e) {} }
+}
+function openLink(u) { if (!u) return; if (IS_ELECTRON) { try { require('electron').shell.openExternal(u); } catch (e) {} } else window.open(u, '_blank', 'noopener'); }
+$('credit').addEventListener('pointerdown', e => e.stopPropagation());
+$('credit').onclick = () => credit && openLink(credit.u);
+
+function guessCredit(u) {
+  try {
+    const x = new URL(u), m = x.pathname.match(/^\/([a-z0-9-]+)\/images\//i);
+    if (/wikia\.nocookie\.net$/i.test(x.host) && m) {
+      const f = (x.pathname.match(/\/([^\/]+)\/revision\//) || [])[1];
+      return { t: (f ? decodeURIComponent(f) + ' — ' : '') + m[1].replace(/-/g, ' ') + ' wiki (Fandom)', u: 'https://' + m[1] + '.fandom.com/' };
+    }
+    return { t: x.host, u: x.origin };
+  } catch (e) { return null; }
+}
+function nodeGet(u, n = 0) {
+  return new Promise((res, rej) => {
+    require('https').get(u, { headers: { 'User-Agent': 'Mozilla/5.0' } }, r => {
+      if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location && n < 5) { r.resume(); return res(nodeGet(new URL(r.headers.location, u).href, n + 1)); }
+      if (r.statusCode !== 200) { r.resume(); return rej(new Error('HTTP ' + r.statusCode)); }
+      const ch = []; let len = 0;
+      r.on('data', d => { len += d.length; if (len > 30e6) { r.destroy(); rej(new Error('Image too large')); } else ch.push(d); });
+      r.on('end', () => res({ buf: Buffer.concat(ch), type: (r.headers['content-type'] || '').split(';')[0] }));
+    }).on('error', rej);
+  });
+}
+function srcMsg(t) { const e = $('srcMsg'); e.textContent = t || ''; e.style.display = t ? 'block' : 'none'; }
+async function importUrl() {
+  const u = okUrl($('srcUrl').value.trim());
+  if (!u) return srcMsg('Paste a full image link (https://...)');
+  srcMsg('Loading...');
+  let blob;
+  try {
+    if (IS_ELECTRON) { const r = await nodeGet(u); blob = new Blob([r.buf], { type: r.type }); }
+    else { const r = await fetch(u); if (!r.ok) throw new Error('HTTP ' + r.status); blob = await r.blob(); }
+  } catch (e) {
+    return srcMsg(IS_ELECTRON ? 'Could not download: ' + e.message : 'This site would not let the browser load it (' + e.message + '). Save the image and use the + button to open it instead.');
+  }
+  if (!/^image\//.test(blob.type)) return srcMsg('That link is not an image. Open the image on its own and paste that address.');
+  if (blob.size > 30e6) return srcMsg('Image is too large (30 MB max).');
+  const path = new URL(u).pathname.split('/').filter(x => x && !/^(revision|latest|scale-to-width-down)$/.test(x) && !/^\d+$/.test(x));
+  const fname = decodeURIComponent(path.reverse().find(x => /\.(png|jpe?g|webp|gif)$/i.test(x)) || 'map.png');
+  const cr = cleanCredit({ t: $('srcCredit').value || (guessCredit(u) || {}).t, u: $('srcLink').value || (guessCredit(u) || {}).u });
+  pendCredit = cr || null;
+  $('menu').classList.remove('open');
+  srcMsg('');
+  loadFile(new File([blob], fname, { type: blob.type }));
+}
+async function saveCredit() {
+  const cr = cleanCredit({ t: $('srcCredit').value, u: $('srcLink').value });
+  setCredit(cr, true);
+  if (room) { const r = await db().from('rooms').update({ credit: cr ? JSON.stringify(cr) : null }).eq('code', room); if (r.error) srcMsg('Credit is saved for you only. To share it, add the credit column in Supabase (see SQL).'); else srcMsg(''); }
+  else srcMsg('');
+}
+(function buildSource() {
+  const box = $('source');
+  const mk1 = (id, ph) => { const i = document.createElement('input'); i.id = id; i.placeholder = ph; i.autocomplete = 'off'; i.spellcheck = false; i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') i.blur(); }); return i; };
+  const h = document.createElement('div'); h.className = 'sh'; h.textContent = 'Map from link and credit';
+  const u = mk1('srcUrl', 'Image link (https://...)');
+  u.addEventListener('change', () => { const g = guessCredit(u.value.trim()); if (g && !$('srcCredit').value) { $('srcCredit').value = g.t; $('srcLink').value = g.u; } });
+  const c = mk1('srcCredit', 'Credit (shown on the map)'), l = mk1('srcLink', 'Credit link (optional)');
+  const row = document.createElement('div'); row.className = 'srow';
+  const b1 = document.createElement('button'); b1.textContent = 'Load from link'; b1.onclick = importUrl;
+  const b2 = document.createElement('button'); b2.className = 'alt'; b2.textContent = 'Save credit'; b2.onclick = saveCredit;
+  row.append(b1, b2);
+  const m = document.createElement('div'); m.id = 'srcMsg';
+  box.append(h, u, c, l, row, m);
+})();
+paintCredit();
 
 /* ---------- rooms ---------- */
 const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
@@ -1242,6 +1349,7 @@ function onDelete(old) {
 function onRoom(r) {
   if (!r) return;
   roomHasMap = !!r.map_path;
+  if ('credit' in r) setCredit(r.credit);
   if (r.map_path && r.map_path !== curPath) { hist = []; showRemoteMap(r.map_path); }
 }
 function showRemoteMap(path) {
@@ -1252,9 +1360,10 @@ function showRemoteMap(path) {
 }
 
 async function syncRoom() {
-  const r = await db().from('rooms').select('map_path').eq('code', room).single();
+  const r = await db().from('rooms').select('*').eq('code', room).single();
   if (r.error) throw r.error;
   roomHasMap = !!r.data.map_path;
+  setCredit(r.data.credit);
   if (r.data.map_path && r.data.map_path !== curPath) showRemoteMap(r.data.map_path);
   const m = await db().from('marks').select('id,data').eq('room', room).order('created_at').limit(5000);
   if (m.error) throw m.error;
@@ -1263,7 +1372,7 @@ async function syncRoom() {
   draw();
 }
 
-async function uploadMap(f) {
+async function uploadMap(f, cr) {
   const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
   const path = room + '/' + Date.now() + '.' + ext;
   showErr('');
@@ -1274,7 +1383,9 @@ async function uploadMap(f) {
   setImg(URL.createObjectURL(f), { fit: true });
   const d = await db().from('marks').delete().eq('room', room);
   if (d.error) fail(d.error);
-  const u = await db().from('rooms').update({ map_path: path }).eq('code', room);
+  setCredit(cr || null);
+  let u = await db().from('rooms').update({ map_path: path, credit: cr ? JSON.stringify(cr) : null }).eq('code', room);
+  if (u.error && /credit/i.test(u.error.message || '')) u = await db().from('rooms').update({ map_path: path }).eq('code', room);
   if (u.error) fail(u.error);
 }
 
@@ -1326,7 +1437,7 @@ async function joinRoom(code, nick) {
   if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
-  room = code; curPath = null; roomHasMap = false;
+  room = code; curPath = null; roomHasMap = false; setCredit(null);
   items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1, r: 0 };
   $('roomIn').value = code; $('nameIn').value = nick;
   setJoinedUI(true); showErr(''); setTitle(); draw();

@@ -1,4 +1,4 @@
-const CACHE = 'atak-v9';
+const CACHE = 'atak-v10';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './supabase.js', './milsymbol.js', './symdata.js', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
