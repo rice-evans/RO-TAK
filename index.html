@@ -258,7 +258,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .row { overflow: hidden; }
   #landing .track { display: flex; gap: 12px; height: 100%; width: max-content; animation: lslide 140s linear infinite; }
   #landing .row.rev .track { animation-direction: reverse; animation-duration: 170s; }
-  #landing .track img { height: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 4px; background: #161616; filter: brightness(.9) saturate(1.05); user-select: none; -webkit-user-drag: none; }
+  #landing .slide { position: relative; flex: none; height: 100%; aspect-ratio: 3 / 2; border-radius: 4px; overflow: hidden; background: #161616; }
+  #landing .slide img { display: block; width: 100%; height: 100%; object-fit: cover; filter: brightness(.9) saturate(1.05); user-select: none; -webkit-user-drag: none; }
+  #landing .slide span { position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: rgba(255,255,255,.75); text-shadow: 0 1px 6px rgba(0,0,0,.9); }
   @keyframes lslide { to { transform: translateX(calc(-50% - 6px)); } }
   #landing .veil { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,8,8,.78) 0%, rgba(8,8,8,.45) 40%, rgba(8,8,8,.08) 100%); }
   #landing .hero { pointer-events: none; position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; padding: 24px clamp(24px, 8vw, 128px); }
@@ -1553,11 +1555,21 @@ function goGrid(mark) {
 (function () {
   const L = $('landing');
   if (!L) return;
-  const IMAGES = ['images/landing/1.jpg', 'images/landing/2.jpg', 'images/landing/3.jpg', 'images/landing/4.jpg', 'images/landing/5.jpg', 'images/landing/6.jpg', 'images/landing/7.jpg', 'images/landing/8.jpg'];
-  const half = Math.ceil(IMAGES.length / 2);
-  [[IMAGES.slice(0, half), 'lrow1'], [IMAGES.slice(half), 'lrow2']].forEach(([list, id]) => {
-    const t = $(id); if (!list.length) list = IMAGES;
-    [...list, ...list].forEach(src => { const i = new Image(); i.src = src; i.alt = ''; i.draggable = false; t.appendChild(i); });
+  const IMAGES = [
+    { src: 'images/landing/1.jpg', by: 'FineMaltLyrics' },
+    { src: 'images/landing/2.jpg', by: 'begoren' },
+    { src: 'images/landing/3.jpg', by: 'Gravity_Defier' },
+  ];
+  [['lrow1', 0], ['lrow2', 1]].forEach(([id, shift]) => {
+    const t = $(id);
+    let list = IMAGES.map((_, k) => IMAGES[(k + shift) % IMAGES.length]);
+    while (list.length < 6) list = list.concat(list);
+    [...list, ...list].forEach(m => {
+      const d = document.createElement('div'); d.className = 'slide';
+      const i = new Image(); i.src = m.src; i.alt = ''; i.draggable = false;
+      const c = document.createElement('span'); c.textContent = m.by;
+      d.append(i, c); t.appendChild(d);
+    });
   });
   const MSG = "Hey there! Welcome to my site. You've been sitting on the splash page for quite a while. Is everything alright? Enjoy the site, and if you need any help, message me at rice.e.";
   let idle, typer;
