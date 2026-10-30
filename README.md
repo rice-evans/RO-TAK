@@ -1,9 +1,33 @@
+<div align="center">
+
 # RO-TAK
 
-Annotate a game map with your team in real time. Upload a map, draw, drop military symbols and waypoints, and share a room link.
+**Real-time shared map annotation for games.** Upload a map, draw, drop military symbols and waypoints, measure bearings and share a room link.
 
-- Web: https://ro-tak.vercel.app
-- Desktop overlay (Windows, macOS): see Releases
+<p>
+<a href="https://github.com/rice-evans/RO-TAK"><img src="https://img.shields.io/github/stars/rice-evans/RO-TAK?style=flat&logo=github" alt="Stars"></a>
+<a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rice-evans/RO-TAK?style=flat" alt="License"></a>
+<a href="https://github.com/rice-evans/RO-TAK/commits/main"><img src="https://img.shields.io/github/last-commit/rice-evans/RO-TAK?style=flat" alt="Last commit"></a>
+<a href="https://github.com/rice-evans/RO-TAK/releases/latest"><img src="https://img.shields.io/github/v/release/rice-evans/RO-TAK?style=flat" alt="Release"></a>
+<img src="https://img.shields.io/badge/JavaScript-f7df1e?style=flat&logo=javascript&logoColor=black" alt="JavaScript">
+<img src="https://img.shields.io/badge/Electron-47848f?style=flat&logo=electron&logoColor=white" alt="Electron">
+</p>
+
+<p>
+<a href="https://ro-tak.vercel.app"><img src="https://img.shields.io/badge/WEB_APP-RO--TAK.VERCEL.APP-3b82f6?style=for-the-badge&labelColor=444444" alt="Web app"></a>
+</p>
+
+<p>
+<a href="https://github.com/rice-evans/RO-TAK/releases/latest"><img src="https://img.shields.io/badge/DOWNLOAD-WINDOWS_%28.EXE%29-3b82f6?style=for-the-badge&labelColor=444444" alt="Download for Windows"></a>
+<a href="https://github.com/rice-evans/RO-TAK/releases/latest"><img src="https://img.shields.io/badge/DOWNLOAD-MACOS_APPLE_SILICON-000000?style=for-the-badge&labelColor=444444&logo=apple&logoColor=white" alt="Download for macOS Apple Silicon"></a>
+<a href="https://github.com/rice-evans/RO-TAK/releases/latest"><img src="https://img.shields.io/badge/DOWNLOAD-MACOS_INTEL-1f1f1f?style=for-the-badge&labelColor=444444&logo=apple&logoColor=white" alt="Download for macOS Intel"></a>
+</p>
+
+<p>
+<a href="https://github.com/rice-evans/RO-TAK/releases">Releases</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/SECURITY.md">Security</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE">License</a>
+</p>
+
+</div>
 
 ## What it does and does not do
 

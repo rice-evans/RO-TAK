@@ -10,6 +10,7 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -54,4 +55,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           id=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate --jq ".[] | select(.tag_name==\"$GITHUB_REF_NAME\") | .id" | head -n1)
+          old=$(gh api "repos/$GITHUB_REPOSITORY/releases/$id/assets" --jq ".[] | select(.name==\"SHA256SUMS-$RUNNER_OS.txt\") | .id")
+          if [ -n "$old" ]; then gh api --method DELETE "repos/$GITHUB_REPOSITORY/releases/assets/$old"; fi
           gh api --method POST "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$id/assets?name=SHA256SUMS-$RUNNER_OS.txt" -H "Content-Type: text/plain" --input "SHA256SUMS-$RUNNER_OS.txt"
