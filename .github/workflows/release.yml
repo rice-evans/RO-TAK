@@ -19,6 +19,11 @@ jobs:
       - name: Copy shared app files
         shell: bash
         run: cp index.html milsymbol.js symdata.js desktop/
+      - name: Set version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        working-directory: desktop
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
       - name: Install
         working-directory: desktop
         run: npm install
