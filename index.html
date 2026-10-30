@@ -75,7 +75,7 @@
     font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   #join button.leave { background: #444; }
   #joinErr { color: #f87171; display: none; max-width: 460px; white-space: normal; }
-  #binds { display: grid; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 7px 26px; }
+  #binds { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); gap: 7px 26px; }
   #binds div { display: flex; justify-content: space-between; align-items: center; gap: 16px; white-space: nowrap; }
   #binds b { font: 600 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
   #menu { max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; }
@@ -140,6 +140,31 @@
     .sw { width: 28px; height: 28px; }
     #join input, #join button { height: 36px; font-size: 16px; }
   }
+
+  #nav { position: absolute; top: 52px; right: 26px; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1; }
+  #compass { width: 46px; height: 46px; cursor: pointer; }
+  #compass svg { width: 100%; height: 100%; display: block; transition: transform .12s; }
+  #navbtns { display: flex; gap: 4px; }
+  #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+  #navbtns button:hover { background: #333; }
+  #hdg { font: 700 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.9); border-radius: 8px; padding: 1px 6px; display: none; }
+  html.web #nav { top: calc(52px + env(safe-area-inset-top)); right: calc(14px + env(safe-area-inset-right)); }
+  @media (pointer: coarse) { #compass { width: 54px; height: 54px; } #navbtns button { width: 30px; height: 30px; font-size: 18px; } }
+  #numbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 5px; background: rgba(20,20,22,.94); border-radius: 22px; }
+  #numbar.open { display: flex; }
+  #numbar button { width: 30px; height: 30px; border: 0; border-radius: 50%; background: #2a2a2d; color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
+  #numbar input { height: 30px; background: #2a2a2d; border: 0; border-radius: 15px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #nPre { width: 54px; } #nVal { width: 74px; }
+  html.web #numbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
+  @media (pointer: coarse) { #numbar button, #numbar input { height: 40px; } #numbar button { width: 40px; } #numbar input { font-size: 16px; } }
+  #selLbl { display: none; width: 70px; height: 28px; background: #2a2a2d; border: 0; border-radius: 14px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  @media (pointer: coarse) { #selLbl { height: 36px; font-size: 16px; width: 80px; } }
+  #settings { display: grid; grid-template-columns: auto 1fr 64px; gap: 8px 10px; align-items: center; border-top: 1px solid #333; padding-top: 10px; }
+  #settings input[type=range] { width: 100%; min-width: 120px; accent-color: #3b82f6; }
+  #settings input[type=number] { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; text-align: center; font-size: 12px; font-family: inherit; outline: none; width: 100%; user-select: text; -webkit-user-select: text; }
+  #settings .sh { grid-column: 1 / -1; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #settings button { grid-column: 1 / -1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  @media (pointer: coarse) { #settings input[type=number] { height: 36px; font-size: 16px; } #settings button { height: 36px; font-size: 14px; } }
 </style>
 </head>
 <body>
@@ -155,13 +180,16 @@
       <div id="stage">
         <canvas id="c"></canvas>
         <div class="pill" id="clock">--:--</div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><div id="hdg"></div></div>
+        <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selNum" type="number" min="1" step="1" inputmode="numeric" title="Size"></div>
+        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selNum" type="number" min="1" step="1" inputmode="numeric" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
+          <div id="settings"></div>
           <div id="binds"></div>
           <div id="legend"></div>
         </div>
@@ -192,14 +220,22 @@ const ICONS = {
   undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11',
   clear: 'M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6',
   menu: 'M4 6h16M4 12h16M4 18h16',
+  num: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
   sym: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
 };
 
 let tool = 'pen', color = COLORS[0], si = 1;
 let img = null, name = 'ATAK';
 let items = [], hist = [];
-let v = { x: 0, y: 0, s: 1 };
+let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
+/* view settings (per viewer, not synced): size of every symbol / number badge, in map units */
+const setg = { sym: 56, badge: 16 };
+try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; } catch (e) {}
+const SET_RANGE = { sym: [4, 300], badge: [3, 120] };
+let nextNum = 1, numPre = '';
+const TAU = Math.PI * 2;
+const normA = a => { a = ((a % TAU) + TAU) % TAU; return a > Math.PI ? a - TAU : a; };
 
 
 /* ---------- military symbols (MIL-STD-2525D / APP-6D via milsymbol) ---------- */
@@ -266,8 +302,20 @@ function drawThumb(x, it, w, h) {
   const k = Math.min((w - 4) / r.w, (h - 4) / r.h);
   x.drawImage(r.cv, (w - r.w * k) / 2, (h - r.h * k) / 2, r.w * k, r.h * k);
 }
-const symR = it => it.s * 0.6;
 const unit = () => img ? Math.max(img.width, img.height) / 500 : 1;
+const symS = () => setg.sym * unit();
+const badgeD = () => setg.badge * unit();
+const symR = () => symS() * 0.6;
+const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num';
+function badgeFont(c, d, n) {
+  let fs = d * 0.62;
+  c.font = `800 ${fs}px -apple-system, "Segoe UI", sans-serif`;
+  const w = c.measureText(n).width;
+  if (w > d * 0.8) { fs *= d * 0.8 / w; c.font = `800 ${fs}px -apple-system, "Segoe UI", sans-serif`; }
+  return fs;
+}
+const inkFor = col => { const h = (col || '#fff').replace('#', ''); const f = h.length === 3 ? h.split('').map(x => x + x).join('') : h;
+  const r = parseInt(f.slice(0, 2), 16), g = parseInt(f.slice(2, 4), 16), b = parseInt(f.slice(4, 6), 16); return (r * .299 + g * .587 + b * .114) > 150 ? '#111' : '#fff'; };
 
 /* ---------- toolbar ---------- */
 const tb = $('toolbar');
@@ -281,7 +329,7 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['sym', 'Symbols'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['sym', 'Symbols'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
@@ -290,7 +338,7 @@ sep();
 mk('undo', svg(ICONS.undo), 'Undo', undo);
 mk('clear', svg(ICONS.clear), 'Clear', () => room && items.length ? confirmTap('clear', clearAll) : clearAll());
 sep();
-mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
+mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('numbar').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
 $('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
 
 let legendDone = false;
@@ -488,12 +536,16 @@ const BINDS = IS_ELECTRON ? [
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
   ['Zoom map', 'Scroll'],
+  ['Rotate map', 'Alt+scroll or ↺ ↻'],
+  ['North up', 'Tap the compass'],
   ['Pan map', 'Right / middle drag'],
   ['Move phone', 'Drag frame or header'],
   ['Confirm / cancel text', 'Enter / Esc'],
 ] : TOUCH ? [
   ['Draw', 'One finger'],
   ['Zoom and pan map', 'Two fingers'],
+  ['Rotate map', 'Twist two fingers'],
+  ['North up', 'Tap the compass'],
   ['Pan with one finger', 'Move tool'],
   ['Move / scale item', 'Move tool, tap it'],
   ['Confirm text', 'Enter'],
@@ -502,6 +554,8 @@ const BINDS = IS_ELECTRON ? [
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
   ['Zoom map', 'Scroll'],
+  ['Rotate map', 'Alt+scroll or ↺ ↻'],
+  ['North up', 'Click the compass'],
   ['Pan map', 'Right / middle drag'],
   ['Confirm / cancel text', 'Enter / Esc'],
 ];
@@ -522,8 +576,10 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
   if (t !== 'sym') closeSym();
+  $('numbar').classList.toggle('open', t === 'num');
+  if (t === 'num') { $('palette').classList.remove('open'); $('menu').classList.remove('open'); paintNum(); }
   if (t !== 'pan') { endDrag(); sel = null; draw(); }
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
@@ -544,14 +600,24 @@ function fit() {
   const r = c.getBoundingClientRect();
   const T = 46, h = r.height - T;
   const s = Math.min(r.width / img.width, h / img.height);
-  v = { s, x: (r.width - img.width * s) / 2, y: T + (h - img.height * s) / 2 };
+  v = { s, r: 0, x: (r.width - img.width * s) / 2, y: T + (h - img.height * s) / 2 };
 }
 
 function drawItem(it) {
   ctx.lineCap = ctx.lineJoin = 'round';
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
-  if (it.type === 'sym') { drawSym(ctx, it, it.x, it.y, it.s); return; }
+  if (it.type === 'sym') { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r); drawSym(ctx, it, 0, 0, symS()); ctx.restore(); return; }
+  if (it.type === 'num') {
+    const d = badgeD();
+    ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
+    ctx.beginPath(); ctx.arc(0, 0, d / 2, 0, TAU);
+    ctx.fillStyle = it.color; ctx.fill();
+    ctx.lineWidth = d * 0.09; ctx.strokeStyle = inkFor(it.color) === '#111' ? '#111' : '#fff'; ctx.stroke();
+    badgeFont(ctx, d, it.n); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = inkFor(it.color); ctx.fillText(it.n, 0, d * 0.04);
+    ctx.restore(); return;
+  }
   if (it.type === 'pen') {
     ctx.beginPath();
     it.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
@@ -571,11 +637,13 @@ function drawItem(it) {
     ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
       Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
   } else if (it.type === 'text') {
+    ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
-    ctx.textBaseline = 'top';
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
     ctx.strokeStyle = '#000'; ctx.lineWidth = it.fs / 6;
-    ctx.strokeText(it.t, it.x, it.y);
-    ctx.fillText(it.t, it.x, it.y);
+    ctx.strokeText(it.t, 0, 0);
+    ctx.fillText(it.t, 0, 0);
+    ctx.restore();
   }
 }
 
@@ -594,7 +662,7 @@ function draw() {
     ctx.stroke();
   }
 
-  ctx.setTransform(dpr * v.s, 0, 0, dpr * v.s, dpr * v.x, dpr * v.y);
+  { const k = dpr * v.s, co = Math.cos(v.r), si_ = Math.sin(v.r); ctx.setTransform(k * co, k * si_, -k * si_, k * co, dpr * v.x, dpr * v.y); }
   if (img) ctx.drawImage(img, 0, 0);
   items.forEach(drawItem);
   if (cur) drawItem(cur);
@@ -602,20 +670,35 @@ function draw() {
   if (sel) {
     const b = bbox(sel), pad = 5 / v.s;
     ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
+    if (UPRIGHT(sel)) { ctx.translate(sel.x, sel.y); ctx.rotate(-v.r); ctx.translate(-sel.x, -sel.y); }
     ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad); ctx.restore();
   }
   $('selbar').classList.toggle('open', !!sel && tool === 'pan');
   $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
-  paintSelNum();
+  paintSelNum(); paintNav();
+  $('selLbl').style.display = sel && sel.type === 'num' ? 'block' : 'none';
+  if (sel && sel.type === 'num' && document.activeElement !== $('selLbl')) $('selLbl').value = sel.n;
   $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
   if (sbEdit && sel !== sbEdit) closeSym();
 }
 
 /* ---------- interaction ---------- */
-const world = e => {
-  const r = c.getBoundingClientRect();
-  return [(e.clientX - r.left - v.x) / v.s, (e.clientY - r.top - v.y) / v.s];
+const toWorld = (px, py) => {
+  const dx = px - v.x, dy = py - v.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
+  return [(co * dx + si_ * dy) / v.s, (-si_ * dx + co * dy) / v.s];
 };
+const world = e => { const r = c.getBoundingClientRect(); return toWorld(e.clientX - r.left, e.clientY - r.top); };
+/* rotate the view to angle r2 (radians) keeping the screen point (px,py) fixed; default = centre */
+function setRot(r2, px, py) {
+  const b = c.getBoundingClientRect();
+  if (px === undefined) { px = b.width / 2; py = b.height / 2; }
+  const w = toWorld(px, py);
+  v.r = Math.abs(normA(r2)) < 1e-9 ? 0 : normA(r2);
+  const co = Math.cos(v.r), si_ = Math.sin(v.r);
+  v.x = px - v.s * (co * w[0] - si_ * w[1]);
+  v.y = py - v.s * (si_ * w[0] + co * w[1]);
+  draw(); save();
+}
 
 function segDist(p, a, b) {
   const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy;
@@ -624,7 +707,8 @@ function segDist(p, a, b) {
   return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
 function hit(it, p, tol) {
-  if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR(it) + tol;
+  if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR() + tol;
+  if (it.type === 'num') return Math.hypot(p[0] - it.x, p[1] - it.y) < badgeD() / 2 + tol;
   if (it.type === 'pen') {
     for (let i = 0; i < it.pts.length; i++)
       if (segDist(p, it.pts[i], it.pts[i + 1] || it.pts[i]) < tol + it.w / 2) return true;
@@ -637,8 +721,9 @@ function hit(it, p, tol) {
     return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
   }
   ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
-  const tw = ctx.measureText(it.t).width;
-  return p[0] > it.x - tol && p[0] < it.x + tw + tol && p[1] > it.y - tol && p[1] < it.y + it.fs + tol;
+  const tw = ctx.measureText(it.t).width, dx = p[0] - it.x, dy = p[1] - it.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
+  const lx = co * dx - si_ * dy, ly = si_ * dx + co * dy;
+  return lx > -tol && lx < tw + tol && ly > -tol && ly < it.fs + tol;
 }
 function erase(p) {
   const tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
@@ -657,15 +742,23 @@ const ptrs = new Map();
 let pinch = null, ignore = false;
 function pinchNow() {
   const a = [...ptrs.values()], r = c.getBoundingClientRect();
-  return { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, mx: (a[0].x + a[1].x) / 2 - r.left, my: (a[0].y + a[1].y) / 2 - r.top };
+  return { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, ang: Math.atan2(a[1].y - a[0].y, a[1].x - a[0].x),
+    mx: (a[0].x + a[1].x) / 2 - r.left, my: (a[0].y + a[1].y) / 2 - r.top };
 }
-function startPinch() { pinch = { ...pinchNow(), v: { ...v } }; ignore = true; }
+function startPinch() { pinch = { ...pinchNow(), v: { ...v }, rot: false, off: 0 }; ignore = true; }
 function updatePinch() {
   if (ptrs.size < 2) return;
   const n = pinchNow();
   const s = Math.min(20, Math.max(0.02, pinch.v.s * n.d / pinch.d));
-  const wx = (pinch.mx - pinch.v.x) / pinch.v.s, wy = (pinch.my - pinch.v.y) / pinch.v.s;
-  v.s = s; v.x = n.mx - wx * s; v.y = n.my - wy * s;
+  const da = normA(n.ang - pinch.ang);
+  if (!pinch.rot && Math.abs(da) > 0.2) { pinch.rot = true; pinch.off = da; }   /* ignore small twists while zooming */
+  let r = pinch.v.r || 0;
+  if (pinch.rot) { r = normA(r + da - pinch.off); if (Math.abs(r) < 0.07) r = 0; }  /* snap to north-up */
+  const w = [(Math.cos(pinch.v.r) * (pinch.mx - pinch.v.x) + Math.sin(pinch.v.r) * (pinch.my - pinch.v.y)) / pinch.v.s,
+             (-Math.sin(pinch.v.r) * (pinch.mx - pinch.v.x) + Math.cos(pinch.v.r) * (pinch.my - pinch.v.y)) / pinch.v.s];
+  v.s = s; v.r = r;
+  v.x = n.mx - s * (Math.cos(r) * w[0] - Math.sin(r) * w[1]);
+  v.y = n.my - s * (Math.sin(r) * w[0] + Math.cos(r) * w[1]);
   draw();
 }
 
@@ -698,6 +791,7 @@ c.addEventListener('pointerdown', e => {
   else if (tool === 'line' || tool === 'box' || tool === 'arrow') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
   else if (tool === 'text') openText(e);
   else if (tool === 'sym') placeSym(p);
+  else if (tool === 'num') placeNum(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
   draw();
 });
@@ -747,6 +841,7 @@ c.addEventListener('wheel', e => {
   e.preventDefault();
   const r = c.getBoundingClientRect();
   const px = e.clientX - r.left, py = e.clientY - r.top;
+  if (e.altKey) { setRot(v.r + (e.deltaY < 0 ? 1 : -1) * Math.PI / 36, px, py); return; }
   const ns = Math.min(20, Math.max(0.02, v.s * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
   v.x = px - (px - v.x) * (ns / v.s);
   v.y = py - (py - v.y) * (ns / v.s);
@@ -766,7 +861,8 @@ function bbox(it) {
     const h = it.w / 2;
     return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
   }
-  if (it.type === 'sym') return [it.x - it.s * .55, it.y - it.s * .6, it.x + it.s * .55, it.y + it.s * .5];
+  if (it.type === 'sym') { const z = symS(); return [it.x - z * .55, it.y - z * .6, it.x + z * .55, it.y + z * .5]; }
+  if (it.type === 'num') { const h = badgeD() / 2; return [it.x - h, it.y - h, it.x + h, it.y + h]; }
   ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
   return [it.x, it.y, it.x + ctx.measureText(it.t).width, it.y + it.fs];
 }
@@ -776,7 +872,8 @@ function moveFrom(it, b, dx, dy) {
   else { it.x = b.x + dx; it.y = b.y + dy; }
 }
 function gdim(it) {
-  if (it.type === 'sym') return it.s;
+  if (it.type === 'sym') return symS();
+  if (it.type === 'num') return badgeD();
   if (it.type === 'text') { ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
   if (it.type === 'pen') {
     let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
@@ -787,11 +884,12 @@ function gdim(it) {
 }
 function scaleSel(f) {
   if (!sel || !isFinite(f) || f <= 0 || f === 1) return;
+  if (sel.type === 'sym') { setSetting('sym', setg.sym * f); return; }
+  if (sel.type === 'num') { setSetting('badge', setg.badge * f); return; }
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
   else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
-  else if (sel.type === 'sym') sel.s = Math.min(100000, Math.max(4, sel.s * f));
   else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
   hist.push({ t: 'mod', it: sel, before });
   pushUpd(sel); save(); draw();
@@ -818,10 +916,84 @@ function applySelNum() {
 selNum.onchange = applySelNum;
 selNum.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') applySelNum(); };
 
+function placeNum(p) {
+  const it = { id: uuid(), type: 'num', color, n: numPre + nextNum, x: p[0], y: p[1] };
+  nextNum = Math.min(99999, nextNum + 1);
+  items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save(); paintNum();
+}
 function placeSym(p) {
-  const it = Object.assign({ id: uuid(), type: 'sym' }, sbItem(), { x: p[0], y: p[1], s: SIZES[si] * unit() * 14 });
+  const it = Object.assign({ id: uuid(), type: 'sym' }, sbItem(), { x: p[0], y: p[1], s: symS() });
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
 }
+
+
+/* ---------- compass, rotation, settings, number badges ---------- */
+function paintNav() {
+  const deg = v.r * 180 / Math.PI;
+  $('compass').firstChild.style.transform = `rotate(${v.r}rad)`;
+  $('hdg').style.display = Math.abs(deg) >= 0.5 ? 'block' : 'none';
+  $('hdg').textContent = Math.round(deg) + '°';
+  const ri = $('rotIn'); if (ri && document.activeElement !== ri) ri.value = Math.round(deg);
+}
+$('compass').onclick = () => setRot(0);
+$('rotL').onclick = () => setRot(v.r - Math.PI / 12);
+$('rotR').onclick = () => setRot(v.r + Math.PI / 12);
+['compass', 'rotL', 'rotR', 'numbar'].forEach(id => $(id).addEventListener('pointerdown', e => e.stopPropagation()));
+
+function setSetting(k, val) {
+  if (!isFinite(val)) return;
+  const [lo, hi] = SET_RANGE[k];
+  setg[k] = Math.min(hi, Math.max(lo, val));
+  try { localStorage.setItem('atak-set', JSON.stringify(setg)); } catch (e) {}
+  paintSettings(); draw();
+}
+const SETROWS = {};
+function buildSettings() {
+  const box = $('settings');
+  const h = document.createElement('div'); h.className = 's h'; h.className = 'sh'; h.textContent = 'Settings (this device only)'; box.appendChild(h);
+  const row = (label, key) => {
+    const l = document.createElement('span'); l.textContent = label;
+    const rg = document.createElement('input'); rg.type = 'range'; rg.min = SET_RANGE[key][0]; rg.max = SET_RANGE[key][1]; rg.step = 1;
+    const nm = document.createElement('input'); nm.type = 'number'; nm.min = SET_RANGE[key][0]; nm.max = SET_RANGE[key][1];
+    rg.oninput = () => setSetting(key, parseFloat(rg.value));
+    nm.onchange = () => setSetting(key, parseFloat(nm.value));
+    nm.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') nm.blur(); };
+    box.append(l, rg, nm); SETROWS[key] = [rg, nm];
+  };
+  row('Symbol size (all symbols)', 'sym');
+  row('Number badge size', 'badge');
+  const l = document.createElement('span'); l.textContent = 'Map rotation (°)';
+  const rg = document.createElement('input'); rg.type = 'range'; rg.min = -180; rg.max = 180; rg.step = 1; rg.id = 'rotRg';
+  const nm = document.createElement('input'); nm.type = 'number'; nm.min = -180; nm.max = 180; nm.id = 'rotIn';
+  rg.oninput = () => setRot(parseFloat(rg.value) * Math.PI / 180);
+  nm.onchange = () => { const d = parseFloat(nm.value); if (isFinite(d)) setRot(d * Math.PI / 180); nm.blur(); };
+  nm.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') nm.blur(); };
+  box.append(l, rg, nm);
+  const b = document.createElement('button'); b.textContent = 'Reset to north-up'; b.onclick = () => setRot(0); box.appendChild(b);
+  paintSettings();
+}
+function paintSettings() {
+  for (const k in SETROWS) { SETROWS[k][0].value = Math.round(setg[k]); if (document.activeElement !== SETROWS[k][1]) SETROWS[k][1].value = Math.round(setg[k]); }
+  const rg = $('rotRg'); if (rg) rg.value = Math.round(v.r * 180 / Math.PI);
+}
+const _paintNav = paintNav;
+paintNav = function () { _paintNav(); const rg = $('rotRg'); if (rg) rg.value = Math.round(v.r * 180 / Math.PI); };
+
+function paintNum() {
+  if (document.activeElement !== $('nVal')) $('nVal').value = nextNum;
+  if (document.activeElement !== $('nPre')) $('nPre').value = numPre;
+}
+$('nMinus').onclick = () => { nextNum = Math.max(0, nextNum - 1); paintNum(); };
+$('nPlus').onclick = () => { nextNum = Math.min(99999, nextNum + 1); paintNum(); };
+$('nVal').onchange = () => { const n = parseInt($('nVal').value, 10); nextNum = isFinite(n) ? Math.min(99999, Math.max(0, n)) : nextNum; $('nVal').blur(); paintNum(); };
+$('nPre').oninput = () => { numPre = $('nPre').value.slice(0, 3); };
+['nVal', 'nPre', 'selLbl'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $(id).blur(); }));
+$('selLbl').onchange = () => {
+  if (!sel || sel.type !== 'num') return;
+  const t = $('selLbl').value.trim().slice(0, 8); if (!t || t === sel.n) { $('selLbl').value = sel.n; return; }
+  const before = clone(sel); sel.n = t; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
+};
+buildSettings(); paintNum();
 
 /* ---------- text ---------- */
 const txt = $('txt');
@@ -857,7 +1029,7 @@ function undo() {
   commitText();
   const h = hist.pop();
   if (!h) return;
-  if (h.t === 'add') { const i = items.indexOf(h.it); if (i > -1) items.splice(i, 1); pushDel([h.it.id]); }
+  if (h.t === 'add') { if (h.it.type === 'num' && h.it.n === numPre + (nextNum - 1)) { nextNum--; paintNum(); } const i = items.indexOf(h.it); if (i > -1) items.splice(i, 1); pushDel([h.it.id]); }
   else if (h.t === 'del') { items.splice(h.i, 0, h.it); pushAdd(h.it); }
   else if (h.t === 'clear') { items = h.list; pushAdd(h.list); }
   else if (h.t === 'mod') { for (const k in h.it) delete h.it[k]; Object.assign(h.it, h.before); pushUpd(h.it); }
@@ -917,7 +1089,7 @@ function load() {
   try {
     const d = JSON.parse(localStorage.getItem('atak') || 'null');
     const m = localStorage.getItem('atak-map');
-    if (d) { items = d.items || []; v = d.v || v; name = d.name || name; items.forEach(i => { i.id = i.id || uuid(); }); }
+    if (d) { items = d.items || []; v = d.v || v; v.r = v.r || 0; name = d.name || name; items.forEach(i => { i.id = i.id || uuid(); }); }
     if (m) setImg(m, { solo: true });
   } catch (e) {}
 }
@@ -1000,6 +1172,10 @@ function cleanItem(d, id) {
     const okS = typeof d.sidc === 'string' && (/^\d{20}$/.test(d.sidc) || /^[A-Z][A-Z-]{3}[A-Z0-9-]{11}$/.test(d.sidc));
     if (!okS || !num(d.x) || !num(d.y) || !num(d.s) || d.s <= 0 || d.s > 100000) return null;
     return { id, type: 'sym', sidc: d.sidc, std: d.std === 'APP6' ? 'APP6' : '2525', o: cleanOpts(d.o), x: d.x, y: d.y, s: d.s };
+  }
+  if (d.type === 'num') {
+    if (typeof d.n !== 'string' || !d.n || !num(d.x) || !num(d.y)) return null;
+    return { id, type: 'num', color, n: d.n.slice(0, 8), x: d.x, y: d.y };
   }
   if (d.type === 'text') {
     if (typeof d.t !== 'string' || !num(d.x) || !num(d.y) || !num(d.fs)) return null;
@@ -1131,7 +1307,7 @@ async function joinRoom(code, nick) {
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
   room = code; curPath = null; roomHasMap = false;
-  items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1 };
+  items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1, r: 0 };
   $('roomIn').value = code; $('nameIn').value = nick;
   setJoinedUI(true); showErr(''); setTitle(); draw();
   try { localStorage.setItem('atak-room', JSON.stringify({ code, name: nick })); localStorage.setItem('atak-name', nick); } catch (e) {}
@@ -1165,7 +1341,7 @@ function leaveRoom() {
   room = null; curPath = null; roomHasMap = false;
   try { localStorage.removeItem('atak-room'); } catch (e) {}
   setJoinedUI(false); showErr(''); renderPresence(null);
-  items = []; hist = []; img = null; name = 'ATAK'; v = { x: 0, y: 0, s: 1 };
+  items = []; hist = []; img = null; name = 'ATAK'; v = { x: 0, y: 0, s: 1, r: 0 };
   load(); setTitle(); draw();
 }
 
