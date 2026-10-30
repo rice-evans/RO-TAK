@@ -186,6 +186,27 @@
   #source button.alt { background: #444; }
   #srcMsg { color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
+
+  #coord { position: absolute; top: 104px; left: 26px; font: 700 11px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.88); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
+  html.web #coord { top: calc(104px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
+  #gridbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 6px; padding: 6px 8px; background: rgba(20,20,22,.95); border-radius: 22px; color: #ddd; font-size: 12px; max-width: calc(100% - 16px); z-index: 3; }
+  #gridbar.open { display: flex; }
+  #gbMsg { max-width: 260px; white-space: normal; line-height: 1.25; }
+  #gbIn { width: 110px; height: 30px; background: #2a2a2d; border: 0; border-radius: 15px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #gridbar button { height: 30px; min-width: 30px; padding: 0 12px; border: 0; border-radius: 15px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+  #gridbar button#gbX { background: #444; padding: 0; }
+  html.web #gridbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
+  html.desk #gridbar { left: 47%; }
+  @media (pointer: coarse) { #gridbar button, #gbIn { height: 40px; } #gbIn { font-size: 16px; } }
+  #gridsec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-top: 1px solid #333; padding-top: 10px; }
+  #gridsec .sh { grid-column: 1 / -1; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #gridsec .gst { grid-column: 1 / -1; color: #ddd; }
+  #gridsec input[type=text] { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; width: 100%; min-width: 0; user-select: text; -webkit-user-select: text; }
+  #gridsec button { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #gridsec button.alt { background: #444; }
+  #gridsec label { display: flex; align-items: center; gap: 6px; }
+  #gridMsg { grid-column: 1 / -1; color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
+  @media (pointer: coarse) { #gridsec input[type=text], #gridsec button { height: 36px; font-size: 16px; } }
 </style>
 </head>
 <body>
@@ -202,6 +223,8 @@
         <canvas id="c"></canvas>
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
+        <div id="coord"></div>
+        <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
         <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><button id="numTog" title="Show / hide building numbers">#</button><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
@@ -212,6 +235,7 @@
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
           <div id="settings"></div>
+          <div id="gridsec"></div>
           <div id="source"></div>
           <div id="binds"></div>
           <div id="legend"></div>
@@ -253,8 +277,8 @@ let items = [], hist = [];
 let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 /* view settings (per viewer, not synced): size of every symbol / number badge, in map units */
-const setg = { sym: 56, badge: 16, hideNums: false };
-try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; } catch (e) {}
+const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
+try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
 const SET_RANGE = { sym: [1, 300], badge: [0.5, 120] };
 const r1 = n => Math.round(n * 10) / 10;
 let nextNum = 1, numPre = '';
@@ -689,7 +713,9 @@ function draw() {
 
   { const k = dpr * v.s, co = Math.cos(v.r), si_ = Math.sin(v.r); ctx.setTransform(k * co, k * si_, -k * si_, k * co, dpr * v.x, dpr * v.y); }
   if (img) ctx.drawImage(img, 0, 0);
+  drawGrid();
   items.forEach(drawItem);
+  drawGridMarks();
   if (cur) drawItem(cur);
   if (sel && (!items.includes(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
@@ -797,6 +823,9 @@ c.addEventListener('pointerdown', e => {
   if (ptrs.size > 2 || ignore) return;
   if (tool !== 'text') commitText();
   c.setPointerCapture(e.pointerId);
+  if (calib && calib.stage === 'tap' && e.button === 0) {
+    pan = { sx: e.clientX, sy: e.clientY, vx: v.x, vy: v.y }; calib.down = { x: e.clientX, y: e.clientY }; return;
+  }
   if (tool === 'pan' && e.button === 0) {
     const p = world(e), tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
     let h = null;
@@ -848,6 +877,7 @@ function endPointer(e) {
   if (ignore) { if (!ptrs.size) ignore = false; return; }
   if (drag) { endDrag(); return; }
   if (pan) {
+    if (calib && calib.down) { const d = Math.hypot(e.clientX - calib.down.x, e.clientY - calib.down.y); calib.down = null; if (d < 6) { pan = null; calibTap(world(e)); return; } }
     pan = null;
     c.style.cursor = tool === 'pan' ? 'grab' : tool === 'text' ? 'text' : 'crosshair';
     save(); return;
@@ -1101,7 +1131,7 @@ function loadFile(f) {
   if (!f || !f.type.startsWith('image/')) return;
   const cr = pendCredit; pendCredit = null;
   if (room) { uploadMap(f, cr); return; }
-  setCredit(cr, true);
+  setCredit(cr, true); setGrid(null, true);
   name = f.name ? f.name.replace(/\.[^.]+$/, '') : 'ATAK';
   const fr = new FileReader();
   fr.onload = () => {
@@ -1129,6 +1159,7 @@ function load() {
     if (d) { items = d.items || []; v = d.v || v; v.r = v.r || 0; name = d.name || name; items.forEach(i => { i.id = i.id || uuid(); }); }
     if (m) setImg(m, { solo: true });
     setCredit(localStorage.getItem('atak-credit'));
+    loadGridLocal();
   } catch (e) {}
 }
 
@@ -1221,6 +1252,173 @@ async function saveCredit() {
   box.append(h, u, c, l, row, m);
 })();
 paintCredit();
+
+
+/* ---------- grid coordinates (two-point calibration) ---------- */
+let grid = null, calib = null, gotoPt = null;
+const pt2 = a => Array.isArray(a) && a.length === 2 && a.every(n => typeof n === 'number' && isFinite(n));
+function cleanGrid(g) {
+  if (typeof g === 'string') { try { g = JSON.parse(g); } catch (e) { return null; } }
+  if (!g || !pt2(g.a) || !pt2(g.b) || !pt2(g.ea) || !pt2(g.eb)) return null;
+  if (g.a[0] === g.b[0] || g.a[1] === g.b[1] || g.ea[0] === g.eb[0] || g.ea[1] === g.eb[1]) return null;
+  return { a: g.a, b: g.b, ea: g.ea, eb: g.eb };
+}
+const gkey = () => 'atak-grid:' + (room || 'solo');
+function setGrid(g, persist) {
+  grid = cleanGrid(g);
+  if (persist) { try { grid ? localStorage.setItem(gkey(), JSON.stringify(grid)) : localStorage.removeItem(gkey()); } catch (e) {} }
+  paintGridUI(); draw();
+}
+function loadGridLocal() { try { grid = cleanGrid(localStorage.getItem(gkey())); } catch (e) { grid = null; } paintGridUI(); }
+const gk = () => ({ kx: (grid.eb[0] - grid.ea[0]) / (grid.b[0] - grid.a[0]), ky: (grid.eb[1] - grid.ea[1]) / (grid.b[1] - grid.a[1]) });
+const toGrid = p => { const m = gk(); return [grid.ea[0] + (p[0] - grid.a[0]) * m.kx, grid.ea[1] + (p[1] - grid.a[1]) * m.ky]; };
+const fromGrid = g => { const m = gk(); return [grid.a[0] + (g[0] - grid.ea[0]) / m.kx, grid.a[1] + (g[1] - grid.ea[1]) / m.ky]; };
+const pad = (n, l) => { n = Math.round(n); return (n < 0 ? '-' : '') + String(Math.abs(n)).padStart(l, '0'); };
+const fmt8 = g => pad(g[0], 4) + ' ' + pad(g[1], 4);
+const fmt6 = g => pad(Math.floor(g[0] / 10), 3) + ' ' + pad(Math.floor(g[1] / 10), 3);
+
+/* "1234 5678", "12345678", "123 456" (6 digits = 100 m, read as its south-west corner) */
+function parseGrid(t) {
+  const g = String(t || '').trim().split(/[^0-9]+/).filter(Boolean);
+  let e, n, l;
+  if (g.length === 1 && (g[0].length === 8 || g[0].length === 6)) { l = g[0].length / 2; e = g[0].slice(0, l); n = g[0].slice(l); }
+  else if (g.length === 2 && g[0].length === g[1].length && (g[0].length === 4 || g[0].length === 3)) { l = g[0].length; e = g[0]; n = g[1]; }
+  else return null;
+  const k = l === 3 ? 10 : 1;
+  return [parseInt(e, 10) * k, parseInt(n, 10) * k];
+}
+
+function clipSeg(a, b, r) {
+  let t0 = 0, t1 = 1; const dx = b[0] - a[0], dy = b[1] - a[1];
+  for (const [pp, qq] of [[-dx, a[0] - r[0]], [dx, r[2] - a[0]], [-dy, a[1] - r[1]], [dy, r[3] - a[1]]]) {
+    if (pp === 0) { if (qq < 0) return null; }
+    else { const k = qq / pp; if (pp < 0) { if (k > t1) return null; if (k > t0) t0 = k; } else { if (k < t0) return null; if (k < t1) t1 = k; } }
+  }
+  return [[a[0] + t0 * dx, a[1] + t0 * dy], [a[0] + t1 * dx, a[1] + t1 * dy]];
+}
+function drawGrid() {
+  if (!grid || !img || !setg.showGrid) return;
+  const m = gk(), W = img.width, H = img.height, cw = c.width / dpr, ch = c.height / dpr;
+  const px = Math.min(Math.abs(v.s / m.kx), Math.abs(v.s / m.ky));
+  const step = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000].find(x => x * px >= 70) || 10000;
+  const co = Math.cos(v.r), si_ = Math.sin(v.r);
+  const P = (x, y) => [v.x + v.s * (co * x - si_ * y), v.y + v.s * (si_ * x + co * y)];
+  const full = [0, 0, cw, ch], inset = [6, 58, cw - 6, ch - 64];
+  ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.font = '700 10px ui-monospace, Menlo, Consolas, monospace'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  const axis = vertical => {
+    const i = vertical ? 0 : 1;
+    const a = toGrid([0, 0])[i], b = toGrid([W, H])[i];
+    const lo = Math.ceil(Math.min(a, b) / step), hi = Math.floor(Math.max(a, b) / step);
+    if (hi - lo > 400) return;
+    for (let k = lo; k <= hi; k++) {
+      const val = k * step, w = fromGrid([val, val])[i];
+      const p0 = vertical ? P(w, 0) : P(0, w), p1 = vertical ? P(w, H) : P(W, w);
+      const seg = clipSeg(p0, p1, full); if (!seg) continue;
+      const major = (k * step) % (step * 10) === 0;
+      ctx.strokeStyle = major ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.45)'; ctx.lineWidth = major ? 1.4 : 1;
+      ctx.beginPath(); ctx.moveTo(seg[0][0], seg[0][1]); ctx.lineTo(seg[1][0], seg[1][1]); ctx.stroke();
+      const ls = clipSeg(p0, p1, inset); if (!ls) continue;
+      const e = (vertical ? ls[0][1] <= ls[1][1] : ls[0][0] <= ls[1][0]) ? ls[0] : ls[1];
+      const txt = (vertical ? 'E ' : 'N ') + pad(val, 4), tx = e[0] + 3, ty = vertical ? e[1] + 8 : e[1] - 7;
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.strokeText(txt, tx, ty);
+      ctx.fillStyle = '#fff'; ctx.fillText(txt, tx, ty);
+    }
+  };
+  axis(true); axis(false);
+  ctx.restore();
+}
+function drawGridMarks() {
+  const cross = (p, col) => { const r = 12 / v.s; ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2 / v.s; ctx.beginPath(); ctx.moveTo(p[0] - r, p[1]); ctx.lineTo(p[0] + r, p[1]); ctx.moveTo(p[0], p[1] - r); ctx.lineTo(p[0], p[1] + r); ctx.stroke(); ctx.beginPath(); ctx.arc(p[0], p[1], r * .6, 0, TAU); ctx.stroke(); ctx.restore(); };
+  if (calib) { calib.pts.forEach(q => cross(q.w, '#22d3ee')); if (calib.cur) cross(calib.cur, '#facc15'); }
+  if (gotoPt) { ctx.save(); ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3 / v.s; ctx.beginPath(); ctx.arc(gotoPt[0], gotoPt[1], 18 / v.s, 0, TAU); ctx.stroke(); ctx.restore(); }
+}
+
+const coordEl = $('coord');
+function showCoord(p) {
+  if (!grid || !img) { coordEl.style.display = 'none'; return; }
+  const g = toGrid(p);
+  coordEl.style.display = 'block'; coordEl.textContent = fmt8(g) + '  (' + fmt6(g) + ')';
+}
+c.addEventListener('pointermove', e => { if (grid && !calib) showCoord(world(e)); });
+c.addEventListener('pointerdown', e => { if (grid) showCoord(world(e)); });
+
+/* calibration flow */
+const gbar = $('gridbar'), gbIn = $('gbIn');
+function gbShow(msg, input) { gbar.classList.add('open'); $('gbMsg').textContent = msg; gbIn.style.display = input ? 'block' : 'none'; $('gbOk').style.display = input ? 'block' : 'none'; if (input) { gbIn.value = ''; setTimeout(() => gbIn.focus(), 0); } }
+function calibEnd(msg) { calib = null; gbar.classList.remove('open'); gridMsg(msg || ''); paintGridUI(); draw(); }
+function calibStart() {
+  if (!img) return gridMsg('Open a map first');
+  commitText(); $('menu').classList.remove('open'); $('numbar').classList.remove('open'); $('palette').classList.remove('open'); closeSym();
+  calib = { n: 1, pts: [], cur: null, stage: 'tap', down: null };
+  gbShow('Point 1: tap a spot on the map whose grid you know', false); draw();
+}
+function calibTap(p) {
+  calib.cur = p; calib.stage = 'enter';
+  gbShow('Point ' + calib.n + ': type its grid (8 digits best)', true); draw();
+}
+function calibOk() {
+  if (!calib || calib.stage !== 'enter') return;
+  const g = parseGrid(gbIn.value);
+  if (!g) { $('gbMsg').textContent = 'Type it like 1234 5678 (or 123 456)'; return; }
+  calib.pts.push({ w: calib.cur, g }); calib.cur = null;
+  if (calib.n === 1) { calib.n = 2; calib.stage = 'tap'; gbShow('Point 2: tap a second spot, far from the first and not in line with it', false); draw(); return; }
+  const [A, B] = calib.pts, big = Math.max(img.width, img.height);
+  const cand = cleanGrid({ a: A.w, ea: A.g, b: B.w, eb: B.g });
+  if (!cand || Math.abs(A.w[0] - B.w[0]) < big * 0.02 || Math.abs(A.w[1] - B.w[1]) < big * 0.02) {
+    calib.pts = []; calib.n = 1; calib.stage = 'tap'; gbShow('Those points are too close or in a line. Start again: tap point 1', false); draw(); return;
+  }
+  const kx = (B.g[0] - A.g[0]) / (B.w[0] - A.w[0]), ky = (B.g[1] - A.g[1]) / (B.w[1] - A.w[1]);
+  const warn = kx < 0 || ky > 0 ? ' Note: on this map east or north runs the opposite way to normal. Check your numbers.' : '';
+  setGrid(cand, true); pushGrid();
+  calibEnd('Calibrated. Hover or tap a known spot to check the readout.' + warn);
+}
+$('gbOk').onclick = calibOk;
+$('gbX').onclick = () => calibEnd('');
+gbIn.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') calibOk(); if (e.key === 'Escape') calibEnd(''); });
+gbar.addEventListener('pointerdown', e => e.stopPropagation());
+async function pushGrid() {
+  if (!room) return;
+  const r = await db().from('rooms').update({ grid: grid ? JSON.stringify(grid) : null }).eq('code', room);
+  if (r.error) gridMsg('Calibration saved for you only. To share it, add the grid column in Supabase (see SQL).');
+}
+
+/* menu section */
+const GR = {};
+function gridMsg(t) { const e = $('gridMsg'); if (e) { e.textContent = t || ''; e.style.display = t ? 'block' : 'none'; } }
+function paintGridUI() { if (GR.st) { GR.st.textContent = grid ? 'Grid calibrated' : 'Not calibrated'; GR.show.checked = setg.showGrid; } if (!grid) coordEl.style.display = 'none'; }
+function goGrid(mark) {
+  if (!grid) return gridMsg('Calibrate first');
+  const g = parseGrid(GR.go.value); if (!g) return gridMsg('Type it like 1234 5678');
+  const p = fromGrid(g);
+  if (p[0] < 0 || p[1] < 0 || p[0] > img.width || p[1] > img.height) return gridMsg('That grid is off the map');
+  gridMsg('');
+  const b = c.getBoundingClientRect(), co = Math.cos(v.r), si_ = Math.sin(v.r);
+  v.x = b.width / 2 - v.s * (co * p[0] - si_ * p[1]); v.y = b.height / 2 - v.s * (si_ * p[0] + co * p[1]);
+  gotoPt = p; clearTimeout(goGrid.t); goGrid.t = setTimeout(() => { gotoPt = null; draw(); }, 8000);
+  if (mark) { const it = { id: uuid(), type: 'num', color, n: 'X', x: p[0], y: p[1] }; items.push(it); hist.push({ t: 'add', it }); pushAdd(it); }
+  $('menu').classList.remove('open'); save(); draw();
+}
+(function buildGridSec() {
+  const box = $('gridsec');
+  const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
+  box.append(el('div', 'sh', 'Grid coordinates'));
+  GR.st = el('div', 'gst', ''); box.append(GR.st);
+  const cal = el('button', '', 'Calibrate (2 points)'); cal.onclick = calibStart;
+  const clr = el('button', 'alt', 'Clear grid'); clr.onclick = () => { setGrid(null, true); pushGrid(); gridMsg(''); };
+  box.append(cal, clr);
+  const lb = el('label'); GR.show = document.createElement('input'); GR.show.type = 'checkbox';
+  GR.show.onchange = () => { setg.showGrid = GR.show.checked; try { localStorage.setItem('atak-set', JSON.stringify(setg)); } catch (e) {} draw(); };
+  lb.append(GR.show, document.createTextNode('Show grid lines')); lb.style.gridColumn = '1 / -1'; box.append(lb);
+  GR.go = document.createElement('input'); GR.go.type = 'text'; GR.go.placeholder = 'Go to grid: 1234 5678'; GR.go.autocomplete = 'off';
+  GR.go.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') goGrid(false); });
+  GR.go.style.gridColumn = '1 / -1'; box.append(GR.go);
+  const go = el('button', '', 'Go there'); go.onclick = () => goGrid(false);
+  const mk2 = el('button', 'alt', 'Go and mark'); mk2.onclick = () => goGrid(true);
+  const gm = el('div', ''); gm.id = 'gridMsg';
+  box.append(go, mk2, gm);
+  paintGridUI();
+})();
 
 /* ---------- rooms ---------- */
 const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
@@ -1351,6 +1549,7 @@ function onRoom(r) {
   if (!r) return;
   roomHasMap = !!r.map_path;
   if ('credit' in r) setCredit(r.credit);
+  if ('grid' in r) setGrid(r.grid, true);
   if (r.map_path && r.map_path !== curPath) { hist = []; showRemoteMap(r.map_path); }
 }
 function showRemoteMap(path) {
@@ -1365,6 +1564,7 @@ async function syncRoom() {
   if (r.error) throw r.error;
   roomHasMap = !!r.data.map_path;
   setCredit(r.data.credit);
+  if ('grid' in r.data) setGrid(r.data.grid, true);
   if (r.data.map_path && r.data.map_path !== curPath) showRemoteMap(r.data.map_path);
   const m = await db().from('marks').select('id,data').eq('room', room).order('created_at').limit(5000);
   if (m.error) throw m.error;
@@ -1384,9 +1584,9 @@ async function uploadMap(f, cr) {
   setImg(URL.createObjectURL(f), { fit: true });
   const d = await db().from('marks').delete().eq('room', room);
   if (d.error) fail(d.error);
-  setCredit(cr || null);
-  let u = await db().from('rooms').update({ map_path: path, credit: cr ? JSON.stringify(cr) : null }).eq('code', room);
-  if (u.error && /credit/i.test(u.error.message || '')) u = await db().from('rooms').update({ map_path: path }).eq('code', room);
+  setCredit(cr || null); setGrid(null, true);
+  let u = await db().from('rooms').update({ map_path: path, credit: cr ? JSON.stringify(cr) : null, grid: null }).eq('code', room);
+  if (u.error && /credit|grid/i.test(u.error.message || '')) u = await db().from('rooms').update({ map_path: path }).eq('code', room);
   if (u.error) fail(u.error);
 }
 
@@ -1438,7 +1638,7 @@ async function joinRoom(code, nick) {
   if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
-  room = code; curPath = null; roomHasMap = false; setCredit(null);
+  room = code; curPath = null; roomHasMap = false; setCredit(null); loadGridLocal();
   items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1, r: 0 };
   $('roomIn').value = code; $('nameIn').value = nick;
   setJoinedUI(true); showErr(''); setTitle(); draw();
