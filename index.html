@@ -14,7 +14,11 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='.9em' font-size='90' text-anchor='middle'%3E%F0%9F%8D%8C%3C/text%3E%3C/svg%3E">
 <script src="milsymbol.js"></script>
 <script src="symdata.js"></script>
-<script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';</script>
+<script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';
+try { if (document.documentElement.className === 'web' && !navigator.standalone && !matchMedia('(display-mode: standalone)').matches && !sessionStorage.getItem('ro-landed')) document.documentElement.classList.add('land'); } catch (e) {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
   html, body { width: 860px; height: 600px; background: transparent; overflow: hidden;
@@ -245,9 +249,76 @@
   .srowi.done .tt { color: #f87171; }
   .mbtn { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #side input[type=text], #side input[type=number], #side button.sb, #sideTabs button { height: 40px; font-size: 16px; } .mbtn { height: 36px; font-size: 14px; } }
+
+  /* ---------- landing (web only) ---------- */
+  #landing { display: none; position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #080808; transition: opacity .4s ease; font-family: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: auto; }
+  html.land #landing { display: block; }
+  #landing.out { opacity: 0; pointer-events: none; }
+  #landing .rows { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
+  #landing .row { overflow: hidden; }
+  #landing .track { display: flex; gap: 12px; height: 100%; width: max-content; animation: lslide 140s linear infinite; }
+  #landing .row.rev .track { animation-direction: reverse; animation-duration: 170s; }
+  #landing .track img { height: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 4px; background: #161616; filter: brightness(.9) saturate(1.05); user-select: none; -webkit-user-drag: none; }
+  @keyframes lslide { to { transform: translateX(calc(-50% - 6px)); } }
+  #landing .veil { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,8,8,.78) 0%, rgba(8,8,8,.45) 40%, rgba(8,8,8,.08) 100%); }
+  #landing .hero { pointer-events: none; position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; padding: 24px clamp(24px, 8vw, 128px); }
+  #landing .avatar { display: block; width: 140px; height: 140px; margin: 0; border-radius: 50%; object-fit: cover; background: #fff; border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 32px rgba(0,0,0,.5); animation: lrise .8s ease-out .1s both; }
+  #landing .hero h1 { text-shadow: 0 2px 24px rgba(0,0,0,.5); margin: 0 0 40px; font-weight: 600; font-size: clamp(44px, 9vw, 112px); line-height: .98; letter-spacing: -.035em; color: #fff; max-width: 9ch; animation: lrise .8s ease-out .3s both; }
+  #landing .enter { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 4px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background .15s, color .15s, border-color .15s; animation: lrise .8s ease-out .5s both; }
+  #landing .enter:hover { background: #fff; color: #0b0d10; border-color: #fff; }
+  #landing .enter svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  @keyframes lrise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  #landing .enter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
+  #landing .updated { font-size: 13px; color: rgba(255,255,255,.55); text-shadow: 0 1px 12px rgba(0,0,0,.6); animation: lrise .8s ease-out .7s both; }
+  #landing .avatar-wrap { position: relative; width: fit-content; margin: 0 0 28px 6px; }
+  #landing .lights { position: absolute; inset: 0; overflow: hidden; pointer-events: none; mix-blend-mode: screen; }
+  #landing .lights i { position: absolute; top: -10%; bottom: -10%; right: -22%; width: 55%; opacity: 0; animation: 10.92s linear infinite; will-change: opacity; }
+  #landing .lights .red { background: radial-gradient(ellipse at 70% 50%, rgba(255,32,48,.6), rgba(255,32,48,.2) 38%, transparent 70%); animation-name: lred; }
+  #landing .lights .blue { background: radial-gradient(ellipse at 70% 50%, rgba(36,96,255,.66), rgba(36,96,255,.24) 38%, transparent 70%); animation-name: lblue; }
+  @keyframes lred { 0.000% { opacity: 0; } 0.183% { opacity: 1; } 1.465% { opacity: 1; } 4.212% { opacity: 0; } 7.326% { opacity: 0; } 7.509% { opacity: 1; } 8.791% { opacity: 1; } 11.538% { opacity: 0; } 14.652% { opacity: 0; } 14.835% { opacity: 1; } 16.117% { opacity: 1; } 18.864% { opacity: 0; } 21.978% { opacity: 0; } 22.161% { opacity: 1; } 23.443% { opacity: 1; } 26.190% { opacity: 0; } 29.304% { opacity: 0; } 29.487% { opacity: 1; } 30.769% { opacity: 1; } 33.516% { opacity: 0; } 36.630% { opacity: 0; } 36.813% { opacity: 1; } 38.095% { opacity: 1; } 40.842% { opacity: 0; } 43.956% { opacity: 0; } 44.139% { opacity: 1; } 45.238% { opacity: 1; } 46.886% { opacity: 0; } 47.070% { opacity: 0; } 47.253% { opacity: 1; } 48.352% { opacity: 1; } 50.000% { opacity: 0; } 62.637% { opacity: 0; } 62.821% { opacity: 1; } 63.919% { opacity: 1; } 65.568% { opacity: 0; } 65.751% { opacity: 0; } 65.934% { opacity: 1; } 67.033% { opacity: 1; } 68.681% { opacity: 0; } 81.319% { opacity: 0; } 81.502% { opacity: 1; } 82.601% { opacity: 1; } 84.249% { opacity: 0; } 84.432% { opacity: 0; } 84.615% { opacity: 1; } 85.714% { opacity: 1; } 87.363% { opacity: 0; } 100.000% { opacity: 0; } }
+  @keyframes lblue { 0.000% { opacity: 0; } 3.663% { opacity: 0; } 3.846% { opacity: 1; } 5.128% { opacity: 1; } 7.875% { opacity: 0; } 10.989% { opacity: 0; } 11.172% { opacity: 1; } 12.454% { opacity: 1; } 15.201% { opacity: 0; } 18.315% { opacity: 0; } 18.498% { opacity: 1; } 19.780% { opacity: 1; } 22.527% { opacity: 0; } 25.641% { opacity: 0; } 25.824% { opacity: 1; } 27.106% { opacity: 1; } 29.853% { opacity: 0; } 32.967% { opacity: 0; } 33.150% { opacity: 1; } 34.432% { opacity: 1; } 37.179% { opacity: 0; } 40.293% { opacity: 0; } 40.476% { opacity: 1; } 41.758% { opacity: 1; } 44.505% { opacity: 0; } 53.297% { opacity: 0; } 53.480% { opacity: 1; } 54.579% { opacity: 1; } 56.227% { opacity: 0; } 56.410% { opacity: 0; } 56.593% { opacity: 1; } 57.692% { opacity: 1; } 59.341% { opacity: 0; } 71.978% { opacity: 0; } 72.161% { opacity: 1; } 73.260% { opacity: 1; } 74.908% { opacity: 0; } 75.092% { opacity: 0; } 75.275% { opacity: 1; } 76.374% { opacity: 1; } 78.022% { opacity: 0; } 90.659% { opacity: 0; } 90.842% { opacity: 1; } 91.941% { opacity: 1; } 93.590% { opacity: 0; } 93.773% { opacity: 0; } 93.956% { opacity: 1; } 95.055% { opacity: 1; } 96.703% { opacity: 0; } 100.000% { opacity: 0; } }
+  #landing .chat { position: absolute; left: calc(100% + 18px); top: 6px; z-index: 5; width: min(320px, calc(100vw - 240px)); padding: 14px 16px 16px; border-radius: 16px; background: #fff; color: #1a1a1a; box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 14px; line-height: 1.5; pointer-events: auto; transform-origin: 0 44px; animation: lchatpop .4s cubic-bezier(.2,.9,.3,1.2); }
+  #landing .chat[hidden] { display: none; }
+  #landing .chat::before { content: ''; position: absolute; left: -8px; top: 38px; border: 8px solid transparent; border-left: 0; border-right-color: #fff; }
+  #landing .chat-name { font-weight: 600; font-size: 12px; color: #666; margin-bottom: 6px; }
+  #landing .chat p { margin: 0; min-height: 4.5em; }
+  #landing .chat p.typing::after { content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: #1a1a1a; animation: lblink 1s steps(1) infinite; }
+  #landing .chat-x { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #666; cursor: pointer; padding: 0; }
+  #landing .chat-x:hover { background: #eee; color: #000; }
+  #landing .chat-x svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  @keyframes lchatpop { from { opacity: 0; transform: translateX(-14px) scale(.7); } to { opacity: 1; transform: none; } }
+  @keyframes lblink { 50% { opacity: 0; } }
+  @media (max-width: 700px) {
+    #landing .chat { left: 0; top: calc(100% + 14px); width: min(320px, calc(100vw - 48px)); transform-origin: 60px 0; }
+    #landing .chat::before { left: 56px; top: -8px; border: 8px solid transparent; border-top: 0; border-bottom-color: #fff; }
+  }
+  @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } #landing .lights { display: none; } }
 </style>
 </head>
 <body>
+<div id="landing">
+  <div class="rows" aria-hidden="true">
+    <div class="row"><div class="track" id="lrow1"></div></div>
+    <div class="row rev"><div class="track" id="lrow2"></div></div>
+  </div>
+  <div class="veil"></div>
+  <div class="lights" aria-hidden="true"><i class="red"></i><i class="blue"></i></div>
+  <main class="hero">
+    <div class="avatar-wrap">
+      <img class="avatar" src="images/avatar.webp" alt="">
+      <div id="lchat" class="chat" hidden aria-live="polite">
+        <button id="lchatX" class="chat-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        <div class="chat-name">Banana</div>
+        <p id="lchatText"></p>
+      </div>
+    </div>
+    <h1>Banana's <span style="white-space:nowrap">RO-TAK</span></h1>
+    <div class="enter-row">
+      <button id="lenter" class="enter" type="button">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <span class="updated">Updated on 30th October 2026</span>
+    </div>
+  </main>
+</div>
 <div id="case">
   <div id="screen">
       <div id="bar">
@@ -1483,6 +1554,43 @@ function goGrid(mark) {
   paintGridUI();
 })();
 
+
+
+/* ---------- landing ---------- */
+(function () {
+  const L = $('landing');
+  if (!L) return;
+  const IMAGES = ['images/landing/1.jpg', 'images/landing/2.jpg', 'images/landing/3.jpg', 'images/landing/4.jpg', 'images/landing/5.jpg', 'images/landing/6.jpg', 'images/landing/7.jpg', 'images/landing/8.jpg'];
+  const half = Math.ceil(IMAGES.length / 2);
+  [[IMAGES.slice(0, half), 'lrow1'], [IMAGES.slice(half), 'lrow2']].forEach(([list, id]) => {
+    const t = $(id); if (!list.length) list = IMAGES;
+    [...list, ...list].forEach(src => { const i = new Image(); i.src = src; i.alt = ''; i.draggable = false; t.appendChild(i); });
+  });
+  const MSG = "Hey there! Welcome to my site. You've been sitting on the splash page for quite a while. Is everything alright? Enjoy the site, and if you need any help, message me at rice.e.";
+  let idle, typer;
+  function showChat() {
+    const box = $('lchat'), txt = $('lchatText');
+    if (!box.hidden || !document.documentElement.classList.contains('land')) return;
+    box.hidden = false; txt.textContent = '';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { txt.textContent = MSG; return; }
+    txt.classList.add('typing');
+    let i = 0;
+    typer = setInterval(() => { txt.textContent = MSG.slice(0, ++i); if (i >= MSG.length) { clearInterval(typer); txt.classList.remove('typing'); } }, 32);
+  }
+  const stopChat = () => { clearTimeout(idle); clearInterval(typer); };
+  idle = setTimeout(showChat, 45000);
+  $('lchatX').onclick = () => { stopChat(); $('lchat').hidden = true; };
+  function enter() {
+    stopChat();
+    try { sessionStorage.setItem('ro-landed', '1'); } catch (e) {}
+    L.classList.add('out');
+    setTimeout(() => { document.documentElement.classList.remove('land'); L.classList.remove('out'); L.remove(); }, 400);
+    removeEventListener('keydown', onKey, true);
+  }
+  function onKey(e) { if (e.key === 'Enter' && document.documentElement.classList.contains('land') && !e.target.closest('button')) { e.preventDefault(); enter(); } }
+  addEventListener('keydown', onKey, true);
+  $('lenter').onclick = enter;
+})();
 
 /* ---------- waypoints, timers, export ---------- */
 var sideReady = false;
