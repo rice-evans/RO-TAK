@@ -237,11 +237,11 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   @media (pointer: coarse) { #gridsec input[type=text], #gridsec button { height: 36px; font-size: 16px; } }
 
   #navbtns2 { display: flex; gap: 4px; }
-  #numTog, #wpBtn, #tmBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  #wpBtn svg, #tmBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  #wpBtn:hover, #tmBtn:hover { background: #333; }
-  #wpBtn.on, #tmBtn.on { background: #3b82f6; color: #fff; }
-  @media (pointer: coarse) { #numTog, #wpBtn, #tmBtn { width: 30px; height: 30px; } #wpBtn svg, #tmBtn svg { width: 16px; height: 16px; } }
+  #numTog, #wpBtn, #tmBtn, #lyBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #wpBtn svg, #tmBtn svg, #lyBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #wpBtn:hover, #tmBtn:hover, #lyBtn:hover { background: #333; }
+  #wpBtn.on, #tmBtn.on, #lyBtn.on { background: #3b82f6; color: #fff; }
+  @media (pointer: coarse) { #numTog, #wpBtn, #tmBtn, #lyBtn { width: 30px; height: 30px; } #wpBtn svg, #tmBtn svg, #lyBtn svg { width: 16px; height: 16px; } }
   #tchips { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 1; }
   html.web #tchips { top: calc(52px + env(safe-area-inset-top)); }
   html.desk #tchips { left: 47%; }
@@ -260,6 +260,26 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #side.tab-wp #wpList, #side.tab-tm #tmList { display: flex; }
   #tmNew { display: none; flex-wrap: wrap; gap: 6px; align-items: center; }
   #side.tab-tm #tmNew { display: flex; }
+  #side.tab-ly #lyList { display: flex; }
+  .lyrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: #1a1a1c; border: 0; border-radius: 8px; padding: 7px 10px; color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; text-align: left; }
+  .lyrow i { width: 28px; height: 16px; border-radius: 8px; background: #444; position: relative; flex: none; }
+  .lyrow i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #aaa; transition: left .12s; }
+  .lyrow.on i { background: #3b82f6; }
+  .lyrow.on i::after { left: 14px; background: #fff; }
+  #follow { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); display: none; align-items: center; gap: 8px; padding: 3px 4px 3px 12px; border-radius: 14px; background: rgba(20,20,22,.92); color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; white-space: nowrap; z-index: 1; }
+  html.web #follow { top: calc(84px + env(safe-area-inset-top)); }
+  html.desk #follow { left: 47%; }
+  #follow button { height: 22px; padding: 0 10px; border: 0; border-radius: 11px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  #tour { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(300px, calc(100% - 32px)); display: none; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: #141416; border: 1px solid #2a2a2d; color: #ddd; z-index: 30; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+  html.desk #tour { left: 47%; }
+  #tourT { font: 700 14px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  #tourB { font: 500 13px/1.45 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #tourF { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  #tourDots { flex: 1; display: flex; gap: 5px; }
+  #tourDots i { width: 6px; height: 6px; border-radius: 50%; background: #444; }
+  #tourDots i.on { background: #3b82f6; }
+  #tour button { height: 28px; padding: 0 12px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  #tour button.alt { background: #444; }
   #side input[type=text], #side input[type=number] { height: 28px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; min-width: 0; user-select: text; -webkit-user-select: text; }
   #tnName { flex: 1 1 110px; } #tnMin, #tnSec { width: 56px; }
   #side button.sb { height: 28px; min-width: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
@@ -420,9 +440,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="coord"></div>
         <canvas id="mm"></canvas>
         <div id="tchips"></div>
-        <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
+        <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button data-tab="ly">Layers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="lyList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
-        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button></div><div id="hdg"></div></div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button><button id="lyBtn" title="Layers"><svg viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M22 17.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="M22 12.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></button></div><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
@@ -437,6 +457,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
           <div id="legend"></div>
         </div>
         <div id="toolbar"></div>
+        <div id="follow"><span id="followTxt"></span><button id="followBtn"></button></div>
+        <div id="tour"><div id="tourT"></div><div id="tourB"></div><div id="tourF"><div id="tourDots"></div><button id="tourSkip" class="alt">Skip</button><button id="tourNext"></button></div></div>
       </div>
   </div>
   <img id="frame" draggable="false" alt="">
@@ -476,6 +498,18 @@ let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
+const LAYERS = [['sym', 'Symbols'], ['draw', 'Drawings'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
+const LAYER_OF = { sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
+const hidL = new Set();
+try { (JSON.parse(localStorage.getItem('atak-layers') || '[]') || []).forEach(k => { if (typeof k === 'string') hidL.add(k); }); } catch (e) {}
+const hiddenIt = it => { const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
+const layerOn = k => k === 'num' ? !setg.hideNums : !hidL.has(k);
+function toggleLayer(k) {
+  if (k === 'num') { toggleNums(); return; }
+  if (hidL.has(k)) hidL.delete(k); else hidL.add(k);
+  try { localStorage.setItem('atak-layers', JSON.stringify([...hidL])); } catch (e) {}
+  draw(); paintSide(true);
+}
 const SET_RANGE = { sym: [1, 300], badge: [0.5, 120] };
 const r1 = n => Math.round(n * 10) / 10;
 let nextNum = 1, numPre = '';
@@ -851,6 +885,7 @@ function fit() {
 }
 
 function drawItem(it) {
+  if (hiddenIt(it)) return;
   ctx.lineCap = 'butt'; ctx.lineJoin = it.type === 'pen' ? 'bevel' : 'miter'; ctx.miterLimit = 4;
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
@@ -938,7 +973,7 @@ function paintMini() {
   const path = () => { mmc.beginPath(); q.forEach((p, i) => i ? mmc.lineTo(p[0], p[1]) : mmc.moveTo(p[0], p[1])); mmc.closePath(); };
   mmc.save(); path(); mmc.clip(); mmc.drawImage(mmThumb, 0, 0); mmc.restore();
   items.forEach(it => {
-    if (it.x === undefined || it.type === 'text' || (it.type === 'num' && setg.hideNums)) return;
+    if (it.x === undefined || it.type === 'text' || hiddenIt(it) || (it.type === 'num' && setg.hideNums)) return;
     mmc.fillStyle = it.color || '#fff'; mmc.fillRect(it.x * g.k * d - d, it.y * g.k * d - d, 2 * d, 2 * d);
   });
   path(); mmc.strokeStyle = '#facc15'; mmc.lineWidth = Math.max(1, d); mmc.stroke();
@@ -1109,7 +1144,7 @@ function draw() {
   drawMeas();
   drawPings();
   if (cur) drawItem(cur);
-  if (sel && (!items.includes(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
+  if (sel && (!items.includes(sel) || hiddenIt(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
     const b = bbox(sel), pad = 5 / v.s;
     ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
@@ -1133,6 +1168,7 @@ const toWorld = (px, py) => {
 const world = e => { const r = c.getBoundingClientRect(); return toWorld(e.clientX - r.left, e.clientY - r.top); };
 function recenter() {
   if (!img) return;
+  stopFollow();
   const r = c.getBoundingClientRect(), T = 46, h = r.height - T - 56;
   const co = Math.cos(v.r), si_ = Math.sin(v.r), wx = img.width / 2, wy = img.height / 2;
   const bw = Math.abs(img.width * co) + Math.abs(img.height * si_), bh = Math.abs(img.width * si_) + Math.abs(img.height * co);
@@ -1142,6 +1178,7 @@ function recenter() {
 }
 $('ctrBtn').onclick = recenter;
 function setRot(r2, px, py) {
+  stopFollow();
   const b = c.getBoundingClientRect();
   if (px === undefined) { px = b.width / 2; py = b.height / 2; }
   const w = toWorld(px, py);
@@ -1159,6 +1196,7 @@ function segDist(p, a, b) {
   return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
 function hit(it, p, tol) {
+  if (hiddenIt(it)) return false;
   if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR() + tol;
   if (it.type === 'timer') return false;
   if (it.type === 'wp') {
@@ -1203,7 +1241,7 @@ function pinchNow() {
   return { d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) || 1, ang: Math.atan2(a[1].y - a[0].y, a[1].x - a[0].x),
     mx: (a[0].x + a[1].x) / 2 - r.left, my: (a[0].y + a[1].y) / 2 - r.top };
 }
-function startPinch() { pinch = { ...pinchNow(), v: { ...v }, rot: false, off: 0 }; ignore = true; }
+function startPinch() { stopFollow(); pinch = { ...pinchNow(), v: { ...v }, rot: false, off: 0 }; ignore = true; }
 function updatePinch() {
   if (ptrs.size < 2) return;
   const n = pinchNow();
@@ -1243,7 +1281,7 @@ c.addEventListener('pointerdown', e => {
     draw();
   }
   if (e.button === 1 || e.button === 2 || tool === 'pan') {
-    pan = { sx: e.clientX, sy: e.clientY, vx: v.x, vy: v.y };
+    stopFollow(); pan = { sx: e.clientX, sy: e.clientY, vx: v.x, vy: v.y };
     c.style.cursor = 'grabbing';
     return;
   }
@@ -1306,7 +1344,7 @@ c.addEventListener('pointerup', endPointer);
 c.addEventListener('pointercancel', endPointer);
 
 c.addEventListener('wheel', e => {
-  e.preventDefault();
+  e.preventDefault(); stopFollow();
   const r = c.getBoundingClientRect();
   const px = e.clientX - r.left, py = e.clientY - r.top;
   if (e.altKey) { setRot(v.r + (e.deltaY < 0 ? 1 : -1) * Math.PI / 36, px, py); return; }
@@ -1409,7 +1447,7 @@ function paintNumTog() { $('numTog').classList.toggle('off', setg.hideNums); }
 function toggleNums(on) {
   setg.hideNums = on === undefined ? !setg.hideNums : !on;
   try { localStorage.setItem('atak-set', JSON.stringify(setg)); } catch (e) {}
-  paintNumTog(); draw();
+  paintNumTog(); draw(); paintSide(true);
 }
 $('numTog').onclick = () => toggleNums();
 $('numTog').addEventListener('pointerdown', e => e.stopPropagation());
@@ -1968,6 +2006,7 @@ function placeWp(p) {
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save(); paintSide(true);
 }
 function centerOn(p, ring) {
+  stopFollow();
   const b = c.getBoundingClientRect(), co = Math.cos(v.r), si_ = Math.sin(v.r);
   v.x = b.width / 2 - v.s * (co * p[0] - si_ * p[1]); v.y = b.height / 2 - v.s * (si_ * p[0] + co * p[1]);
   if (ring) { gotoPt = p; clearTimeout(goGrid.t); goGrid.t = setTimeout(() => { gotoPt = null; draw(); }, 6000); }
@@ -1980,12 +2019,13 @@ function openSide(tab) {
   ['menu', 'palette', 'numbar'].forEach(i => $(i).classList.remove('open'));
   sideEl.classList.add('open'); paintSide(true);
 }
-function closeSide() { sideEl.classList.remove('open'); $('wpBtn').classList.remove('on'); $('tmBtn').classList.remove('on'); }
+function closeSide() { sideEl.classList.remove('open'); $('wpBtn').classList.remove('on'); $('tmBtn').classList.remove('on'); $('lyBtn').classList.remove('on'); }
 $('wpBtn').onclick = () => openSide('wp');
 $('tmBtn').onclick = () => openSide('tm');
+$('lyBtn').onclick = () => openSide('ly');
 $('sideX').onclick = closeSide;
 sideEl.querySelectorAll('#sideTabs button[data-tab]').forEach(b => b.onclick = () => { sideTab = b.dataset.tab; paintSide(true); });
-['wpBtn', 'tmBtn', 'tchips', 'side'].forEach(id => $(id).addEventListener('pointerdown', e => e.stopPropagation()));
+['wpBtn', 'tmBtn', 'lyBtn', 'tchips', 'side', 'follow', 'tour'].forEach(id => $(id).addEventListener('pointerdown', e => e.stopPropagation()));
 $('b-menu').addEventListener('click', () => closeSide());
 
 const fmtT = sec => { sec = Math.ceil(sec); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60; return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0'); };
@@ -2016,13 +2056,13 @@ let sideSig = '';
 function paintSide(force) {
   if (!sideEl.classList.contains('open')) return;
   const wps = items.filter(i => i.type === 'wp'), tms = timerList();
-  const sig = sideTab + JSON.stringify(wps.map(w => [w.id, w.n, Math.round(w.x), Math.round(w.y), w.color])) + JSON.stringify(tms.map(t => [t.id, t.n, t.d, t.end, t.left])) + (grid ? JSON.stringify(grid) : '');
+  const sig = sideTab + JSON.stringify(wps.map(w => [w.id, w.n, Math.round(w.x), Math.round(w.y), w.color])) + JSON.stringify(tms.map(t => [t.id, t.n, t.d, t.end, t.left])) + (grid ? JSON.stringify(grid) : '') + [...hidL].join() + setg.hideNums;
   if (!force && sig === sideSig) return;
   if (!force && sideEl.contains(document.activeElement) && /INPUT/.test(document.activeElement.tagName)) return;
   sideSig = sig;
   sideEl.className = 'open tab-' + sideTab;
   sideEl.querySelectorAll('#sideTabs button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === sideTab));
-  $('wpBtn').classList.toggle('on', sideTab === 'wp'); $('tmBtn').classList.toggle('on', sideTab === 'tm');
+  $('wpBtn').classList.toggle('on', sideTab === 'wp'); $('tmBtn').classList.toggle('on', sideTab === 'tm'); $('lyBtn').classList.toggle('on', sideTab === 'ly');
   const mkb = (txt, cls, fn, title) => { const b = document.createElement('button'); b.className = 'sb ' + (cls || ''); b.textContent = txt; if (title) b.title = title; b.onclick = fn; return b; };
   const nameIn = (it, max) => { const i = document.createElement('input'); i.type = 'text'; i.maxLength = max; i.value = it.n; i.autocomplete = 'off';
     i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') i.blur(); });
@@ -2043,6 +2083,12 @@ function paintSide(force) {
     const tt = document.createElement('span'); tt.className = 'tt'; tt.dataset.tt = t.id;
     r.append(nameIn(t, 24), tt, mkb(t.end ? '❚❚' : '▶', '', () => (t.end ? tPause(t) : tStart(t)), t.end ? 'Pause' : 'Start'), mkb('↺', 'alt', () => tReset(t), 'Reset'), mkb('✕', 'alt', () => tDel(t), 'Delete'));
     tl.appendChild(r);
+  });
+  const ll = $('lyList'); ll.textContent = '';
+  LAYERS.forEach(([k, label]) => {
+    const b = document.createElement('button'); b.className = 'lyrow' + (layerOn(k) ? ' on' : '');
+    const t = document.createElement('span'); t.textContent = label;
+    b.append(t, document.createElement('i')); b.onclick = () => toggleLayer(k); ll.appendChild(b);
   });
   tickTimes();
 }
@@ -2141,7 +2187,11 @@ let roomUI = () => {};
     [['Privacy policy', 'privacy'], ['Terms of service', 'terms']].forEach(([t, k]) => { const x = document.createElement('button'); x.className = 'mbtn alt'; x.textContent = t; x.onclick = () => { $('menu').classList.remove('open'); showLg(k); }; row.appendChild(x); });
     $('gridsec').before(row);
   }
-  b.before(inv, lk);
+  const ld = mkb('Lead the room', () => { if (!room) return; setLeading(!leading); $('menu').classList.remove('open'); });
+  const tu = mkb('Tutorial', () => { $('menu').classList.remove('open'); tourShow(0); }); tu.style.display = '';
+  const baseUI = roomUI;
+  roomUI = () => { baseUI(); ld.style.display = room ? '' : 'none'; ld.textContent = leading ? 'Stop leading' : 'Lead the room'; };
+  b.before(inv, lk, ld, tu);
 })();
 
 addEventListener('popstate', () => { if (!IS_ELECTRON && !/^\/play\/?$/.test(location.pathname)) location.reload(); });
@@ -2365,8 +2415,13 @@ async function uploadMap(f, cr) {
 function hue(str) { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; }
 function renderPresence(state) {
   const box = $('avs');
-  if (!state) { box.innerHTML = decorAvs; return; }
-  const people = Object.values(state).map(a => a[0] && a[0].name).filter(n => typeof n === 'string' && n).map(n => isBad(n) ? 'Player' : n);
+  if (!state) { box.innerHTML = decorAvs; leaders = []; followId = null; leading = false; paintFollow(); return; }
+  const entries = Object.entries(state).filter(([k, a]) => a[0] && typeof a[0].name === 'string' && a[0].name);
+  const clean = n => isBad(n) ? 'Player' : n.slice(0, 16);
+  const people = entries.map(([k, a]) => clean(a[0].name));
+  leaders = entries.filter(([k, a]) => k !== clientId && a[0].lead === true).map(([k, a]) => ({ id: k, name: clean(a[0].name) }));
+  if (followId && !leaders.some(l => l.id === followId)) followId = null;
+  paintFollow();
   box.textContent = '';
   const add = (text, bg, title) => {
     const d = document.createElement('div');
@@ -2377,6 +2432,69 @@ function renderPresence(state) {
   people.slice(0, 4).forEach(n => add(n.slice(0, 1).toUpperCase(), 'hsl(' + hue(n) + ',55%,42%)', n));
   if (people.length > 4) add('+' + (people.length - 4), '#333');
 }
+
+let leading = false, followId = null, leaders = [], lastView = '', lastViewAt = 0;
+function viewMsg() {
+  const r = c.getBoundingClientRect(), w = toWorld(r.width / 2, r.height / 2);
+  return { id: clientId, cx: w[0], cy: w[1], ww: r.width / v.s, wh: r.height / v.s, r: v.r };
+}
+function viewLoop() {
+  if (!leading || !channel || !img) return;
+  const m = viewMsg(), sig = [m.cx, m.cy, m.ww, m.wh, m.r].map(x => x.toFixed(2)).join(), now = Date.now();
+  if (sig === lastView && now - lastViewAt < 2000) return;
+  lastView = sig; lastViewAt = now;
+  try { channel.send({ type: 'broadcast', event: 'view', payload: m }); } catch (e) {}
+}
+setInterval(viewLoop, 250);
+const okNum = (x, lo, hi) => typeof x === 'number' && isFinite(x) && x >= lo && x <= hi;
+function onView(m) {
+  if (!m || m.id !== followId || m.id === clientId || !img) return;
+  if (!okNum(m.cx, -1e7, 1e7) || !okNum(m.cy, -1e7, 1e7) || !okNum(m.ww, 1e-3, 1e8) || !okNum(m.wh, 1e-3, 1e8) || !okNum(m.r, -10, 10)) return;
+  const r = c.getBoundingClientRect(), s = Math.min(150, Math.max(0.02, Math.min(r.width / m.ww, r.height / m.wh)));
+  const co = Math.cos(m.r), si_ = Math.sin(m.r);
+  v.s = s; v.r = m.r;
+  v.x = r.width / 2 - s * (co * m.cx - si_ * m.cy);
+  v.y = r.height / 2 - s * (si_ * m.cx + co * m.cy);
+  draw();
+}
+function setLeading(on) {
+  leading = !!on; lastView = '';
+  if (leading) followId = null;
+  if (channel) { try { channel.track({ name: myNick, lead: leading }); } catch (e) {} }
+  paintFollow();
+}
+function startFollow(id) { if (leading) setLeading(false); followId = id; paintFollow(); }
+function stopFollow() { if (followId) { followId = null; paintFollow(); } }
+function paintFollow() {
+  const cur = leaders.find(l => l.id === followId);
+  let txt = '', btn = '', fn = null;
+  if (leading) { txt = 'Leading the room'; btn = 'Stop'; fn = () => setLeading(false); }
+  else if (cur) { txt = 'Following ' + cur.name; btn = 'Stop'; fn = stopFollow; }
+  else if (leaders.length) { txt = leaders[0].name + ' is leading'; btn = 'Follow'; fn = () => startFollow(leaders[0].id); }
+  $('follow').style.display = txt ? 'flex' : 'none';
+  $('followTxt').textContent = txt; $('followBtn').textContent = btn; $('followBtn').onclick = fn;
+  roomUI();
+}
+
+const TOUR = [
+  ['Draw', 'Pick a tool on the bottom bar, then drag on the map. The shield places unit symbols and the pin places waypoints.'],
+  ['Move and layers', 'Drag with the move tool to pan. Scroll or pinch to zoom. Alt-scroll or twist two fingers to rotate. The stack button beside the compass hides layers for you only.'],
+  ['Bearing and ping', 'Compass tool: drag from one point to another to read the bearing. Ping tool: tap to flash a spot for everyone in the room.'],
+  ['Rooms', 'Open the menu, enter a room code and join. Copy the invite link to bring people in. Lead the room and anyone can follow your view.'],
+];
+let tourAt = 0;
+function tourEnd() { $('tour').style.display = 'none'; try { localStorage.setItem('atak-tour', '1'); } catch (e) {} }
+function tourShow(i) {
+  tourAt = i; const last = i === TOUR.length - 1;
+  $('tourT').textContent = TOUR[i][0]; $('tourB').textContent = TOUR[i][1];
+  const d = $('tourDots'); d.textContent = '';
+  TOUR.forEach((_, k) => { const e = document.createElement('i'); if (k === i) e.className = 'on'; d.appendChild(e); });
+  $('tourSkip').style.display = last ? 'none' : '';
+  $('tourNext').textContent = last ? 'Done' : 'Next';
+  $('tour').style.display = 'flex';
+}
+$('tourNext').onclick = () => { if (tourAt >= TOUR.length - 1) tourEnd(); else tourShow(tourAt + 1); };
+$('tourSkip').onclick = tourEnd;
 
 let wake = null;
 async function keepAwake() {
@@ -2436,6 +2554,7 @@ async function joinRoom(code, nick) {
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'marks' }, p => onDelete(p.old))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'code=eq.' + code }, p => onRoom(p.new))
       .on('broadcast', { event: 'ping' }, m => onPing(m && m.payload))
+      .on('broadcast', { event: 'view' }, m => onView(m && m.payload))
       .on('presence', { event: 'sync' }, () => renderPresence(channel.presenceState()))
       .subscribe(async (st, err) => {
         if (room !== code) return;
@@ -2499,6 +2618,7 @@ try {
   if (q) joinRoom(q, $('nameIn').value);
   else if (r && r.code) joinRoom(r.code, $('nameIn').value);
 } catch (e) {}
+try { if (!document.documentElement.classList.contains('land') && !localStorage.getItem('atak-tour')) setTimeout(() => tourShow(0), 700); } catch (e) {}
 </script>
 </body>
 </html>
