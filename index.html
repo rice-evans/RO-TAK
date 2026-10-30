@@ -146,7 +146,16 @@
   #compass svg { width: 100%; height: 100%; display: block; transition: transform .12s; }
   #navbtns { display: flex; gap: 4px; }
   #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
-  #navbtns button:hover { background: #333; }
+  #navbtns button:hover, #numTog:hover { background: #333; }
+  #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font: 700 12px -apple-system, sans-serif; cursor: pointer; padding: 0; }
+  #numTog.off { color: #777; text-decoration: line-through; }
+  @media (pointer: coarse) { #numTog { width: 30px; height: 30px; font-size: 15px; } }
+  html.desk #nav { top: 46px; right: 62px; }
+  html.desk #compass { width: 38px; height: 38px; }
+  html.desk #menu, html.desk #numbar, html.desk #sympanel { left: 47%; z-index: 3; }
+  html.desk #menu { max-width: calc(100% - 110px); }
+  html.desk #binds { gap: 5px 18px; font-size: 10px; }
+  html.desk #sympanel { max-width: calc(100% - 110px); }
   #hdg { font: 700 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.9); border-radius: 8px; padding: 1px 6px; display: none; }
   html.web #nav { top: calc(52px + env(safe-area-inset-top)); right: calc(14px + env(safe-area-inset-right)); }
   @media (pointer: coarse) { #compass { width: 54px; height: 54px; } #navbtns button { width: 30px; height: 30px; font-size: 18px; } }
@@ -180,7 +189,7 @@
       <div id="stage">
         <canvas id="c"></canvas>
         <div class="pill" id="clock">--:--</div>
-        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><div id="hdg"></div></div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><button id="numTog" title="Show / hide building numbers">#</button><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
@@ -230,8 +239,8 @@ let items = [], hist = [];
 let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 /* view settings (per viewer, not synced): size of every symbol / number badge, in map units */
-const setg = { sym: 56, badge: 16 };
-try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; } catch (e) {}
+const setg = { sym: 56, badge: 16, hideNums: false };
+try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; } catch (e) {}
 const SET_RANGE = { sym: [4, 300], badge: [3, 120] };
 let nextNum = 1, numPre = '';
 const TAU = Math.PI * 2;
@@ -609,6 +618,7 @@ function drawItem(it) {
   ctx.lineWidth = it.w || 1;
   if (it.type === 'sym') { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r); drawSym(ctx, it, 0, 0, symS()); ctx.restore(); return; }
   if (it.type === 'num') {
+    if (setg.hideNums) return;
     const d = badgeD();
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     ctx.beginPath(); ctx.arc(0, 0, d / 2, 0, TAU);
@@ -666,7 +676,7 @@ function draw() {
   if (img) ctx.drawImage(img, 0, 0);
   items.forEach(drawItem);
   if (cur) drawItem(cur);
-  if (sel && !items.includes(sel)) sel = null;
+  if (sel && (!items.includes(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
     const b = bbox(sel), pad = 5 / v.s;
     ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
@@ -708,7 +718,7 @@ function segDist(p, a, b) {
 }
 function hit(it, p, tol) {
   if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR() + tol;
-  if (it.type === 'num') return Math.hypot(p[0] - it.x, p[1] - it.y) < badgeD() / 2 + tol;
+  if (it.type === 'num') return !setg.hideNums && Math.hypot(p[0] - it.x, p[1] - it.y) < badgeD() / 2 + tol;
   if (it.type === 'pen') {
     for (let i = 0; i < it.pts.length; i++)
       if (segDist(p, it.pts[i], it.pts[i + 1] || it.pts[i]) < tol + it.w / 2) return true;
@@ -917,6 +927,7 @@ selNum.onchange = applySelNum;
 selNum.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') applySelNum(); };
 
 function placeNum(p) {
+  if (setg.hideNums) toggleNums(true);
   const it = { id: uuid(), type: 'num', color, n: numPre + nextNum, x: p[0], y: p[1] };
   nextNum = Math.min(99999, nextNum + 1);
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save(); paintNum();
@@ -935,6 +946,15 @@ function paintNav() {
   $('hdg').textContent = Math.round(deg) + '°';
   const ri = $('rotIn'); if (ri && document.activeElement !== ri) ri.value = Math.round(deg);
 }
+function paintNumTog() { $('numTog').classList.toggle('off', setg.hideNums); }
+function toggleNums(on) {
+  setg.hideNums = on === undefined ? !setg.hideNums : !on;
+  try { localStorage.setItem('atak-set', JSON.stringify(setg)); } catch (e) {}
+  paintNumTog(); draw();
+}
+$('numTog').onclick = () => toggleNums();
+$('numTog').addEventListener('pointerdown', e => e.stopPropagation());
+paintNumTog();
 $('compass').onclick = () => setRot(0);
 $('rotL').onclick = () => setRot(v.r - Math.PI / 12);
 $('rotR').onclick = () => setRot(v.r + Math.PI / 12);
