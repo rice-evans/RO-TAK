@@ -1,4 +1,5 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, screen, shell } = require('electron');
+const path = require('path');
 
 const BASE_W = 860;
 const BASE_H = 600;
@@ -31,6 +32,13 @@ ipcMain.on('drag-start', () => {
   }, 8);
 });
 ipcMain.on('drag-end', () => clearInterval(dragTimer));
+ipcMain.on('open-external', (event, url) => {
+  if (!win || event.sender !== win.webContents) return;
+  try {
+    const u = new URL(url);
+    if (u.protocol === 'https:' || u.protocol === 'http:') shell.openExternal(u.href);
+  } catch (e) {}
+});
 
 function createWindow() {
   const area = screen.getPrimaryDisplay().workArea;
@@ -46,7 +54,13 @@ function createWindow() {
     hasShadow: false,
     alwaysOnTop: true,
     backgroundColor: '#00000000',
-    webPreferences: { nodeIntegration: true, contextIsolation: false },
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      preload: path.join(__dirname, 'preload.js'),
+    },
   });
 
   win.setAlwaysOnTop(true, 'screen-saver');
@@ -54,6 +68,8 @@ function createWindow() {
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   }
 
+  win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  win.webContents.on('will-navigate', event => event.preventDefault());
   win.loadFile('index.html');
   win.webContents.on('did-finish-load', () => {
     win.webContents.setZoomFactor(scale);

@@ -9,21 +9,20 @@
     "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.0.0"
+    "electron": "45.1.0",
+    "electron-builder": "26.18.0"
   },
   "build": {
     "appId": "com.rhysevans.atakoverlay",
     "productName": "RO-TAK",
     "files": [
       "main.js",
+      "preload.js",
       "index.html",
       "frame.png",
       "milsymbol.js",
       "symdata.js",
+      "supabase.js",
       "package.json"
     ],
     "directories": {

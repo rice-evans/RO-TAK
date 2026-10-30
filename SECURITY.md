@@ -22,7 +22,7 @@ I will reply within 7 days and fix by severity. You are credited in the fix unle
 - **Uploads.** Maps go through the `upload-map` function, which checks the file type and size and runs OpenAI's moderation check before storing anything. Direct writes to the storage bucket are removed. If the check cannot run, the upload is refused.
 - **Text.** Slurs are blocked in the page and again in the database.
 - **Shared data.** Everything received from a room is validated before it is drawn.
-- **Desktop app.** It loads only the bundled `index.html`, never a remote page. Node integration is enabled, so anything that makes room data run as script would run on the user's computer. Reports of that kind are treated as high severity.
+- **Desktop app.** It loads only the bundled `index.html`, never a remote page. The page runs sandboxed with Node access off and context isolation on, and talks to the app through a three-function bridge. Navigation and new windows are blocked, and links open in your browser only if they are http or https.
 
 ## Scope
 

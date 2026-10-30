@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>RO-TAK</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#0b0d0f">
@@ -14,7 +15,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='.9em' font-size='90' text-anchor='middle'%3E%F0%9F%8D%8C%3C/text%3E%3C/svg%3E">
 <script src="milsymbol.js"></script>
 <script src="symdata.js"></script>
-<script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';
+<script>document.documentElement.className = window.rotak ? 'desk' : 'web';
 try { if (document.documentElement.className === 'web' && !navigator.standalone && !matchMedia('(display-mode: standalone)').matches && !/^\/play\/?$/.test(location.pathname)) document.documentElement.classList.add('land'); } catch (e) {}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,7 +195,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #source .srow { display: flex; gap: 6px; }
   #source button { flex: 1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   #source button.alt { background: #444; }
-  #srcMsg { color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
 
   #mm { position: absolute; top: 52px; left: 26px; display: none; z-index: 1; background: rgba(20,20,22,.9); border: 1px solid rgba(255,255,255,.4); touch-action: none; cursor: pointer; }
@@ -430,8 +430,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 <input type="file" id="file" accept="image/*">
 
 <script>
-const IS_ELECTRON = typeof window.require === 'function';
-const ipcRenderer = IS_ELECTRON ? require('electron').ipcRenderer : null;
+const IS_ELECTRON = !!window.rotak;
 const $ = id => document.getElementById(id);
 const c = $('c'); let ctx = c.getContext('2d');
 
@@ -1510,59 +1509,10 @@ function setCredit(c, persist) {
 if (document.fonts) Promise.all([500, 600, 700].map(w => document.fonts.load(w + ' 16px "IBM Plex Sans"'))).then(() => { try { draw(); } catch (e) {} }).catch(() => {});
   if (persist && !room) { try { credit ? localStorage.setItem('atak-credit', JSON.stringify(credit)) : localStorage.removeItem('atak-credit'); } catch (e) {} }
 }
-function openLink(u) { if (!u) return; if (IS_ELECTRON) { try { require('electron').shell.openExternal(u); } catch (e) {} } else window.open(u, '_blank', 'noopener'); }
+function openLink(u) { if (!u) return; if (IS_ELECTRON) window.rotak.openExternal(u); else window.open(u, '_blank', 'noopener'); }
 $('credit').addEventListener('pointerdown', e => e.stopPropagation());
 $('credit').onclick = () => credit && openLink(credit.u);
 
-function guessCredit(u) {
-  try {
-    const x = new URL(u), m = x.pathname.match(/^\/([a-z0-9-]+)\/images\//i);
-    if (/wikia\.nocookie\.net$/i.test(x.host) && m) {
-      const f = (x.pathname.match(/\/([^\/]+)\/revision\//) || [])[1];
-      return { t: (f ? decodeURIComponent(f) + ' — ' : '') + m[1].replace(/-/g, ' ') + ' wiki (Fandom)', u: 'https://' + m[1] + '.fandom.com/' };
-    }
-    return { t: x.host, u: x.origin };
-  } catch (e) { return null; }
-}
-function nodeGet(u, n = 0) {
-  return new Promise((res, rej) => {
-    require('https').get(u, { headers: { 'User-Agent': 'Mozilla/5.0' } }, r => {
-      if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location && n < 5) { r.resume(); return res(nodeGet(new URL(r.headers.location, u).href, n + 1)); }
-      if (r.statusCode !== 200) { r.resume(); return rej(new Error('HTTP ' + r.statusCode)); }
-      const ch = []; let len = 0;
-      r.on('data', d => { len += d.length; if (len > 30e6) { r.destroy(); rej(new Error('Image too large')); } else ch.push(d); });
-      r.on('end', () => res({ buf: Buffer.concat(ch), type: (r.headers['content-type'] || '').split(';')[0] }));
-    }).on('error', rej);
-  });
-}
-function srcMsg(t) { const e = $('srcMsg'); e.textContent = t || ''; e.style.display = t ? 'block' : 'none'; }
-async function importUrl() {
-  const u = okUrl($('srcUrl').value.trim());
-  if (!u) return srcMsg('Paste a full image link (https://...)');
-  srcMsg('Loading...');
-  let blob;
-  try {
-    if (IS_ELECTRON) { const r = await nodeGet(u); blob = new Blob([r.buf], { type: r.type }); }
-    else { const r = await fetch(u); if (!r.ok) throw new Error('HTTP ' + r.status); blob = await r.blob(); }
-  } catch (e) {
-    return srcMsg(IS_ELECTRON ? 'Could not download: ' + e.message : 'This site would not let the browser load it (' + e.message + '). Save the image and use the + button to open it instead.');
-  }
-  if (!/^image\//.test(blob.type)) return srcMsg('That link is not an image. Open the image on its own and paste that address.');
-  if (blob.size > 30e6) return srcMsg('Image is too large (30 MB max).');
-  const path = new URL(u).pathname.split('/').filter(x => x && !/^(revision|latest|scale-to-width-down)$/.test(x) && !/^\d+$/.test(x));
-  const fname = decodeURIComponent(path.reverse().find(x => /\.(png|jpe?g|webp|gif)$/i.test(x)) || 'map.png');
-  const cr = cleanCredit({ t: $('srcCredit').value || (guessCredit(u) || {}).t, u: $('srcLink').value || (guessCredit(u) || {}).u });
-  pendCredit = cr || null;
-  $('menu').classList.remove('open');
-  srcMsg('');
-  loadFile(new File([blob], fname, { type: blob.type }));
-}
-async function saveCredit() {
-  const cr = cleanCredit({ t: $('srcCredit').value, u: $('srcLink').value });
-  setCredit(cr, true);
-  if (room) { const r = await db().from('rooms').update({ credit: cr ? JSON.stringify(cr) : null }).eq('code', room); if (r.error) srcMsg('Credit is saved for you only. To share it, add the credit column in Supabase (see SQL).'); else srcMsg(''); }
-  else srcMsg('');
-}
 paintCredit();
 
 let grid = null, calib = null, gotoPt = null;
@@ -2112,17 +2062,13 @@ const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7Voavi1b7JKDflmMJIU2TA_rsA8rZWN';
 let createClient = null;
 let libReady = Promise.resolve();
-if (IS_ELECTRON) {
-  try { ({ createClient } = require('@supabase/supabase-js')); } catch (e) {}
-} else {
-  libReady = new Promise(res => {
-    const sc = document.createElement('script');
-    sc.src = 'supabase.js';
-    sc.onload = () => { createClient = window.supabase && window.supabase.createClient; res(); };
-    sc.onerror = () => res();
-    document.head.appendChild(sc);
-  });
-}
+libReady = new Promise(res => {
+  const sc = document.createElement('script');
+  sc.src = 'supabase.js';
+  sc.onload = () => { createClient = window.supabase && window.supabase.createClient; res(); };
+  sc.onerror = () => res();
+  document.head.appendChild(sc);
+});
 let sb = null, room = null, channel = null, curPath = null, roomHasMap = false, errTimer = null;
 let hostHash = null, roomLocked = false, isHost = false, myKey = '', myHash = '';
 const SITE = 'https://ro-tak.vercel.app';
@@ -2378,7 +2324,7 @@ async function joinRoom(code, nick) {
   if (!code) return showErr('Enter a room code');
   if (isBad(rawCode) || isBad(code) || isBad(nick)) return showErr('That name or room code is not allowed');
   await libReady;
-  if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
+  if (!createClient) return showErr('Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
   room = code; curPath = null; roomHasMap = false; hostHash = null; roomLocked = false; isHost = false; myKey = ''; myHash = ''; roomUI(); setCredit(null); loadGridLocal();
@@ -2437,14 +2383,14 @@ function tick() {
 }
 setInterval(tick, 10000); tick();
 
-if (ipcRenderer) ipcRenderer.on('locked', (e, l) => $('case').classList.toggle('locked', l));
+if (IS_ELECTRON) window.rotak.onLocked(l => $('case').classList.toggle('locked', l));
 
 let dragging = false;
-function stopDrag() { if (dragging) { dragging = false; ipcRenderer.send('drag-end'); } }
+function stopDrag() { if (dragging) { dragging = false; window.rotak.send('drag-end'); } }
 $('case').addEventListener('mousedown', e => {
-  if (!ipcRenderer || e.button !== 0 || e.target.closest('#stage')) return;
+  if (!IS_ELECTRON || e.button !== 0 || e.target.closest('#stage')) return;
   dragging = true;
-  ipcRenderer.send('drag-start');
+  window.rotak.send('drag-start');
 });
 addEventListener('mouseup', stopDrag);
 addEventListener('blur', stopDrag);

@@ -21,7 +21,7 @@ jobs:
           node-version: 20
       - name: Copy shared app files
         shell: bash
-        run: cp index.html milsymbol.js symdata.js desktop/
+        run: cp index.html milsymbol.js symdata.js supabase.js desktop/
       - name: Set version from tag
         if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
