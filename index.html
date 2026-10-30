@@ -311,7 +311,24 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     #landing .chat { left: 0; top: calc(100% + 14px); width: min(320px, calc(100vw - 48px)); transform-origin: 60px 0; }
     #landing .chat::before { left: 56px; top: -8px; border: 8px solid transparent; border-top: 0; border-bottom-color: #fff; }
   }
-  @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
+  #landing .gridfx { pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 62%; overflow: hidden;
+    background-image: linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.075) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.075) 1px, transparent 1px);
+    background-size: 192px 192px, 192px 192px, 48px 48px, 48px 48px; background-position: right top;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, #000 55%); }
+  #landing .gx-cols { position: absolute; top: 8px; right: 0; display: flex; flex-direction: row-reverse; }
+  #landing .gx-rows { position: absolute; top: 0; right: 8px; display: flex; flex-direction: column; padding-top: 24px; }
+  #landing .gx-cols span { width: 192px; flex: none; padding-left: 6px; }
+  #landing .gx-rows span { height: 192px; flex: none; padding-top: 6px; text-align: right; }
+  #landing .gx-cols span, #landing .gx-rows span { font-size: 10px; letter-spacing: .08em; color: rgba(255,255,255,.55); }
+  #landing .gx-sweep { position: absolute; top: 0; bottom: 0; width: 22%; left: -22%; background: linear-gradient(90deg, transparent, rgba(140,200,255,.07) 70%, rgba(170,220,255,.26) 100%); border-right: 1px solid rgba(190,230,255,.55); animation: gxsweep 14s linear infinite; }
+  #landing .gx-mk { position: absolute; width: 20px; height: 16px; margin: -8px 0 0 -10px; opacity: 0; animation: gxmk 14s linear infinite; }
+  @keyframes gxsweep { to { left: 100%; } }
+  @keyframes gxmk { 0% { opacity: 0; } 1.5% { opacity: 1; } 50% { opacity: .35; } 62% { opacity: 0; } 100% { opacity: 0; } }
+  @media (max-width: 700px) {
+    #landing .gridfx { width: 100%; top: 64%; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 60%); mask-image: linear-gradient(180deg, transparent 0%, #000 60%); }
+    #landing .gx-rows { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { #landing .gx-sweep { display: none; } #landing .gx-mk { animation: none; opacity: .6; } #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
 </style>
 </head>
 <body>
@@ -321,6 +338,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     <div class="row rev"><div class="track" id="lrow2"></div></div>
   </div>
   <div class="veil"></div>
+  <div class="gridfx" aria-hidden="true"><div class="gx-cols"></div><div class="gx-rows"></div><div class="gx-sweep"></div></div>
   <main class="hero">
     <div class="avatar-wrap">
       <img class="avatar" src="images/avatar.webp" alt="">
@@ -1589,6 +1607,19 @@ function goGrid(mark) {
       d.append(i, c); d.onclick = () => showLb(IMAGES.indexOf(m)); t.appendChild(d);
     });
   });
+  (function () {
+    const g = L.querySelector('.gridfx'), pad = (n, l) => String(n).padStart(l, '0');
+    const cols = g.querySelector('.gx-cols'), rows = g.querySelector('.gx-rows');
+    for (let i = 0; i < 12; i++) { const a = document.createElement('span'); a.textContent = pad(480 - i, 4); cols.appendChild(a); }
+    for (let i = 0; i < 8; i++) { const a = document.createElement('span'); a.textContent = pad(310 + i, 4); rows.appendChild(a); }
+    const F = '<svg viewBox="0 0 20 16"><rect x="1" y="1" width="18" height="14" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/><path d="M1 1 19 15M19 1 1 15" stroke="#0b0d0f" stroke-width="1"/></svg>';
+    const H = '<svg viewBox="0 0 20 16"><path d="M10 0 20 8 10 16 0 8Z" fill="#ef4444" stroke="#fff" stroke-width="1.5"/><path d="M5 4 15 12M15 4 5 12" stroke="#0b0d0f" stroke-width="1"/></svg>';
+    [[34, 62, F], [46, 28, H], [58, 74, F], [68, 40, H], [78, 18, F], [84, 56, F], [92, 80, H], [52, 52, F]].forEach(([x, y, svg]) => {
+      const m = document.createElement('div'); m.className = 'gx-mk'; m.innerHTML = svg;
+      m.style.left = x + '%'; m.style.top = y + '%'; m.style.animationDelay = ((x + 22) / 122 * 14).toFixed(2) + 's';
+      g.appendChild(m);
+    });
+  })();
   const lb = $('llb'); let lbI = 0;
   const lbOpen = () => !lb.hidden;
   function showLb(i) {
