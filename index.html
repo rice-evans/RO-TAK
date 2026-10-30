@@ -1310,9 +1310,11 @@ function placeSym(p) {
   items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
 }
 
+let cmpLast = 0, cmpAng = 0;
 function paintNav() {
   const deg = v.r * 180 / Math.PI;
-  $('compass').firstChild.style.transform = `rotate(${v.r}rad)`;
+  cmpAng += normA(v.r - cmpLast); cmpLast = v.r;
+  $('compass').firstChild.style.transform = `rotate(${cmpAng}rad)`;
   $('hdg').style.display = Math.abs(deg) >= 0.5 ? 'block' : 'none';
   $('hdg').textContent = Math.round(deg) + '°';
   const ri = $('rotIn'); if (ri && document.activeElement !== ri) ri.value = Math.round(deg);
