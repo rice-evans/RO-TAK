@@ -158,6 +158,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #navbtns { display: flex; gap: 4px; }
   #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
   #navbtns button:hover, #numTog:hover { background: #333; }
+  #navbtns #ctrBtn { display: flex; align-items: center; justify-content: center; padding: 0; }
+  #ctrBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  @media (pointer: coarse) { #ctrBtn svg { width: 16px; height: 16px; } }
   #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; padding: 0; }
   #numTog.off { color: #777; text-decoration: line-through; }
   @media (pointer: coarse) { #numTog { width: 30px; height: 30px; font-size: 15px; } }
@@ -405,7 +408,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="tchips"></div>
         <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
-        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button></div><div id="hdg"></div></div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button></div><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
@@ -934,6 +937,16 @@ const toWorld = (px, py) => {
 };
 const world = e => { const r = c.getBoundingClientRect(); return toWorld(e.clientX - r.left, e.clientY - r.top); };
 /* rotate the view to angle r2 (radians) keeping the screen point (px,py) fixed; default = centre */
+function recenter() {
+  if (!img) return;
+  const r = c.getBoundingClientRect(), T = 46, h = r.height - T - 56;
+  const co = Math.cos(v.r), si_ = Math.sin(v.r), wx = img.width / 2, wy = img.height / 2;
+  const bw = Math.abs(img.width * co) + Math.abs(img.height * si_), bh = Math.abs(img.width * si_) + Math.abs(img.height * co);
+  const s = Math.min(r.width / bw, h / bh);
+  v.s = s; v.x = r.width / 2 - s * (co * wx - si_ * wy); v.y = T + h / 2 - s * (si_ * wx + co * wy);
+  draw(); save();
+}
+$('ctrBtn').onclick = recenter;
 function setRot(r2, px, py) {
   const b = c.getBoundingClientRect();
   if (px === undefined) { px = b.width / 2; py = b.height / 2; }
@@ -1636,12 +1649,14 @@ const LEGAL = {
     ['p', 'A room is deleted automatically, along with its marks and map file, once nobody has been connected to it for 2 hours. I can also delete one sooner on request.'],
     ['h', 'Without a room'],
     ['p', "If you don't join a room, your map and marks stay in your browser and are never sent to me."],
+    ['h', 'Checks'],
+    ['p', 'Uploaded maps are checked automatically for explicit content. The image is sent to OpenAI for this and is not kept by me. Images that fail are not stored. Text you type, such as names, labels and room codes, is checked against a word list in your browser and in my database. Text that fails is not stored.'],
     ['h', 'Analytics'],
     ['p', "I don't use analytics."],
     ['h', 'Saved on your device'],
     ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your last room and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
     ['h', 'Other services'],
-    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'OpenAI checks uploaded maps automatically for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
+    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
     ['h', 'Contact'],
     ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
   ]],
@@ -1654,7 +1669,7 @@ const LEGAL = {
     ['h', 'Use of the site'],
     ['p', "You're free to use it. Don't try to break it, overload it or abuse rooms with scripts or spam."],
     ['h', 'Conduct'],
-    ['p', 'Slurs and inappropriate images are not tolerated. If I hear about this, the relevant users will be banned.'],
+    ['p', 'Slurs and inappropriate images are not tolerated. Maps are checked automatically and text is filtered. If I hear about this, the relevant users will be banned.'],
     ['h', 'Maps and uploads'],
     ['p', "You keep ownership of what you upload. Only upload maps and images you're allowed to use. Everyone in your room can see them. I can remove any room or file at any time."],
     ['h', 'Room deletion'],
