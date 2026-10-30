@@ -1,8 +1,8 @@
 {
   "name": "RO-TAK",
   "short_name": "RO-TAK",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/play",
+  "scope": "/",
   "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "#0b0d0f",
