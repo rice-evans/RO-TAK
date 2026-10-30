@@ -444,6 +444,7 @@ const ICONS = {
   arrow: 'M7 7h10v10M7 17L17 7',
   box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
   text: 'M4 7V4h16v3M9 20h6M12 4v16',
+  ping: 'M4.9 19.1C1 15.2 1 8.8 4.9 4.9M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5M12 12h.01M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5M19.1 4.9C23 8.8 23 15.2 19.1 19.1',
   meas: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z',
   eraser: 'M7 21l-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21M22 21H7M5 11l9 9',
   undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11',
@@ -555,7 +556,7 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => hostOnly() ? toast('Only the host can change the map') : room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
@@ -761,6 +762,7 @@ const BINDS = IS_ELECTRON ? [
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
   ['Measure bearing', 'Measure tool, click two points'],
+  ['Ping', 'Ping tool, click a spot'],
   ['Zoom map', 'Scroll'],
   ['Rotate map', 'Alt+scroll or ↺ ↻'],
   ['North up', 'Tap the compass'],
@@ -775,12 +777,14 @@ const BINDS = IS_ELECTRON ? [
   ['Pan with one finger', 'Move tool'],
   ['Move / scale item', 'Move tool, tap it'],
   ['Measure bearing', 'Measure tool, tap two points'],
+  ['Ping', 'Ping tool, tap a spot'],
   ['Confirm text', 'Enter'],
 ] : [
   ['Undo', MOD + '+Z'],
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
   ['Measure bearing', 'Measure tool, click two points'],
+  ['Ping', 'Ping tool, click a spot'],
   ['Zoom map', 'Scroll'],
   ['Rotate map', 'Alt+scroll or ↺ ↻'],
   ['North up', 'Click the compass'],
@@ -805,7 +809,7 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'ping', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
   if (t !== 'sym') closeSym();
   $('numbar').classList.toggle('open', t === 'num');
   if (t === 'num') { $('palette').classList.remove('open'); $('menu').classList.remove('open'); paintNum(); }
@@ -1001,6 +1005,73 @@ function drawMeas() {
 }
 addEventListener('keydown', e => { if (e.key === 'Escape' && meas && e.target.tagName !== 'INPUT') { meas = null; draw(); } });
 
+let pings = [], pingRaf = 0, pingSent = 0, myNick = '';
+const pingSeen = new Map();
+const PING_MS = 3600;
+function addPing(x, y, col, nm) {
+  if (pings.length >= 12) pings.shift();
+  pings.push({ x, y, col, nm, t0: performance.now() });
+  if (!pingRaf) pingRaf = requestAnimationFrame(pingTick);
+}
+function pingTick() {
+  const now = performance.now();
+  pings = pings.filter(q => now - q.t0 < PING_MS);
+  draw();
+  pingRaf = pings.length ? requestAnimationFrame(pingTick) : 0;
+}
+function sendPing(p) {
+  const now = Date.now();
+  if (now - pingSent < 350) return;
+  pingSent = now;
+  addPing(p[0], p[1], color, '');
+  if (!room || !channel) return;
+  try {
+    const r = channel.send({ type: 'broadcast', event: 'ping', payload: { id: clientId, x: p[0], y: p[1], c: color, n: myNick } });
+    if (r && r.catch) r.catch(() => {});
+  } catch (e) {}
+}
+function onPing(d) {
+  if (!d || typeof d !== 'object' || d.id === clientId || typeof d.id !== 'string') return;
+  if (!num(d.x) || !num(d.y) || Math.abs(d.x) > 1e6 || Math.abs(d.y) > 1e6) return;
+  const now = Date.now(), key = d.id.slice(0, 40);
+  if (now - (pingSeen.get(key) || 0) < 300) return;
+  if (pingSeen.size > 200) pingSeen.clear();
+  pingSeen.set(key, now);
+  const col = typeof d.c === 'string' && /^#[0-9a-f]{6}$/i.test(d.c) ? d.c : '#ffffff';
+  let nm = typeof d.n === 'string' ? d.n.slice(0, 16) : '';
+  if (isBad(nm)) nm = 'Player';
+  addPing(d.x, d.y, col, nm);
+}
+function drawPings() {
+  if (!pings.length || ctx.canvas !== c) return;
+  const now = performance.now(), u = 1 / v.s, F = '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+  ctx.save();
+  pings.forEach(q => {
+    const a = now - q.t0, fade = Math.max(0, 1 - a / PING_MS);
+    ctx.strokeStyle = q.col; ctx.fillStyle = q.col;
+    for (let k = 0; k < 3; k++) {
+      const ph = (a - k * 700) / 1500;
+      if (ph <= 0 || ph >= 1) continue;
+      ctx.globalAlpha = (1 - ph) * 0.9;
+      ctx.lineWidth = 3 * u;
+      ctx.beginPath(); ctx.arc(q.x, q.y, (8 + 56 * ph) * u, 0, TAU); ctx.stroke();
+    }
+    ctx.globalAlpha = Math.min(1, fade * 1.6);
+    ctx.beginPath(); ctx.arc(q.x, q.y, 6 * u, 0, TAU); ctx.fill();
+    ctx.lineWidth = 2 * u; ctx.strokeStyle = '#fff';
+    ctx.beginPath(); ctx.arc(q.x, q.y, 6 * u, 0, TAU); ctx.stroke();
+    if (q.nm) {
+      ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(-v.r);
+      ctx.font = `700 ${12 * u}px ${F}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const tw = ctx.measureText(q.nm).width;
+      ctx.globalAlpha = Math.min(1, fade * 1.6) * 0.92;
+      ctx.fillStyle = 'rgba(20,20,22,.92)'; ctx.fillRect(-tw / 2 - 6 * u, -34 * u, tw + 12 * u, 18 * u);
+      ctx.fillStyle = '#fff'; ctx.fillText(q.nm, 0, -25 * u);
+      ctx.restore();
+    }
+  });
+  ctx.restore();
+}
 function draw() {
   const w = c.width, h = c.height;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1022,6 +1093,7 @@ function draw() {
   items.forEach(drawItem);
   drawGridMarks();
   drawMeas();
+  drawPings();
   if (cur) drawItem(cur);
   if (sel && (!items.includes(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
@@ -1142,7 +1214,7 @@ c.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) { commitText(); endDrag(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
   if (ptrs.size > 2 || ignore) return;
-  if (ro() && tool !== 'pan' && tool !== 'meas' && e.button === 0) { toast('Room is locked'); return; }
+  if (ro() && tool !== 'pan' && tool !== 'meas' && tool !== 'ping' && e.button === 0) { toast('Room is locked'); return; }
   if (tool !== 'text') commitText();
   c.setPointerCapture(e.pointerId);
   if (calib && calib.stage === 'tap' && e.button === 0) {
@@ -1171,6 +1243,7 @@ c.addEventListener('pointerdown', e => {
   else if (tool === 'wp') placeWp(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
   else if (tool === 'meas') { measDown(e); return; }
+  else if (tool === 'ping') { sendPing(p); return; }
   draw();
 });
 
@@ -1694,7 +1767,8 @@ const LEGAL = {
     ['h', 'What I collect'],
     ['p', "Browsing the site collects nothing from you, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the name you pick, the map you upload and everything drawn on it."],
     ['h', 'Rooms'],
-    ['p', "Anyone with a room code can join, see the map and marks, and edit them. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't upload anything private."],
+    ['p', "Rooms are not private. There are no accounts, and room codes can be looked up, so anyone can read a room's map and marks. Anyone with a room code can also join and edit it unless the host locks it. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't put anything private in a room."],
+    ['p', "Pings are sent live to the people in the room and are not stored."],
     ['h', 'Deletion'],
     ['p', 'A room is deleted automatically, along with its marks and map file, once nobody has been connected to it for 2 hours. I can also delete one sooner on request.'],
     ['h', 'Without a room'],
@@ -2327,6 +2401,7 @@ async function joinRoom(code, nick) {
   if (!createClient) return showErr('Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
+  myNick = nick; pings = [];
   room = code; curPath = null; roomHasMap = false; hostHash = null; roomLocked = false; isHost = false; myKey = ''; myHash = ''; roomUI(); setCredit(null); loadGridLocal();
   items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1, r: 0 };
   $('roomIn').value = code.replace(/-/g, ' '); $('nameIn').value = nick;
@@ -2346,6 +2421,7 @@ async function joinRoom(code, nick) {
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'marks', filter: 'room=eq.' + code }, p => onUpdate(p.new))
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'marks' }, p => onDelete(p.old))
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: 'code=eq.' + code }, p => onRoom(p.new))
+      .on('broadcast', { event: 'ping' }, m => onPing(m && m.payload))
       .on('presence', { event: 'sync' }, () => renderPresence(channel.presenceState()))
       .subscribe(async (st, err) => {
         if (room !== code) return;
@@ -2363,6 +2439,7 @@ async function joinRoom(code, nick) {
 function leaveRoom() {
   teardown();
   releaseAwake();
+  pings = [];
   room = null; curPath = null; roomHasMap = false; hostHash = null; roomLocked = false; isHost = false; myKey = ''; myHash = ''; roomUI();
   try { localStorage.removeItem('atak-room'); } catch (e) {}
   if (!IS_ELECTRON && /^\/play/.test(location.pathname)) { try { history.replaceState(null, '', '/play'); } catch (e) {} }

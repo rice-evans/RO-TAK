@@ -34,6 +34,7 @@
 - Runs on its own. It does not read, inject into or modify any game.
 - No accounts and no analytics.
 - Rooms sync through Supabase and are deleted after 2 hours with nobody connected.
+- Rooms are not private. Anyone can read a room's map and marks, so do not put anything secret in one.
 - Uploaded maps are checked with OpenAI's moderation endpoint before they are stored.
 
 ## Layout
