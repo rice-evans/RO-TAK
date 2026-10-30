@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>ATAK</title>
+<title>RO-TAK</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#0b0d0f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ATAK">
+<meta name="apple-mobile-web-app-title" content="RO-TAK">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='.9em' font-size='90' text-anchor='middle'%3E%F0%9F%8D%8C%3C/text%3E%3C/svg%3E">
@@ -213,7 +213,7 @@
 <div id="case">
   <div id="screen">
       <div id="bar">
-        <span id="title">ATAK</span>
+        <span id="title">RO-TAK</span>
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         <div id="avs"><div class="av"></div><div class="av"></div></div>
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
@@ -272,7 +272,7 @@ const ICONS = {
 };
 
 let tool = 'pen', color = COLORS[0], si = 1;
-let img = null, name = 'ATAK';
+let img = null, name = 'RO-TAK';
 let items = [], hist = [];
 let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
@@ -1133,7 +1133,7 @@ function loadFile(f) {
   const cr = pendCredit; pendCredit = null;
   if (room) { uploadMap(f, cr); return; }
   setCredit(cr, true); setGrid(null, true);
-  name = f.name ? f.name.replace(/\.[^.]+$/, '') : 'ATAK';
+  name = f.name ? f.name.replace(/\.[^.]+$/, '') : 'RO-TAK';
   const fr = new FileReader();
   fr.onload = () => {
     try { localStorage.setItem('atak-map', fr.result); } catch (e) { try { localStorage.removeItem('atak-map'); } catch (_) {} }
@@ -1674,7 +1674,7 @@ function leaveRoom() {
   room = null; curPath = null; roomHasMap = false;
   try { localStorage.removeItem('atak-room'); } catch (e) {}
   setJoinedUI(false); showErr(''); renderPresence(null);
-  items = []; hist = []; img = null; name = 'ATAK'; v = { x: 0, y: 0, s: 1, r: 0 };
+  items = []; hist = []; img = null; name = 'RO-TAK'; v = { x: 0, y: 0, s: 1, r: 0 };
   load(); setTitle(); draw();
 }
 

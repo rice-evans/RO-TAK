@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "com.rhysevans.atakoverlay",
-    "productName": "ATAK Overlay",
+    "productName": "RO-TAK",
     "files": ["main.js", "index.html", "frame.png", "milsymbol.js", "symdata.js", "package.json"],
     "directories": { "buildResources": "build" },
     "publish": { "provider": "github", "owner": "rice-evans", "repo": "RO-TAK" },
