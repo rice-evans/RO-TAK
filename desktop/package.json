@@ -18,11 +18,50 @@
   "build": {
     "appId": "com.rhysevans.atakoverlay",
     "productName": "RO-TAK",
-    "files": ["main.js", "index.html", "frame.png", "milsymbol.js", "symdata.js", "package.json"],
-    "directories": { "buildResources": "build" },
-    "publish": { "provider": "github", "owner": "rice-evans", "repo": "RO-TAK" },
-    "mac": { "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }], "category": "public.app-category.games", "identity": null },
-    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }] },
-    "nsis": { "oneClick": true, "perMachine": false, "deleteAppDataOnUninstall": false }
+    "files": [
+      "main.js",
+      "index.html",
+      "frame.png",
+      "milsymbol.js",
+      "symdata.js",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "rice-evans",
+      "repo": "RO-TAK"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "category": "public.app-category.games",
+      "identity": null
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false
+    },
+    "afterPack": "afterPack.js"
   }
 }
