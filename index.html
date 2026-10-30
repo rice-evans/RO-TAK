@@ -197,6 +197,10 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #srcMsg { color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
 
+  #mm { position: absolute; top: 52px; left: 26px; display: none; z-index: 1; background: rgba(20,20,22,.9); border: 1px solid rgba(255,255,255,.4); touch-action: none; cursor: pointer; }
+  html.web #mm { top: calc(52px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
+  #stage.mm #coord { top: 168px; }
+  html.web #stage.mm #coord { top: calc(168px + env(safe-area-inset-top)); }
   #coord { position: absolute; top: 104px; left: 26px; font: 700 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.88); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
   html.web #coord { top: calc(104px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
   #gridbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 6px; padding: 6px 8px; background: rgba(20,20,22,.95); border-radius: 22px; color: #ddd; font-size: 12px; max-width: calc(100% - 16px); z-index: 3; }
@@ -400,6 +404,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
         <div id="coord"></div>
+        <canvas id="mm"></canvas>
         <div id="tchips"></div>
         <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
@@ -440,6 +445,7 @@ const ICONS = {
   arrow: 'M7 7h10v10M7 17L17 7',
   box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
   text: 'M4 7V4h16v3M9 20h6M12 4v16',
+  meas: 'M4 18h16M4 18a8 8 0 0 1 16 0M12 18l4.5-6',
   eraser: 'M7 21l-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21M22 21H7M5 11l9 9',
   undo: 'M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11',
   clear: 'M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6',
@@ -550,7 +556,7 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => hostOnly() ? toast('Only the host can change the map') : room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
@@ -755,6 +761,7 @@ const BINDS = IS_ELECTRON ? [
   ['Undo', MOD + '+Z'],
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
+  ['Measure bearing', 'Measure tool, click two points'],
   ['Zoom map', 'Scroll'],
   ['Rotate map', 'Alt+scroll or ↺ ↻'],
   ['North up', 'Tap the compass'],
@@ -768,11 +775,13 @@ const BINDS = IS_ELECTRON ? [
   ['North up', 'Tap the compass'],
   ['Pan with one finger', 'Move tool'],
   ['Move / scale item', 'Move tool, tap it'],
+  ['Measure bearing', 'Measure tool, tap two points'],
   ['Confirm text', 'Enter'],
 ] : [
   ['Undo', MOD + '+Z'],
   ['Paste map', MOD + '+V'],
   ['Move / scale item', 'Move tool, click it'],
+  ['Measure bearing', 'Measure tool, click two points'],
   ['Zoom map', 'Scroll'],
   ['Rotate map', 'Alt+scroll or ↺ ↻'],
   ['North up', 'Click the compass'],
@@ -797,10 +806,11 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
   if (t !== 'sym') closeSym();
   $('numbar').classList.toggle('open', t === 'num');
   if (t === 'num') { $('palette').classList.remove('open'); $('menu').classList.remove('open'); paintNum(); }
+  if (t !== 'meas') meas = null;
   if (t !== 'pan') { endDrag(); sel = null; draw(); }
   c.style.cursor = t === 'pan' ? 'grab' : t === 'text' ? 'text' : 'crosshair';
 }
@@ -881,6 +891,117 @@ function drawItem(it) {
   }
 }
 
+const mm = $('mm'), mmc = mm.getContext('2d');
+let mmThumb = null, mmFor = null, mmD = 0, mmDown = false, meas = null;
+const MM_MAX = 104;
+function mmGeom() {
+  const k = MM_MAX / Math.max(img.width, img.height);
+  return { k, w: Math.max(1, Math.round(img.width * k)), h: Math.max(1, Math.round(img.height * k)) };
+}
+function paintMini() {
+  if (ctx.canvas !== c) return;
+  const st = $('stage');
+  const hide = () => { mm.style.display = 'none'; st.classList.remove('mm'); };
+  if (!img) return hide();
+  const r = c.getBoundingClientRect(), T = 46;
+  const fs = Math.min(r.width / img.width, (r.height - T) / img.height);
+  if (!(v.s > fs * 1.3)) return hide();
+  const g = mmGeom(), d = Math.min(2, dpr), W = g.w * d, H = g.h * d;
+  if (mmFor !== img || mmD !== d) {
+    mmThumb = document.createElement('canvas'); mmThumb.width = W; mmThumb.height = H;
+    const tc = mmThumb.getContext('2d'); tc.imageSmoothingQuality = 'high'; tc.drawImage(img, 0, 0, W, H);
+    mmFor = img; mmD = d;
+  }
+  if (mm.width !== W || mm.height !== H) { mm.width = W; mm.height = H; }
+  mm.style.width = g.w + 'px'; mm.style.height = g.h + 'px'; mm.style.display = 'block'; st.classList.add('mm');
+  mmc.setTransform(1, 0, 0, 1, 0, 0);
+  mmc.drawImage(mmThumb, 0, 0);
+  mmc.fillStyle = 'rgba(0,0,0,.5)'; mmc.fillRect(0, 0, W, H);
+  const q = [[0, T], [r.width, T], [r.width, r.height], [0, r.height]].map(p => { const w = toWorld(p[0], p[1]); return [w[0] * g.k * d, w[1] * g.k * d]; });
+  const path = () => { mmc.beginPath(); q.forEach((p, i) => i ? mmc.lineTo(p[0], p[1]) : mmc.moveTo(p[0], p[1])); mmc.closePath(); };
+  mmc.save(); path(); mmc.clip(); mmc.drawImage(mmThumb, 0, 0); mmc.restore();
+  items.forEach(it => {
+    if (it.x === undefined || it.type === 'text' || (it.type === 'num' && setg.hideNums)) return;
+    mmc.fillStyle = it.color || '#fff'; mmc.fillRect(it.x * g.k * d - d, it.y * g.k * d - d, 2 * d, 2 * d);
+  });
+  path(); mmc.strokeStyle = '#facc15'; mmc.lineWidth = Math.max(1, d); mmc.stroke();
+}
+function mmGo(e) {
+  const g = mmGeom(), b = mm.getBoundingClientRect(), r = c.getBoundingClientRect(), T = 46;
+  const p = [(e.clientX - b.left) / g.k, (e.clientY - b.top) / g.k];
+  const co = Math.cos(v.r), si_ = Math.sin(v.r), cx = r.width / 2, cy = T + (r.height - T) / 2;
+  v.x = cx - v.s * (co * p[0] - si_ * p[1]);
+  v.y = cy - v.s * (si_ * p[0] + co * p[1]);
+  draw();
+}
+mm.addEventListener('pointerdown', e => { e.preventDefault(); mmDown = true; mm.setPointerCapture(e.pointerId); mmGo(e); });
+mm.addEventListener('pointermove', e => { if (mmDown) mmGo(e); });
+const mmUp = () => { if (mmDown) { mmDown = false; save(); } };
+mm.addEventListener('pointerup', mmUp);
+mm.addEventListener('pointercancel', mmUp);
+
+const centreOf = it => (it.type === 'sym' || it.type === 'num' || it.type === 'wp') ? [it.x, it.y] : (b => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2])(bbox(it));
+function measSnap(p) {
+  const tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
+  for (let i = items.length - 1; i >= 0; i--) if (items[i].type !== 'timer' && hit(items[i], p, tol)) return { pt: centreOf(items[i]), it: items[i] };
+  return { pt: p, it: null };
+}
+function measDown(e) {
+  const s = measSnap(world(e));
+  if (!meas || meas.stage === 'done') meas = { a: s.pt, ia: s.it, b: s.pt, ib: null, stage: 'drag', sx: e.clientX, sy: e.clientY };
+  else if (meas.stage === 'wait') { meas.b = s.pt; meas.ib = s.it; meas.stage = 'done'; }
+  draw();
+}
+function measMove(e) {
+  if (!meas || meas.stage === 'done') return;
+  const s = measSnap(world(e));
+  meas.b = s.pt; meas.ib = s.it; draw();
+}
+function measUp(e) {
+  if (!meas || meas.stage !== 'drag') return;
+  meas.stage = Math.hypot(e.clientX - meas.sx, e.clientY - meas.sy) > 8 ? 'done' : 'wait';
+  draw();
+}
+function measText() {
+  const dx = meas.b[0] - meas.a[0], dy = meas.b[1] - meas.a[1];
+  if (!dx && !dy) return '';
+  const deg = ((Math.round(Math.atan2(dx, -dy) * 180 / Math.PI) % 360) + 360) % 360;
+  let t = String(deg).padStart(3, '0') + '°';
+  if (grid) {
+    const m = gk(), d = Math.hypot(dx * m.kx, dy * m.ky) * 10;
+    t += '  ' + (d >= 1000 ? (d / 1000).toFixed(2) + ' km' : Math.round(d) + ' m');
+  }
+  return t;
+}
+function drawMeas() {
+  if (!meas) return;
+  const a = meas.a, b = meas.b, u = 1 / v.s, F = '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+  const ring = (q, rad) => { ctx.beginPath(); ctx.arc(q[0], q[1], rad * u, 0, TAU); ctx.stroke(); };
+  ctx.save();
+  ctx.lineCap = 'butt';
+  ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.5 * u; ctx.setLineDash([5 * u, 4 * u]);
+  ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(a[0], a[1] - 46 * u); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.save(); ctx.translate(a[0], a[1] - 54 * u); ctx.rotate(-v.r);
+  ctx.font = `700 ${11 * u}px ${F}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText('N', 0, 0);
+  ctx.restore();
+  ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5 * u;
+  ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+  ring(a, meas.ia ? 16 : 5);
+  ring(b, meas.ib ? 16 : 5);
+  const t = measText();
+  if (t) {
+    ctx.save(); ctx.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2); ctx.rotate(-v.r);
+    ctx.font = `700 ${13 * u}px ${F}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(t).width;
+    ctx.fillStyle = 'rgba(20,20,22,.92)'; ctx.fillRect(-tw / 2 - 7 * u, -32 * u, tw + 14 * u, 22 * u);
+    ctx.fillStyle = '#facc15'; ctx.fillText(t, 0, -21 * u);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+addEventListener('keydown', e => { if (e.key === 'Escape' && meas && e.target.tagName !== 'INPUT') { meas = null; draw(); } });
+
 function draw() {
   const w = c.width, h = c.height;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -901,6 +1022,7 @@ function draw() {
   drawGrid();
   items.forEach(drawItem);
   drawGridMarks();
+  drawMeas();
   if (cur) drawItem(cur);
   if (sel && (!items.includes(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
@@ -916,6 +1038,7 @@ function draw() {
   if (sel && (sel.type === 'num' || sel.type === 'wp') && document.activeElement !== $('selLbl')) { $('selLbl').maxLength = sel.type === 'wp' ? 24 : 8; $('selLbl').value = sel.n; }
   $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
   if (sbEdit && sel !== sbEdit) closeSym();
+  paintMini();
 }
 
 const toWorld = (px, py) => {
@@ -1020,7 +1143,7 @@ c.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) { commitText(); endDrag(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
   if (ptrs.size > 2 || ignore) return;
-  if (ro() && tool !== 'pan' && e.button === 0) { toast('Room is locked'); return; }
+  if (ro() && tool !== 'pan' && tool !== 'meas' && e.button === 0) { toast('Room is locked'); return; }
   if (tool !== 'text') commitText();
   c.setPointerCapture(e.pointerId);
   if (calib && calib.stage === 'tap' && e.button === 0) {
@@ -1048,6 +1171,7 @@ c.addEventListener('pointerdown', e => {
   else if (tool === 'num') placeNum(p);
   else if (tool === 'wp') placeWp(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
+  else if (tool === 'meas') { measDown(e); return; }
   draw();
 });
 
@@ -1066,6 +1190,7 @@ c.addEventListener('pointermove', e => {
     draw(); return;
   }
   if (erasing) { erase(world(e)); return; }
+  if (tool === 'meas') { measMove(e); return; }
   if (!cur) return;
   const p = world(e);
   if (cur.type === 'pen') cur.pts.push(p); else cur.b = p;
@@ -1084,6 +1209,7 @@ function endPointer(e) {
     save(); return;
   }
   if (erasing) { erasing = false; return; }
+  if (tool === 'meas') { measUp(e); return; }
   if (cur) {
     const real = cur.type === 'pen' || cur.a[0] !== cur.b[0] || cur.a[1] !== cur.b[1];
     if (real) { items.push(cur); hist.push({ t: 'add', it: cur }); pushAdd(cur); }
