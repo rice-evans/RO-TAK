@@ -207,6 +207,44 @@
   #gridsec label { display: flex; align-items: center; gap: 6px; }
   #gridMsg { grid-column: 1 / -1; color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #gridsec input[type=text], #gridsec button { height: 36px; font-size: 16px; } }
+
+  #navbtns2 { display: flex; gap: 4px; }
+  #numTog, #wpBtn, #tmBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px -apple-system, sans-serif; }
+  #wpBtn svg, #tmBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #wpBtn:hover, #tmBtn:hover { background: #333; }
+  #wpBtn.on, #tmBtn.on { background: #3b82f6; color: #fff; }
+  @media (pointer: coarse) { #numTog, #wpBtn, #tmBtn { width: 30px; height: 30px; } #wpBtn svg, #tmBtn svg { width: 16px; height: 16px; } }
+  #tchips { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 1; }
+  html.web #tchips { top: calc(52px + env(safe-area-inset-top)); }
+  html.desk #tchips { left: 47%; }
+  .tchip { font: 700 11px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.9); padding: 2px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+  .tchip.done { background: #d93025; animation: tpulse 1s infinite; }
+  @keyframes tpulse { 50% { opacity: .55; } }
+  #side { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px; padding: 8px; width: 420px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; background: rgba(20,20,22,.95); border-radius: 14px; color: #ddd; font-size: 12px; z-index: 3; }
+  #side.open { display: flex; }
+  html.web #side { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
+  html.desk #side { left: 47%; max-width: calc(100% - 110px); }
+  #sideTabs { display: flex; gap: 6px; position: sticky; top: -8px; background: #141416; padding: 2px 0 4px; z-index: 2; }
+  #sideTabs button { flex: 1; height: 28px; border: 0; border-radius: 14px; background: #2a2a2d; color: #ddd; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #sideTabs button.on { background: #3b82f6; color: #fff; }
+  #sideTabs #sideX { flex: none; width: 28px; padding: 0; background: #444; }
+  #side .sl { display: none; flex-direction: column; gap: 4px; }
+  #side.tab-wp #wpList, #side.tab-tm #tmList { display: flex; }
+  #tmNew { display: none; flex-wrap: wrap; gap: 6px; align-items: center; }
+  #side.tab-tm #tmNew { display: flex; }
+  #side input[type=text], #side input[type=number] { height: 28px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; min-width: 0; user-select: text; -webkit-user-select: text; }
+  #tnName { flex: 1 1 110px; } #tnMin, #tnSec { width: 56px; }
+  #side button.sb { height: 28px; min-width: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #side button.sb.alt { background: #444; }
+  #tnQuick { display: flex; gap: 6px; width: 100%; }
+  .srowi { display: flex; align-items: center; gap: 6px; background: #1a1a1c; border-radius: 8px; padding: 4px 6px; }
+  .srowi .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .srowi input[type=text] { flex: 1; background: transparent; padding: 0 4px; }
+  .srowi .gc { font: 600 11px ui-monospace, Menlo, Consolas, monospace; color: #aaa; white-space: nowrap; }
+  .srowi .tt { font: 700 16px ui-monospace, Menlo, Consolas, monospace; color: #fff; min-width: 64px; text-align: center; }
+  .srowi.done .tt { color: #f87171; }
+  .mbtn { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  @media (pointer: coarse) { #side input[type=text], #side input[type=number], #side button.sb, #sideTabs button { height: 40px; font-size: 16px; } .mbtn { height: 36px; font-size: 14px; } }
 </style>
 </head>
 <body>
@@ -224,8 +262,10 @@
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
         <div id="coord"></div>
+        <div id="tchips"></div>
+        <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
-        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><button id="numTog" title="Show / hide building numbers">#</button><div id="hdg"></div></div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="-apple-system,Segoe UI,sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button></div><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
@@ -251,7 +291,7 @@
 const IS_ELECTRON = typeof window.require === 'function';
 const ipcRenderer = IS_ELECTRON ? require('electron').ipcRenderer : null;
 const $ = id => document.getElementById(id);
-const c = $('c'), ctx = c.getContext('2d');
+const c = $('c'); let ctx = c.getContext('2d');
 
 const COLORS = ['#ff7a1a', '#ef4444', '#facc15', '#22c55e', '#22d3ee', '#3b82f6', '#ffffff', '#111111'];
 const SIZES = [0.3, 0.6, 1.2];
@@ -268,6 +308,7 @@ const ICONS = {
   clear: 'M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6',
   menu: 'M4 6h16M4 12h16M4 18h16',
   num: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
+  wp: 'M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   sym: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
 };
 
@@ -354,7 +395,7 @@ const unit = () => img ? Math.max(img.width, img.height) / 500 : 1;
 const symS = () => setg.sym * unit();
 const badgeD = () => setg.badge * unit();
 const symR = () => symS() * 0.6;
-const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num';
+const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num' || it.type === 'wp';
 function badgeFont(c, d, n) {
   let fs = d * 0.62;
   c.font = `800 ${fs}px -apple-system, "Segoe UI", sans-serif`;
@@ -377,7 +418,7 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['sym', 'Symbols'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
@@ -386,7 +427,7 @@ sep();
 mk('undo', svg(ICONS.undo), 'Undo', undo);
 mk('clear', svg(ICONS.clear), 'Clear', () => room && items.length ? confirmTap('clear', clearAll) : clearAll());
 sep();
-mk('menu', svg(ICONS.menu), 'Menu', () => { $('palette').classList.remove('open'); $('numbar').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
+mk('menu', svg(ICONS.menu), 'Menu', () => { if (typeof closeSide === 'function') closeSide(); $('palette').classList.remove('open'); $('numbar').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
 $('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
 
 let legendDone = false;
@@ -624,7 +665,7 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
   if (t !== 'sym') closeSym();
   $('numbar').classList.toggle('open', t === 'num');
   if (t === 'num') { $('palette').classList.remove('open'); $('menu').classList.remove('open'); paintNum(); }
@@ -656,6 +697,19 @@ function drawItem(it) {
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
   if (it.type === 'sym') { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r); drawSym(ctx, it, 0, 0, symS()); ctx.restore(); return; }
+  if (it.type === 'timer') return;
+  if (it.type === 'wp') {
+    const d = badgeD(), r = d * 0.42, cy = -1.9 * r;
+    ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
+    const shape = () => { ctx.beginPath(); ctx.arc(0, cy, r, 0, TAU); ctx.moveTo(-r * 0.8, cy + r * 0.6); ctx.lineTo(0, 0); ctx.lineTo(r * 0.8, cy + r * 0.6); ctx.closePath(); };
+    shape(); ctx.lineWidth = d * 0.16; ctx.strokeStyle = '#000'; ctx.lineJoin = 'round'; ctx.stroke();
+    shape(); ctx.fillStyle = it.color; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, cy, r * 0.38, 0, TAU); ctx.fillStyle = inkFor(it.color); ctx.fill();
+    ctx.font = `800 ${d * 0.7}px -apple-system, "Segoe UI", sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.lineWidth = d * 0.18; ctx.strokeStyle = '#000'; ctx.strokeText(it.n, r + d * 0.18, cy);
+    ctx.fillStyle = '#fff'; ctx.fillText(it.n, r + d * 0.18, cy);
+    ctx.restore(); return;
+  }
   if (it.type === 'num') {
     if (setg.hideNums) return;
     const d = badgeD();
@@ -727,9 +781,9 @@ function draw() {
   }
   $('selbar').classList.toggle('open', !!sel && tool === 'pan');
   $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
-  paintSelNum(); paintNav();
-  $('selLbl').style.display = sel && sel.type === 'num' ? 'block' : 'none';
-  if (sel && sel.type === 'num' && document.activeElement !== $('selLbl')) $('selLbl').value = sel.n;
+  paintSelNum(); paintNav(); _drawSide();
+  $('selLbl').style.display = sel && (sel.type === 'num' || sel.type === 'wp') ? 'block' : 'none';
+  if (sel && (sel.type === 'num' || sel.type === 'wp') && document.activeElement !== $('selLbl')) { $('selLbl').maxLength = sel.type === 'wp' ? 24 : 8; $('selLbl').value = sel.n; }
   $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
   if (sbEdit && sel !== sbEdit) closeSym();
 }
@@ -760,6 +814,12 @@ function segDist(p, a, b) {
 }
 function hit(it, p, tol) {
   if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR() + tol;
+  if (it.type === 'timer') return false;
+  if (it.type === 'wp') {
+    const r = badgeD() * 0.42, dx = p[0] - it.x, dy = p[1] - it.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
+    const lx = co * dx - si_ * dy, ly = si_ * dx + co * dy;
+    return Math.abs(lx) < r + tol && ly > -2.9 * r - tol && ly < tol;
+  }
   if (it.type === 'num') return !setg.hideNums && Math.hypot(p[0] - it.x, p[1] - it.y) < badgeD() / 2 + tol;
   if (it.type === 'pen') {
     for (let i = 0; i < it.pts.length; i++)
@@ -847,6 +907,7 @@ c.addEventListener('pointerdown', e => {
   else if (tool === 'text') openText(e);
   else if (tool === 'sym') placeSym(p);
   else if (tool === 'num') placeNum(p);
+  else if (tool === 'wp') placeWp(p);
   else if (tool === 'eraser') { erasing = true; erase(p); }
   draw();
 });
@@ -919,6 +980,7 @@ function bbox(it) {
   }
   if (it.type === 'sym') { const z = symS(); return [it.x - z * .55, it.y - z * .6, it.x + z * .55, it.y + z * .5]; }
   if (it.type === 'num') { const h = badgeD() / 2; return [it.x - h, it.y - h, it.x + h, it.y + h]; }
+  if (it.type === 'wp') { const r = badgeD() * 0.42; return [it.x - r, it.y - 2.9 * r, it.x + r, it.y]; }
   ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
   return [it.x, it.y, it.x + ctx.measureText(it.t).width, it.y + it.fs];
 }
@@ -929,7 +991,7 @@ function moveFrom(it, b, dx, dy) {
 }
 function gdim(it) {
   if (it.type === 'sym') return symS();
-  if (it.type === 'num') return badgeD();
+  if (it.type === 'num' || it.type === 'wp') return badgeD();
   if (it.type === 'text') { ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
   if (it.type === 'pen') {
     let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
@@ -941,7 +1003,7 @@ function gdim(it) {
 function scaleSel(f) {
   if (!sel || !isFinite(f) || f <= 0 || f === 1) return;
   if (sel.type === 'sym') { setSetting('sym', setg.sym * f); return; }
-  if (sel.type === 'num') { setSetting('badge', setg.badge * f); return; }
+  if (sel.type === 'num' || sel.type === 'wp') { setSetting('badge', setg.badge * f); return; }
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
@@ -961,7 +1023,7 @@ function paintSelNum() {
   if (!sel || document.activeElement === selNum) return;
   const g = gdim(sel);
   selNum.disabled = !(g > 0);
-  selNum.value = g > 0 ? (sel.type === 'sym' || sel.type === 'num' ? Math.max(0.1, r1(g / unit())) : Math.max(1, Math.round(g / unit()))) : '';
+  selNum.value = g > 0 ? (sel.type === 'sym' || sel.type === 'num' || sel.type === 'wp' ? Math.max(0.1, r1(g / unit())) : Math.max(1, Math.round(g / unit()))) : '';
 }
 function applySelNum() {
   if (!sel) return;
@@ -1055,8 +1117,8 @@ $('nVal').onchange = () => { const n = parseInt($('nVal').value, 10); nextNum = 
 $('nPre').oninput = () => { numPre = $('nPre').value.slice(0, 3); };
 ['nVal', 'nPre', 'selLbl'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $(id).blur(); }));
 $('selLbl').onchange = () => {
-  if (!sel || sel.type !== 'num') return;
-  const t = $('selLbl').value.trim().slice(0, 8); if (!t || t === sel.n) { $('selLbl').value = sel.n; return; }
+  if (!sel || (sel.type !== 'num' && sel.type !== 'wp')) return;
+  const t = $('selLbl').value.trim().slice(0, sel.type === 'wp' ? 24 : 8); if (!t || t === sel.n) { $('selLbl').value = sel.n; return; }
   const before = clone(sel); sel.n = t; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
 };
 buildSettings(); paintNum();
@@ -1297,14 +1359,14 @@ function clipSeg(a, b, r) {
   }
   return [[a[0] + t0 * dx, a[1] + t0 * dy], [a[0] + t1 * dx, a[1] + t1 * dy]];
 }
-function drawGrid() {
+function drawGrid(box, ins) {
   if (!grid || !img || !setg.showGrid) return;
-  const m = gk(), W = img.width, H = img.height, cw = c.width / dpr, ch = c.height / dpr;
+  const m = gk(), W = img.width, H = img.height, cw = box ? box[0] : c.width / dpr, ch = box ? box[1] : c.height / dpr;
   const px = Math.min(Math.abs(v.s / m.kx), Math.abs(v.s / m.ky));
   const step = [1, 10, 100, 1000, 10000].find(x => x * px >= 30) || 10000;
   const co = Math.cos(v.r), si_ = Math.sin(v.r);
   const P = (x, y) => [v.x + v.s * (co * x - si_ * y), v.y + v.s * (si_ * x + co * y)];
-  const full = [0, 0, cw, ch], inset = [6, 58, cw - 6, ch - 64];
+  const full = [0, 0, cw, ch], inset = ins || [6, 58, cw - 6, ch - 64];
   ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.font = '700 10px ui-monospace, Menlo, Consolas, monospace'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   const axis = vertical => {
@@ -1421,6 +1483,165 @@ function goGrid(mark) {
   paintGridUI();
 })();
 
+
+/* ---------- waypoints, timers, export ---------- */
+var sideReady = false;
+let wpN = 1;
+function _drawSide() { if (typeof sideReady === 'undefined' || !sideReady) return; paintSide(false); paintChips(false); }
+function placeWp(p) {
+  const used = new Set(items.filter(i => i.type === 'wp').map(i => i.n));
+  while (used.has('WP ' + wpN)) wpN++;
+  const it = { id: uuid(), type: 'wp', color, n: 'WP ' + wpN, x: p[0], y: p[1] };
+  wpN++;
+  items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save(); paintSide(true);
+}
+function centerOn(p, ring) {
+  const b = c.getBoundingClientRect(), co = Math.cos(v.r), si_ = Math.sin(v.r);
+  v.x = b.width / 2 - v.s * (co * p[0] - si_ * p[1]); v.y = b.height / 2 - v.s * (si_ * p[0] + co * p[1]);
+  if (ring) { gotoPt = p; clearTimeout(goGrid.t); goGrid.t = setTimeout(() => { gotoPt = null; draw(); }, 6000); }
+  save(); draw();
+}
+const sideEl = $('side'); let sideTab = 'wp';
+function openSide(tab) {
+  if (sideEl.classList.contains('open') && sideTab === tab) { closeSide(); return; }
+  sideTab = tab; commitText(); closeSym();
+  ['menu', 'palette', 'numbar'].forEach(i => $(i).classList.remove('open'));
+  sideEl.classList.add('open'); paintSide(true);
+}
+function closeSide() { sideEl.classList.remove('open'); $('wpBtn').classList.remove('on'); $('tmBtn').classList.remove('on'); }
+$('wpBtn').onclick = () => openSide('wp');
+$('tmBtn').onclick = () => openSide('tm');
+$('sideX').onclick = closeSide;
+sideEl.querySelectorAll('#sideTabs button[data-tab]').forEach(b => b.onclick = () => { sideTab = b.dataset.tab; paintSide(true); });
+['wpBtn', 'tmBtn', 'tchips', 'side'].forEach(id => $(id).addEventListener('pointerdown', e => e.stopPropagation()));
+$('b-menu').addEventListener('click', () => closeSide());
+
+const fmtT = sec => { sec = Math.ceil(sec); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60; return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0'); };
+const timerList = () => items.filter(i => i.type === 'timer');
+const tLeft = t => t.end ? Math.max(0, (t.end - Date.now()) / 1000) : t.left;
+const tDone = t => t.end > 0 && t.end <= Date.now();
+function tUpd(t) { pushUpd(t); save(); paintSide(true); paintChips(true); }
+function tStart(t) { if (t.end) return; const s = t.left > 0 ? t.left : t.d; t.left = s; t.end = Date.now() + s * 1000; tUpd(t); }
+function tPause(t) { if (!t.end) return; t.left = tLeft(t); t.end = 0; tUpd(t); }
+function tReset(t) { t.end = 0; t.left = t.d; tUpd(t); }
+function tDel(t) { const i = items.indexOf(t); if (i > -1) items.splice(i, 1); pushDel([t.id]); save(); paintSide(true); paintChips(true); }
+function addTimer(n, secs) {
+  if (!(secs >= 1)) return;
+  const it = { id: uuid(), type: 'timer', color, n: (n || 'Timer').trim().slice(0, 24) || 'Timer', d: Math.min(86400, Math.round(secs)), end: 0, left: Math.min(86400, Math.round(secs)) };
+  items.push(it); pushAdd(it); save(); paintSide(true); paintChips(true);
+}
+$('tnAdd').onclick = () => {
+  const secs = (parseInt($('tnMin').value, 10) || 0) * 60 + (parseInt($('tnSec').value, 10) || 0);
+  addTimer($('tnName').value, secs); $('tnName').value = ''; $('tnMin').value = ''; $('tnSec').value = '';
+};
+[['1:00', 60], ['5:00', 300], ['10:00', 600], ['15:00', 900]].forEach(([l, sc]) => {
+  const b = document.createElement('button'); b.className = 'sb alt'; b.textContent = l; b.onclick = () => addTimer($('tnName').value, sc); $('tnQuick').appendChild(b);
+});
+['tnName', 'tnMin', 'tnSec'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $('tnAdd').click(); }));
+
+let sideSig = '';
+function paintSide(force) {
+  if (!sideEl.classList.contains('open')) return;
+  const wps = items.filter(i => i.type === 'wp'), tms = timerList();
+  const sig = sideTab + JSON.stringify(wps.map(w => [w.id, w.n, Math.round(w.x), Math.round(w.y), w.color])) + JSON.stringify(tms.map(t => [t.id, t.n, t.d, t.end, t.left])) + (grid ? JSON.stringify(grid) : '');
+  if (!force && sig === sideSig) return;
+  if (!force && sideEl.contains(document.activeElement) && /INPUT/.test(document.activeElement.tagName)) return;
+  sideSig = sig;
+  sideEl.className = 'open tab-' + sideTab;
+  sideEl.querySelectorAll('#sideTabs button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === sideTab));
+  $('wpBtn').classList.toggle('on', sideTab === 'wp'); $('tmBtn').classList.toggle('on', sideTab === 'tm');
+  const mkb = (txt, cls, fn, title) => { const b = document.createElement('button'); b.className = 'sb ' + (cls || ''); b.textContent = txt; if (title) b.title = title; b.onclick = fn; return b; };
+  const nameIn = (it, max) => { const i = document.createElement('input'); i.type = 'text'; i.maxLength = max; i.value = it.n; i.autocomplete = 'off';
+    i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') i.blur(); });
+    i.onchange = () => { const t = i.value.trim().slice(0, max); if (!t) { i.value = it.n; return; } if (t === it.n) return; const before = clone(it); it.n = t; hist.push({ t: 'mod', it, before }); pushUpd(it); save(); draw(); };
+    return i; };
+  const wl = $('wpList'); wl.textContent = '';
+  wps.forEach(w => {
+    const r = document.createElement('div'); r.className = 'srowi';
+    const d = document.createElement('i'); d.className = 'dot'; d.style.background = w.color;
+    r.append(d, nameIn(w, 24));
+    if (grid) { const g = document.createElement('span'); g.className = 'gc'; g.textContent = fmt8(toGrid([w.x, w.y])); r.appendChild(g); }
+    r.append(mkb('Go', '', () => centerOn([w.x, w.y], true), 'Centre the map here'), mkb('✕', 'alt', () => { const i = items.indexOf(w); if (i > -1) { hist.push({ t: 'del', it: w, i }); items.splice(i, 1); pushDel([w.id]); save(); draw(); paintSide(true); } }, 'Delete'));
+    wl.appendChild(r);
+  });
+  const tl = $('tmList'); tl.textContent = '';
+  tms.forEach(t => {
+    const r = document.createElement('div'); r.className = 'srowi'; r.dataset.tid = t.id;
+    const tt = document.createElement('span'); tt.className = 'tt'; tt.dataset.tt = t.id;
+    r.append(nameIn(t, 24), tt, mkb(t.end ? '❚❚' : '▶', '', () => (t.end ? tPause(t) : tStart(t)), t.end ? 'Pause' : 'Start'), mkb('↺', 'alt', () => tReset(t), 'Reset'), mkb('✕', 'alt', () => tDel(t), 'Delete'));
+    tl.appendChild(r);
+  });
+  tickTimes();
+}
+let chipSig = '';
+function paintChips(force) {
+  const act = timerList().filter(t => t.end > 0);
+  const sig = act.map(t => t.id + ':' + t.end).join(',');
+  if (!force && sig === chipSig) return;
+  chipSig = sig;
+  const box = $('tchips'); box.textContent = '';
+  act.slice(0, 3).forEach(t => {
+    const e = document.createElement('div'); e.className = 'tchip'; e.dataset.cid = t.id; e.onclick = () => openSide('tm');
+    box.appendChild(e);
+  });
+  if (act.length > 3) { const e = document.createElement('div'); e.className = 'tchip'; e.textContent = '+' + (act.length - 3); e.onclick = () => openSide('tm'); box.appendChild(e); }
+  tickTimes();
+}
+const alarmed = new Set(); let actx = null;
+function beep() {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
+    [0, 0.35, 0.7].forEach(dt => { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(actx.destination);
+      const t0 = actx.currentTime + dt; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.25); o.start(t0); o.stop(t0 + 0.3); });
+  } catch (e) {}
+}
+function tickTimes() {
+  const now = Date.now();
+  timerList().forEach(t => {
+    const done = t.end > 0 && t.end <= now;
+    if (done && !alarmed.has(t.id + '|' + t.end)) { alarmed.add(t.id + '|' + t.end); if (now - t.end < 15000) beep(); }
+    const txt = done ? 'DONE' : fmtT(tLeft(t));
+    document.querySelectorAll('[data-tt="' + t.id + '"]').forEach(e => { e.textContent = txt; e.parentNode.classList.toggle('done', done); });
+    document.querySelectorAll('[data-cid="' + t.id + '"]').forEach(e => { e.textContent = (t.n + ' ' + txt); e.classList.toggle('done', done); });
+  });
+}
+setInterval(() => { if (timerList().length) tickTimes(); }, 500);
+sideReady = true;
+
+/* save as image */
+async function exportImage() {
+  if (!img) return;
+  const W = img.width, H = img.height, E = Math.max(1, Math.max(W, H) / 1200);
+  const off = document.createElement('canvas'); off.width = W; off.height = H;
+  const sv = { ctx, v, dpr, sel, cur, gotoPt, calib };
+  try {
+    ctx = off.getContext('2d'); v = { x: 0, y: 0, s: 1 / E, r: 0 }; dpr = E; sel = null; cur = null; gotoPt = null; calib = null;
+    ctx.drawImage(img, 0, 0);
+    drawGrid([W / E, H / E], [6, 6, W / E - 6, H / E - 6]);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    items.forEach(drawItem);
+    if (credit) {
+      const fs = Math.max(12, Math.round(Math.max(W, H) / 90));
+      ctx.font = `600 ${fs}px -apple-system, "Segoe UI", sans-serif`; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+      ctx.lineWidth = fs / 4; ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.fillStyle = '#fff';
+      ctx.strokeText('© ' + credit.t, fs * 0.6, H - fs * 0.5); ctx.fillText('© ' + credit.t, fs * 0.6, H - fs * 0.5);
+    }
+  } finally { ({ ctx, v, dpr, sel, cur, gotoPt, calib } = sv); draw(); }
+  const blob = await new Promise(res => off.toBlob(res, 'image/png'));
+  if (!blob) return;
+  const base = (room || (name !== 'RO-TAK' && name) || 'map').toString().replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'map';
+  const fname = base + '-RO-TAK.png';
+  const file = new File([blob], fname, { type: 'image/png' });
+  try { if (TOUCH && navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+(function () {
+  const b = document.createElement('button'); b.className = 'mbtn'; b.id = 'exportBtn'; b.textContent = 'Save map as image';
+  b.onclick = () => { $('menu').classList.remove('open'); exportImage(); };
+  $('gridsec').before(b);
+})();
+
 /* ---------- rooms ---------- */
 const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7Voavi1b7JKDflmMJIU2TA_rsA8rZWN';
@@ -1499,6 +1720,14 @@ function cleanItem(d, id) {
     const okS = typeof d.sidc === 'string' && (/^\d{20}$/.test(d.sidc) || /^[A-Z][A-Z-]{3}[A-Z0-9-]{11}$/.test(d.sidc));
     if (!okS || !num(d.x) || !num(d.y) || !num(d.s) || d.s <= 0 || d.s > 100000) return null;
     return { id, type: 'sym', sidc: d.sidc, std: d.std === 'APP6' ? 'APP6' : '2525', o: cleanOpts(d.o), x: d.x, y: d.y, s: d.s };
+  }
+  if (d.type === 'wp') {
+    if (typeof d.n !== 'string' || !d.n.trim() || !num(d.x) || !num(d.y)) return null;
+    return { id, type: 'wp', color, n: d.n.slice(0, 24), x: d.x, y: d.y };
+  }
+  if (d.type === 'timer') {
+    if (typeof d.n !== 'string' || !num(d.d) || d.d < 1 || d.d > 86400 || !num(d.end) || d.end < 0 || !num(d.left) || d.left < 0 || d.left > 86400) return null;
+    return { id, type: 'timer', color, n: d.n.slice(0, 24), d: d.d, end: d.end, left: d.left };
   }
   if (d.type === 'num') {
     if (typeof d.n !== 'string' || !d.n || !num(d.x) || !num(d.y)) return null;
