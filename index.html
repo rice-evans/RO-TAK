@@ -311,15 +311,15 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     #landing .chat { left: 0; top: calc(100% + 14px); width: min(320px, calc(100vw - 48px)); transform-origin: 60px 0; }
     #landing .chat::before { left: 56px; top: -8px; border: 8px solid transparent; border-top: 0; border-bottom-color: #fff; }
   }
-  #landing .mapfx { pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; overflow: hidden; background: rgba(8,8,8,.72);
+  #landing .mapfx { pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; overflow: hidden; background: rgba(8,8,8,.78);
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 50%); mask-image: linear-gradient(90deg, transparent 0%, #000 50%); }
-  #landing .mf-box { position: absolute; top: 50%; right: -4%; height: 104%; aspect-ratio: 4 / 3; transform: translateY(-50%); opacity: 0; transition: opacity 1.6s ease; }
+  #landing .mf-box { position: absolute; top: 50%; right: 2%; height: 78%; aspect-ratio: 4 / 3; transform: translateY(-50%); opacity: 0; transition: opacity 1.6s ease; }
   #landing .mf-box.on { opacity: 1; }
-  #landing .mf-img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .8; filter: saturate(.85); }
-  #landing .mf-mk { position: absolute; width: 22px; height: 17px; margin: -8.5px 0 0 -11px; will-change: left, top; filter: drop-shadow(0 1px 3px rgba(0,0,0,.7)); }
+  #landing .mf-img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .96; }
+  #landing .mf-mk { position: absolute; will-change: left, top; }
   @media (max-width: 700px) {
     #landing .mapfx { width: 100%; top: 52%; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%); mask-image: linear-gradient(180deg, transparent 0%, #000 55%); }
-    #landing .mf-box { right: -20%; height: 100%; }
+    #landing .mf-box { right: -10%; height: 78%; }
   }
   @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
 </style>
@@ -1604,22 +1604,27 @@ function goGrid(mark) {
     const MAPS = ['images/landing/map1.webp'];
     const box = L.querySelector('.mf-box'), img = L.querySelector('.mf-img');
     img.src = MAPS[Math.floor(Math.random() * MAPS.length)];
-    const F = '<svg viewBox="0 0 20 16"><rect x="1" y="1" width="18" height="14" fill="#3b82f6" stroke="#fff" stroke-width="1.5"/><path d="M1 1 19 15M19 1 1 15" stroke="#0b0d0f" stroke-width="1"/></svg>';
-    const H = '<svg viewBox="0 0 20 16"><path d="M10 0 20 8 10 16 0 8Z" fill="#ef4444" stroke="#fff" stroke-width="1.5"/><path d="M5 4 15 12M15 4 5 12" stroke="#0b0d0f" stroke-width="1"/></svg>';
+    const SYM = {};
+    ['F:10031000001211000000', 'H:10061000001211000000'].forEach(x => {
+      const [t, sidc] = x.split(':'); let r = null;
+      try { r = MS && symImg({ sidc, std: '2525', o: {} }, 100, 3); } catch (e) {}
+      if (r) SYM[t] = { src: r.cv.toDataURL(), w: r.w * 0.13, h: r.h * 0.13, ax: r.ax * 0.13, ay: r.ay * 0.13 };
+    });
     function start() {
-      const W = 160, Hh = 120, c = document.createElement('canvas'); c.width = W; c.height = Hh;
+      const W = 320, Hh = 240, c = document.createElement('canvas'); c.width = W; c.height = Hh;
       const g = c.getContext('2d'); g.drawImage(img, 0, 0, W, Hh);
       let data; try { data = g.getImageData(0, 0, W, Hh).data; } catch (e) { return; }
-      const land = (u, v) => u > 0 && v > 0 && u < 1 && v < 1 && data[((Math.floor(v * Hh)) * W + Math.floor(u * W)) * 4 + 3] > 140;
-      const spots = []; for (let y = 0; y < Hh; y += 2) for (let x = 0; x < W; x += 2) if (land(x / W, y / Hh)) spots.push([x / W, y / Hh]);
-      if (spots.length < 50) return;
+      const land = (u, v) => u > 0 && v > 0 && u < 1 && v < 1 && data[((Math.floor(v * Hh)) * W + Math.floor(u * W)) * 4 + 3] > 200;
+      const safe = (u, v) => [[0, 0], [.012, 0], [-.012, 0], [0, .016], [0, -.016]].every(d => land(u + d[0], v + d[1]));
+      const spots = []; for (let y = 0; y < Hh; y += 2) for (let x = 0; x < W; x += 2) if (safe(x / W, y / Hh)) spots.push([x / W, y / Hh]);
+      if (spots.length < 50 || !SYM.F || !SYM.H) return;
       const R = Math.random, squads = [];
       [['F', 3], ['F', 2], ['F', 3], ['H', 2], ['H', 3], ['H', 2]].forEach(([t, n]) => {
         const [u, v] = spots[Math.floor(R() * spots.length)];
         const sq = { u, v, a: R() * 6.283, sp: 0.0045 + R() * 0.004, m: [] };
         for (let k = 0; k < n; k++) {
-          const el = document.createElement('div'); el.className = 'mf-mk'; el.innerHTML = t === 'F' ? F : H; box.appendChild(el);
-          sq.m.push({ el, u, v, ox: (R() - .5) * 0.06, oy: (R() - .5) * 0.06 });
+          const d = SYM[t], el = new Image(); el.src = d.src; el.className = 'mf-mk'; el.style.cssText = 'width:' + d.w + 'px;height:' + d.h + 'px;margin:' + (-d.ay) + 'px 0 0 ' + (-d.ax) + 'px'; box.appendChild(el);
+          sq.m.push({ el, u, v, ox: (k - (n - 1) / 2) * 0.04 + (R() - .5) * 0.01, oy: (R() - .5) * 0.03 });
         }
         squads.push(sq);
       });
@@ -1630,10 +1635,11 @@ function goGrid(mark) {
         squads.forEach(sq => {
           sq.a += (R() - .5) * 0.6 * dt;
           let nu = sq.u + Math.cos(sq.a) * sq.sp * dt, nv = sq.v + Math.sin(sq.a) * sq.sp * dt * 1.33;
-          if (land(nu, nv)) { sq.u = nu; sq.v = nv; } else sq.a += 1.2 + R() * 2;
+          if (safe(nu, nv)) { sq.u = nu; sq.v = nv; } else sq.a += 1.2 + R() * 2;
           sq.m.forEach(m => {
             const tu = sq.u + m.ox, tv = sq.v + m.oy, k = Math.min(1, dt * 0.8);
-            m.u += (tu - m.u) * k; m.v += (tv - m.v) * k;
+            const nu2 = m.u + (tu - m.u) * k, nv2 = m.v + (tv - m.v) * k;
+            if (safe(nu2, nv2)) { m.u = nu2; m.v = nv2; } else { m.u += (sq.u - m.u) * k; m.v += (sq.v - m.v) * k; }
             m.el.style.left = (m.u * 100).toFixed(2) + '%'; m.el.style.top = (m.v * 100).toFixed(2) + '%';
           });
         });
