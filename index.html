@@ -18,11 +18,11 @@
 try { if (document.documentElement.className === 'web' && !navigator.standalone && !matchMedia('(display-mode: standalone)').matches && !/^\/play\/?$/.test(location.pathname)) document.documentElement.classList.add('land'); } catch (e) {}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
   html, body { width: 860px; height: 600px; background: transparent; overflow: hidden;
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+    font-family: "IBM Plex Sans", system-ui, "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; }
 
   /* ---------- phone frame ---------- */
   #case { position: absolute; inset: 0; transition: opacity .15s; }
@@ -38,7 +38,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #title { flex: 1; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #bar svg { width: 16px; height: 16px; stroke: #ddd; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .av { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #1c1c1e; margin-left: -8px; display: flex; align-items: center; justify-content: center;
-    font: 700 10px -apple-system, "Segoe UI", sans-serif; color: #fff; }
+    font: 700 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
   #avs { display: flex; padding-left: 8px; }
   .av:nth-child(1) { background: radial-gradient(circle at 40% 40%, #777, #222); }
   .av:nth-child(2) { background: radial-gradient(circle at 40% 40%, #c8b6ff, #5b3fa0); }
@@ -70,6 +70,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #menu { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column;
     gap: 12px; padding: 12px 16px; background: rgba(20,20,22,.94); border-radius: 14px; color: #ddd; font-size: 11px; }
   #menu.open { display: flex; }
+  #menu > * { flex: none; }
+  #credit { display: none !important; }
   #join { display: flex; gap: 6px; align-items: center; }
   #join input { flex: 1; min-width: 0; height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff;
     padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
@@ -79,9 +81,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   #join button.leave { background: #444; }
   #joinErr { color: #f87171; display: none; max-width: 460px; white-space: normal; }
-  #binds { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); gap: 7px 26px; }
+  #binds { display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; gap: 7px 26px; }
   #binds div { display: flex; justify-content: space-between; align-items: center; gap: 16px; white-space: nowrap; }
-  #binds b { font: 600 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
+  #binds b { font: 600 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
   #menu { max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; }
   #legend { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 18px; align-items: center; justify-items: start; border-top: 1px solid #333; padding-top: 10px; }
   #legend .lg { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
@@ -89,7 +91,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #legend .lgfr { grid-column: 1 / -1; display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 4px 6px; align-items: center; justify-items: center; }
   #toolbar button.arm { background: #dc2626; color: #fff; }
 
-  #txt { position: absolute; display: none; font: 700 18px -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
+  #txt { position: absolute; display: none; font: 700 18px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
     border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
   #file { display: none; }
 
@@ -122,7 +124,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.web #stage.hassel #sympanel { bottom: calc(var(--tb, 44px) + 70px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 150px); }
   #sympanel { width: 430px; gap: 8px; font-size: 12px; color: #ddd; }
   #sympanel .sb-head { position: sticky; top: -8px; z-index: 2; background: #141416; display: flex; align-items: center; gap: 10px; padding: 4px 0; }
-  #sympanel .sb-code { font: 600 11px ui-monospace, Menlo, Consolas, monospace; color: #aaa; word-break: break-all; user-select: text; -webkit-user-select: text; }
+  #sympanel .sb-code { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #aaa; word-break: break-all; user-select: text; -webkit-user-select: text; }
   #sympanel .sb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
   #sympanel .sb-f { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   #sympanel .sb-f span { color: #888; font-size: 10px; }
@@ -151,7 +153,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #navbtns { display: flex; gap: 4px; }
   #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
   #navbtns button:hover, #numTog:hover { background: #333; }
-  #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font: 700 12px -apple-system, sans-serif; cursor: pointer; padding: 0; }
+  #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; padding: 0; }
   #numTog.off { color: #777; text-decoration: line-through; }
   @media (pointer: coarse) { #numTog { width: 30px; height: 30px; font-size: 15px; } }
   html.desk #nav { top: 46px; right: 62px; }
@@ -160,7 +162,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.desk #menu { max-width: calc(100% - 110px); }
   html.desk #binds { gap: 5px 18px; font-size: 10px; }
   html.desk #sympanel { max-width: calc(100% - 110px); }
-  #hdg { font: 700 10px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.9); border-radius: 8px; padding: 1px 6px; display: none; }
+  #hdg { font: 700 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.9); border-radius: 8px; padding: 1px 6px; display: none; }
   html.web #nav { top: calc(52px + env(safe-area-inset-top)); right: calc(14px + env(safe-area-inset-right)); }
   @media (pointer: coarse) { #compass { width: 54px; height: 54px; } #navbtns button { width: 30px; height: 30px; font-size: 18px; } }
   #numbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 5px; background: rgba(20,20,22,.94); border-radius: 22px; }
@@ -191,7 +193,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #srcMsg { color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
 
-  #coord { position: absolute; top: 104px; left: 26px; font: 700 11px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.88); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
+  #coord { position: absolute; top: 104px; left: 26px; font: 700 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.88); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
   html.web #coord { top: calc(104px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
   #gridbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 6px; padding: 6px 8px; background: rgba(20,20,22,.95); border-radius: 22px; color: #ddd; font-size: 12px; max-width: calc(100% - 16px); z-index: 3; }
   #gridbar.open { display: flex; }
@@ -213,7 +215,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   @media (pointer: coarse) { #gridsec input[type=text], #gridsec button { height: 36px; font-size: 16px; } }
 
   #navbtns2 { display: flex; gap: 4px; }
-  #numTog, #wpBtn, #tmBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px -apple-system, sans-serif; }
+  #numTog, #wpBtn, #tmBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
   #wpBtn svg, #tmBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #wpBtn:hover, #tmBtn:hover { background: #333; }
   #wpBtn.on, #tmBtn.on { background: #3b82f6; color: #fff; }
@@ -221,7 +223,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #tchips { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 1; }
   html.web #tchips { top: calc(52px + env(safe-area-inset-top)); }
   html.desk #tchips { left: 47%; }
-  .tchip { font: 700 11px ui-monospace, Menlo, Consolas, monospace; color: #fff; background: rgba(20,20,22,.9); padding: 2px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+  .tchip { font: 700 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.9); padding: 2px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
   .tchip.done { background: #d93025; animation: tpulse 1s infinite; }
   @keyframes tpulse { 50% { opacity: .55; } }
   #side { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px; padding: 8px; width: 420px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; background: rgba(20,20,22,.95); border-radius: 14px; color: #ddd; font-size: 12px; z-index: 3; }
@@ -244,8 +246,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   .srowi { display: flex; align-items: center; gap: 6px; background: #1a1a1c; border-radius: 8px; padding: 4px 6px; }
   .srowi .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .srowi input[type=text] { flex: 1; background: transparent; padding: 0 4px; }
-  .srowi .gc { font: 600 11px ui-monospace, Menlo, Consolas, monospace; color: #aaa; white-space: nowrap; }
-  .srowi .tt { font: 700 16px ui-monospace, Menlo, Consolas, monospace; color: #fff; min-width: 64px; text-align: center; }
+  .srowi .gc { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #aaa; white-space: nowrap; }
+  .srowi .tt { font: 700 16px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; min-width: 64px; text-align: center; }
   .srowi.done .tt { color: #f87171; }
   .mbtn { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #side input[type=text], #side input[type=number], #side button.sb, #sideTabs button { height: 40px; font-size: 16px; } .mbtn { height: 36px; font-size: 14px; } }
@@ -368,7 +370,6 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
           <div id="joinErr"></div>
           <div id="settings"></div>
           <div id="gridsec"></div>
-          <div id="source"></div>
           <div id="binds"></div>
           <div id="legend"></div>
         </div>
@@ -490,9 +491,9 @@ const symR = () => symS() * 0.6;
 const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num' || it.type === 'wp';
 function badgeFont(c, d, n) {
   let fs = d * 0.62;
-  c.font = `800 ${fs}px -apple-system, "Segoe UI", sans-serif`;
+  c.font = `800 ${fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
   const w = c.measureText(n).width;
-  if (w > d * 0.8) { fs *= d * 0.8 / w; c.font = `800 ${fs}px -apple-system, "Segoe UI", sans-serif`; }
+  if (w > d * 0.8) { fs *= d * 0.8 / w; c.font = `800 ${fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; }
   return fs;
 }
 const inkFor = col => { const h = (col || '#fff').replace('#', ''); const f = h.length === 3 ? h.split('').map(x => x + x).join('') : h;
@@ -740,6 +741,7 @@ const BINDS = IS_ELECTRON ? [
   ['Pan map', 'Right / middle drag'],
   ['Confirm / cancel text', 'Enter / Esc'],
 ];
+$('binds').style.gridTemplateRows = 'repeat(' + Math.ceil(BINDS.length / 2) + ', auto)';
 BINDS.forEach(([a, k]) => {
   const r = document.createElement('div');
   r.innerHTML = `<span>${a}</span><b>${k}</b>`;
@@ -785,7 +787,7 @@ function fit() {
 }
 
 function drawItem(it) {
-  ctx.lineCap = ctx.lineJoin = 'round';
+  ctx.lineCap = 'butt'; ctx.lineJoin = it.type === 'pen' ? 'bevel' : 'miter'; ctx.miterLimit = 4;
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
   if (it.type === 'sym') { ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r); drawSym(ctx, it, 0, 0, symS()); ctx.restore(); return; }
@@ -794,10 +796,10 @@ function drawItem(it) {
     const d = badgeD(), r = d * 0.42, cy = -1.9 * r;
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     const shape = () => { ctx.beginPath(); ctx.arc(0, cy, r, 0, TAU); ctx.moveTo(-r * 0.8, cy + r * 0.6); ctx.lineTo(0, 0); ctx.lineTo(r * 0.8, cy + r * 0.6); ctx.closePath(); };
-    shape(); ctx.lineWidth = d * 0.16; ctx.strokeStyle = '#000'; ctx.lineJoin = 'round'; ctx.stroke();
+    shape(); ctx.lineWidth = d * 0.16; ctx.strokeStyle = '#000'; ctx.lineJoin = 'miter'; ctx.stroke();
     shape(); ctx.fillStyle = it.color; ctx.fill();
     ctx.beginPath(); ctx.arc(0, cy, r * 0.38, 0, TAU); ctx.fillStyle = inkFor(it.color); ctx.fill();
-    ctx.font = `800 ${d * 0.7}px -apple-system, "Segoe UI", sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.font = `800 ${d * 0.7}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.lineWidth = d * 0.18; ctx.strokeStyle = '#000'; ctx.strokeText(it.n, r + d * 0.18, cy);
     ctx.fillStyle = '#fff'; ctx.fillText(it.n, r + d * 0.18, cy);
     ctx.restore(); return;
@@ -816,8 +818,7 @@ function drawItem(it) {
   if (it.type === 'pen') {
     ctx.beginPath();
     it.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
-    if (it.pts.length === 1) ctx.lineTo(it.pts[0][0] + 0.01, it.pts[0][1]);
-    ctx.stroke();
+    if (it.pts.length === 1) { const q = it.pts[0], h = (it.w || 1) / 2; ctx.fillRect(q[0] - h, q[1] - h, h * 2, h * 2); } else ctx.stroke();
   } else if (it.type === 'line') {
     ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.stroke();
   } else if (it.type === 'arrow') {
@@ -834,7 +835,7 @@ function drawItem(it) {
       Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
   } else if (it.type === 'text') {
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
-    ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+    ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
     ctx.textBaseline = 'top'; ctx.textAlign = 'left';
     ctx.strokeStyle = '#000'; ctx.lineWidth = it.fs / 6;
     ctx.strokeText(it.t, 0, 0);
@@ -924,7 +925,7 @@ function hit(it, p, tol) {
     const k = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
     return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
   }
-  ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+  ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
   const tw = ctx.measureText(it.t).width, dx = p[0] - it.x, dy = p[1] - it.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
   const lx = co * dx - si_ * dy, ly = si_ * dx + co * dy;
   return lx > -tol && lx < tw + tol && ly > -tol && ly < it.fs + tol;
@@ -1073,7 +1074,7 @@ function bbox(it) {
   if (it.type === 'sym') { const z = symS(); return [it.x - z * .55, it.y - z * .6, it.x + z * .55, it.y + z * .5]; }
   if (it.type === 'num') { const h = badgeD() / 2; return [it.x - h, it.y - h, it.x + h, it.y + h]; }
   if (it.type === 'wp') { const r = badgeD() * 0.42; return [it.x - r, it.y - 2.9 * r, it.x + r, it.y]; }
-  ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`;
+  ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
   return [it.x, it.y, it.x + ctx.measureText(it.t).width, it.y + it.fs];
 }
 function moveFrom(it, b, dx, dy) {
@@ -1084,7 +1085,7 @@ function moveFrom(it, b, dx, dy) {
 function gdim(it) {
   if (it.type === 'sym') return symS();
   if (it.type === 'num' || it.type === 'wp') return badgeD();
-  if (it.type === 'text') { ctx.font = `700 ${it.fs}px -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
+  if (it.type === 'text') { ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
   if (it.type === 'pen') {
     let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
     it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
@@ -1337,6 +1338,7 @@ function paintCredit() {
 }
 function setCredit(c, persist) {
   credit = cleanCredit(c); paintCredit();
+if (document.fonts) Promise.all([500, 600, 700].map(w => document.fonts.load(w + ' 16px "IBM Plex Sans"'))).then(() => { try { draw(); } catch (e) {} }).catch(() => {});
   if (persist && !room) { try { credit ? localStorage.setItem('atak-credit', JSON.stringify(credit)) : localStorage.removeItem('atak-credit'); } catch (e) {} }
 }
 function openLink(u) { if (!u) return; if (IS_ELECTRON) { try { require('electron').shell.openExternal(u); } catch (e) {} } else window.open(u, '_blank', 'noopener'); }
@@ -1392,20 +1394,6 @@ async function saveCredit() {
   if (room) { const r = await db().from('rooms').update({ credit: cr ? JSON.stringify(cr) : null }).eq('code', room); if (r.error) srcMsg('Credit is saved for you only. To share it, add the credit column in Supabase (see SQL).'); else srcMsg(''); }
   else srcMsg('');
 }
-(function buildSource() {
-  const box = $('source');
-  const mk1 = (id, ph) => { const i = document.createElement('input'); i.id = id; i.placeholder = ph; i.autocomplete = 'off'; i.spellcheck = false; i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') i.blur(); }); return i; };
-  const h = document.createElement('div'); h.className = 'sh'; h.textContent = 'Map from link and credit';
-  const u = mk1('srcUrl', 'Image link (https://...)');
-  u.addEventListener('change', () => { const g = guessCredit(u.value.trim()); if (g && !$('srcCredit').value) { $('srcCredit').value = g.t; $('srcLink').value = g.u; } });
-  const c = mk1('srcCredit', 'Credit (shown on the map)'), l = mk1('srcLink', 'Credit link (optional)');
-  const row = document.createElement('div'); row.className = 'srow';
-  const b1 = document.createElement('button'); b1.textContent = 'Load from link'; b1.onclick = importUrl;
-  const b2 = document.createElement('button'); b2.className = 'alt'; b2.textContent = 'Save credit'; b2.onclick = saveCredit;
-  row.append(b1, b2);
-  const m = document.createElement('div'); m.id = 'srcMsg';
-  box.append(h, u, c, l, row, m);
-})();
 paintCredit();
 
 
@@ -1460,7 +1448,7 @@ function drawGrid(box, ins) {
   const P = (x, y) => [v.x + v.s * (co * x - si_ * y), v.y + v.s * (si_ * x + co * y)];
   const full = [0, 0, cw, ch], inset = ins || [6, 58, cw - 6, ch - 64];
   ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.font = '700 10px ui-monospace, Menlo, Consolas, monospace'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  ctx.font = '700 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   const axis = vertical => {
     const i = vertical ? 0 : 1;
     const a = toGrid([0, 0])[i], b = toGrid([W, H])[i];
@@ -1778,7 +1766,7 @@ async function exportImage() {
     items.forEach(drawItem);
     if (credit) {
       const fs = Math.max(12, Math.round(Math.max(W, H) / 90));
-      ctx.font = `600 ${fs}px -apple-system, "Segoe UI", sans-serif`; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+      ctx.font = `600 ${fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
       ctx.lineWidth = fs / 4; ctx.strokeStyle = 'rgba(0,0,0,.85)'; ctx.fillStyle = '#fff';
       ctx.strokeText('© ' + credit.t, fs * 0.6, H - fs * 0.5); ctx.fillText('© ' + credit.t, fs * 0.6, H - fs * 0.5);
     }
