@@ -207,7 +207,7 @@
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selNum" type="number" min="1" step="1" inputmode="numeric" title="Size"></div>
+        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="joinErr"></div>
@@ -255,7 +255,8 @@ let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 /* view settings (per viewer, not synced): size of every symbol / number badge, in map units */
 const setg = { sym: 56, badge: 16, hideNums: false };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; } catch (e) {}
-const SET_RANGE = { sym: [4, 300], badge: [3, 120] };
+const SET_RANGE = { sym: [1, 300], badge: [0.5, 120] };
+const r1 = n => Math.round(n * 10) / 10;
 let nextNum = 1, numPre = '';
 const TAU = Math.PI * 2;
 const normA = a => { a = ((a % TAU) + TAU) % TAU; return a > Math.PI ? a - TAU : a; };
@@ -929,7 +930,7 @@ function paintSelNum() {
   if (!sel || document.activeElement === selNum) return;
   const g = gdim(sel);
   selNum.disabled = !(g > 0);
-  selNum.value = g > 0 ? Math.max(1, Math.round(g / unit())) : '';
+  selNum.value = g > 0 ? (sel.type === 'sym' || sel.type === 'num' ? Math.max(0.1, r1(g / unit())) : Math.max(1, Math.round(g / unit()))) : '';
 }
 function applySelNum() {
   if (!sel) return;
@@ -987,8 +988,8 @@ function buildSettings() {
   const h = document.createElement('div'); h.className = 's h'; h.className = 'sh'; h.textContent = 'Settings (this device only)'; box.appendChild(h);
   const row = (label, key) => {
     const l = document.createElement('span'); l.textContent = label;
-    const rg = document.createElement('input'); rg.type = 'range'; rg.min = SET_RANGE[key][0]; rg.max = SET_RANGE[key][1]; rg.step = 1;
-    const nm = document.createElement('input'); nm.type = 'number'; nm.min = SET_RANGE[key][0]; nm.max = SET_RANGE[key][1];
+    const rg = document.createElement('input'); rg.type = 'range'; rg.min = SET_RANGE[key][0]; rg.max = SET_RANGE[key][1]; rg.step = 0.5;
+    const nm = document.createElement('input'); nm.type = 'number'; nm.step = 'any'; nm.min = SET_RANGE[key][0]; nm.max = SET_RANGE[key][1];
     rg.oninput = () => setSetting(key, parseFloat(rg.value));
     nm.onchange = () => setSetting(key, parseFloat(nm.value));
     nm.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') nm.blur(); };
@@ -1007,7 +1008,7 @@ function buildSettings() {
   paintSettings();
 }
 function paintSettings() {
-  for (const k in SETROWS) { SETROWS[k][0].value = Math.round(setg[k]); if (document.activeElement !== SETROWS[k][1]) SETROWS[k][1].value = Math.round(setg[k]); }
+  for (const k in SETROWS) { SETROWS[k][0].value = setg[k]; if (document.activeElement !== SETROWS[k][1]) SETROWS[k][1].value = r1(setg[k]); }
   const rg = $('rotRg'); if (rg) rg.value = Math.round(v.r * 180 / Math.PI);
 }
 const _paintNav = paintNav;
