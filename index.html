@@ -273,6 +273,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .avatar { display: block; width: 140px; height: 140px; margin: 0; border-radius: 50%; object-fit: cover; background: #fff; border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 32px rgba(0,0,0,.5); animation: lrise .8s ease-out .1s both; }
   #landing .hero h1 { text-shadow: 0 2px 24px rgba(0,0,0,.5); margin: 0 0 40px; font-weight: 600; font-size: clamp(44px, 9vw, 112px); line-height: .98; letter-spacing: -.035em; color: #fff; max-width: 9ch; animation: lrise .8s ease-out .3s both; }
   #landing .enter { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 4px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background .15s, color .15s, border-color .15s; animation: lrise .8s ease-out .5s both; }
+  #landing a.enter { text-decoration: none; }
   #landing .enter:hover { background: #fff; color: #0b0d10; border-color: #fff; }
   #landing .enter svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
   @keyframes lrise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
@@ -366,6 +367,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     <h1>Banana's <span style="white-space:nowrap">RO-TAK</span></h1>
     <div class="enter-row">
       <button id="lenter" class="enter" type="button">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <a class="enter" id="lgh" href="https://github.com/rice-evans/RO-TAK" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
       <span class="updated">Updated on 30th October 2026</span>
     </div>
   </main>
@@ -1782,7 +1784,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg
       if (e.key === 'Escape') closeLb(); else if (e.key === 'ArrowLeft') showLb(lbI - 1); else if (e.key === 'ArrowRight') showLb(lbI + 1); else if (e.key !== 'Tab') return;
       e.preventDefault(); return;
     }
-    if (e.key === 'Enter' && document.documentElement.classList.contains('land') && !e.target.closest('button')) { e.preventDefault(); enter(); } }
+    if (e.key === 'Enter' && document.documentElement.classList.contains('land') && !e.target.closest('button, a')) { e.preventDefault(); enter(); } }
   addEventListener('keydown', onKey, true);
   $('lenter').onclick = enter;
 })();
