@@ -254,7 +254,7 @@ const $ = id => document.getElementById(id);
 const c = $('c'), ctx = c.getContext('2d');
 
 const COLORS = ['#ff7a1a', '#ef4444', '#facc15', '#22c55e', '#22d3ee', '#3b82f6', '#ffffff', '#111111'];
-const SIZES = [2, 4, 8];
+const SIZES = [0.3, 0.6, 1.2];
 const ICONS = {
   open: 'M5 12h14M12 5v14',
   pan: 'M12 2v20M2 12h20M15 19l-3 3-3-3M9 5l3-3 3 3M19 9l3 3-3 3M5 9l-3 3 3 3',
@@ -677,11 +677,12 @@ function drawItem(it) {
   } else if (it.type === 'arrow') {
     const [ax, ay] = it.a, [bx, by] = it.b, ln = Math.hypot(bx - ax, by - ay);
     ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-    const an = Math.atan2(by - ay, bx - ax), hl = Math.min(Math.max(it.w * 5, 6), ln * 0.6), sp2 = 0.45;
-    ctx.beginPath(); ctx.moveTo(bx, by);
-    ctx.lineTo(bx - hl * Math.cos(an - sp2), by - hl * Math.sin(an - sp2));
+    const an = Math.atan2(by - ay, bx - ax), hl = Math.min(Math.max(it.w * 7, unit() * 1.6), ln * 0.6), sp2 = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(bx - hl * Math.cos(an - sp2), by - hl * Math.sin(an - sp2));
+    ctx.lineTo(bx, by);
     ctx.lineTo(bx - hl * Math.cos(an + sp2), by - hl * Math.sin(an + sp2));
-    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.stroke();
   } else if (it.type === 'box') {
     ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
       Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
@@ -800,7 +801,7 @@ function startPinch() { pinch = { ...pinchNow(), v: { ...v }, rot: false, off: 0
 function updatePinch() {
   if (ptrs.size < 2) return;
   const n = pinchNow();
-  const s = Math.min(20, Math.max(0.02, pinch.v.s * n.d / pinch.d));
+  const s = Math.min(150, Math.max(0.02, pinch.v.s * n.d / pinch.d));
   const da = normA(n.ang - pinch.ang);
   if (!pinch.rot && Math.abs(da) > 0.2) { pinch.rot = true; pinch.off = da; }   /* ignore small twists while zooming */
   let r = pinch.v.r || 0;
@@ -897,7 +898,7 @@ c.addEventListener('wheel', e => {
   const r = c.getBoundingClientRect();
   const px = e.clientX - r.left, py = e.clientY - r.top;
   if (e.altKey) { setRot(v.r + (e.deltaY < 0 ? 1 : -1) * Math.PI / 36, px, py); return; }
-  const ns = Math.min(20, Math.max(0.02, v.s * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+  const ns = Math.min(150, Math.max(0.02, v.s * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
   v.x = px - (px - v.x) * (ns / v.s);
   v.y = py - (py - v.y) * (ns / v.s);
   v.s = ns;
@@ -1300,7 +1301,7 @@ function drawGrid() {
   if (!grid || !img || !setg.showGrid) return;
   const m = gk(), W = img.width, H = img.height, cw = c.width / dpr, ch = c.height / dpr;
   const px = Math.min(Math.abs(v.s / m.kx), Math.abs(v.s / m.ky));
-  const step = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000].find(x => x * px >= 70) || 10000;
+  const step = [1, 10, 100, 1000, 10000].find(x => x * px >= 30) || 10000;
   const co = Math.cos(v.r), si_ = Math.sin(v.r);
   const P = (x, y) => [v.x + v.s * (co * x - si_ * y), v.y + v.s * (si_ * x + co * y)];
   const full = [0, 0, cw, ch], inset = [6, 58, cw - 6, ch - 64];
