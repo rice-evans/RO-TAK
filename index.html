@@ -73,6 +73,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   input[type=number] { -moz-appearance: textfield; appearance: textfield; text-align: center; }
   input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; display: none; }
   #menu > * { flex: none; }
+  .mbtn.alt { background: #444; }
+  .lgrow { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   #credit { display: none !important; }
   #join { display: flex; gap: 6px; align-items: center; }
   #join input { flex: 1; min-width: 0; height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff;
@@ -326,18 +328,21 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .legal { position: absolute; left: clamp(24px, 8vw, 128px); bottom: 22px; z-index: 3; display: flex; flex-wrap: wrap; gap: 6px 22px; }
   #landing .legal button { padding: 4px 0; border: 0; background: none; color: rgba(255,255,255,.6); font: 400 13px "IBM Plex Sans", system-ui, sans-serif; text-shadow: 0 1px 10px rgba(0,0,0,.9); cursor: pointer; }
   #landing .legal button:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-  #landing .lg { position: absolute; inset: 0; z-index: 25; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(6,6,6,.88); animation: lblin .2s ease; }
-  #landing .lg[hidden] { display: none; }
-  #landing .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0e0f11; color: #e6e6e6; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
-  #landing .lg-panel .chat-x { color: #aaa; }
-  #landing .lg-panel .chat-x:hover { background: #222; color: #fff; }
-  #landing .lg-panel h2 { margin: 0 32px 6px 0; font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #fff; }
-  #landing .lg-panel h3 { margin: 26px 0 8px; font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-  #landing .lg-panel p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; }
-  #landing .lg-panel p.up { font-size: 13px; color: rgba(255,255,255,.5); }
-  #landing .lg-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 15px; line-height: 1.6; }
-  #landing .lg-panel li { margin-bottom: 6px; }
-  @media (max-width: 700px) { #landing .lg-panel { padding: 24px 20px 28px; } #landing .legal { left: 24px; } }
+  #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(6,6,6,.88); animation: lblin .2s ease; }
+  #llg[hidden] { display: none; }
+  #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0e0f11; color: #e6e6e6; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
+  #llg .lg-x { color: #aaa; }
+  #llg .lg-x:hover { background: #222; color: #fff; }
+  #llg .lg-panel h2 { margin: 0 32px 6px 0; font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #fff; }
+  #llg .lg-panel h3 { margin: 26px 0 8px; font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+  #llg .lg-panel p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; }
+  #llg .lg-panel p.up { font-size: 13px; color: rgba(255,255,255,.5); }
+  #llg .lg-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 15px; line-height: 1.6; }
+  #llg .lg-panel li { margin-bottom: 6px; }
+  #llg .lg-x { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; padding: 0; }
+  #llg .lg-x svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  #llg .lg-panel * { user-select: text; -webkit-user-select: text; }
+  @media (max-width: 700px) { #llg .lg-panel { padding: 24px 20px 28px; } #landing .legal { left: 24px; } }
   @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
 </style>
 </head>
@@ -365,19 +370,19 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     </div>
   </main>
   <nav class="legal"><button type="button" data-lg="privacy">Privacy policy</button><button type="button" data-lg="terms">Terms of service</button></nav>
-  <div id="llg" class="lg" hidden>
-    <div class="lg-panel" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
-      <button id="lgX" class="chat-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-      <h2 id="lgTitle"></h2>
-      <div id="lgBody"></div>
-    </div>
-  </div>
   <div id="llb" class="lb" hidden>
     <button id="llbX" class="lb-btn lb-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     <button id="llbPrev" class="lb-btn lb-prev" type="button" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
     <img id="llbImg" alt="">
     <div id="llbBy" class="lb-by"></div>
     <button id="llbNext" class="lb-btn lb-next" type="button" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+<div id="llg" class="lg" hidden>
+  <div class="lg-panel" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
+    <button id="lgX" class="lg-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2 id="lgTitle"></h2>
+    <div id="lgBody"></div>
   </div>
 </div>
 <div id="case">
@@ -1603,6 +1608,67 @@ function goGrid(mark) {
 
 
 
+/* ---------- legal ---------- */
+const LEGAL = {
+  privacy: ['Privacy policy', [
+    ['p up', 'Last updated 30 October 2026.'],
+    ['h', 'What I collect'],
+    ['p', "Browsing the site collects nothing from you, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the name you pick, the map you upload and everything drawn on it."],
+    ['h', 'Rooms'],
+    ['p', "Anyone with a room code can join, see the map and marks, and edit them. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't upload anything private."],
+    ['h', 'Deletion'],
+    ['p', 'A room is deleted automatically, along with its marks and map file, once nobody has been connected to it for 2 hours. I can also delete one sooner on request.'],
+    ['h', 'Without a room'],
+    ['p', "If you don't join a room, your map and marks stay in your browser and are never sent to me."],
+    ['h', 'Analytics'],
+    ['p', "I don't use analytics."],
+    ['h', 'Saved on your device'],
+    ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your last room and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
+    ['h', 'Other services'],
+    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
+    ['h', 'Contact'],
+    ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
+  ]],
+  terms: ['Terms of service', [
+    ['p up', 'Last updated 30 October 2026.'],
+    ['h', 'Games only'],
+    ['p', 'RO-TAK is a map and marking tool for entertainment and roleplay in games. It is not military, navigation, safety or emergency guidance, and it is not for real operations.'],
+    ['h', 'No guarantee'],
+    ['p', 'It is provided as is. It may be wrong, break, lose your marks or go offline without notice. Use it at your own risk. I am not liable for anything that comes from using it.'],
+    ['h', 'Use of the site'],
+    ['p', "You're free to use it. Don't try to break it, overload it or abuse rooms with scripts or spam."],
+    ['h', 'Maps and uploads'],
+    ['p', "You keep ownership of what you upload. Only upload maps and images you're allowed to use. Everyone in your room can see them. I can remove any room or file at any time."],
+    ['h', 'Room deletion'],
+    ['p', 'Rooms are deleted automatically after 2 hours with nobody connected. Everything in them is lost.'],
+    ['h', 'Ownership'],
+    ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them.'],
+    ['h', 'Downloads'],
+    ['p', 'The project is open source. The desktop app is unsigned, so your system will warn you when you open it. Before running anything you download from the internet, read the code to check it is safe.'],
+    ['h', 'Changes'],
+    ['p', 'I may change or remove content, or these terms, at any time. The date at the top shows when they last changed.'],
+    ['h', 'Contact'],
+    ['p', 'Message rice.e on Discord.'],
+  ]],
+};
+const lg = $('llg'), lgOpen = () => !lg.hidden;
+function showLg(k) {
+  const [title, blocks] = LEGAL[k], body = $('lgBody'); body.textContent = '';
+  $('lgTitle').textContent = title;
+  blocks.forEach(([t, v]) => {
+    let e;
+    if (t === 'h') { e = document.createElement('h3'); e.textContent = v; }
+    else if (t === 'ul') { e = document.createElement('ul'); v.forEach(x => { const li = document.createElement('li'); li.textContent = x; e.appendChild(li); }); }
+    else { e = document.createElement('p'); if (t === 'p up') e.className = 'up'; e.textContent = v; }
+    body.appendChild(e);
+  });
+  lg.hidden = false; lg.querySelector('.lg-panel').scrollTop = 0;
+}
+const closeLg = () => { lg.hidden = true; };
+$('lgX').onclick = closeLg;
+lg.onclick = e => { if (e.target === lg) closeLg(); };
+addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg(); e.preventDefault(); e.stopPropagation(); } }, true);
+
 /* ---------- landing ---------- */
 (function () {
   const L = $('landing');
@@ -1674,65 +1740,7 @@ function goGrid(mark) {
     }
     if (img.complete && img.naturalWidth) start(); else img.addEventListener('load', start, { once: true });
   })();
-  const LEGAL = {
-    privacy: ['Privacy policy', [
-      ['p up', 'Last updated 30 October 2026.'],
-      ['h', 'What I collect'],
-      ['p', "Browsing the site collects nothing from you, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the name you pick, the map you upload and everything drawn on it."],
-      ['h', 'Rooms'],
-      ['p', "Anyone with a room code can join, see the map and marks, and edit them. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't upload anything private."],
-      ['h', 'Deletion'],
-      ['p', 'A room is deleted automatically, along with its marks and map file, once nobody has been connected to it for 2 hours. I can also delete one sooner on request.'],
-      ['h', 'Without a room'],
-      ['p', "If you don't join a room, your map and marks stay in your browser and are never sent to me."],
-      ['h', 'Analytics'],
-      ['p', "I don't use analytics."],
-      ['h', 'Saved on your device'],
-      ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your last room and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
-      ['h', 'Other services'],
-      ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
-      ['h', 'Contact'],
-      ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
-    ]],
-    terms: ['Terms of service', [
-      ['p up', 'Last updated 30 October 2026.'],
-      ['h', 'Games only'],
-      ['p', 'RO-TAK is a map and marking tool for entertainment and roleplay in games. It is not military, navigation, safety or emergency guidance, and it is not for real operations.'],
-      ['h', 'No guarantee'],
-      ['p', 'It is provided as is. It may be wrong, break, lose your marks or go offline without notice. Use it at your own risk. I am not liable for anything that comes from using it.'],
-      ['h', 'Use of the site'],
-      ['p', "You're free to use it. Don't try to break it, overload it or abuse rooms with scripts or spam."],
-      ['h', 'Maps and uploads'],
-      ['p', "You keep ownership of what you upload. Only upload maps and images you're allowed to use. Everyone in your room can see them. I can remove any room or file at any time."],
-      ['h', 'Room deletion'],
-      ['p', 'Rooms are deleted automatically after 2 hours with nobody connected. Everything in them is lost.'],
-      ['h', 'Ownership'],
-      ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them.'],
-      ['h', 'Downloads'],
-      ['p', 'The project is open source. The desktop app is unsigned, so your system will warn you when you open it. Before running anything you download from the internet, read the code to check it is safe.'],
-      ['h', 'Changes'],
-      ['p', 'I may change or remove content, or these terms, at any time. The date at the top shows when they last changed.'],
-      ['h', 'Contact'],
-      ['p', 'Message rice.e on Discord.'],
-    ]],
-  };
-  const lg = $('llg'), lgOpen = () => !lg.hidden;
-  function showLg(k) {
-    const [title, blocks] = LEGAL[k], body = $('lgBody'); body.textContent = '';
-    $('lgTitle').textContent = title;
-    blocks.forEach(([t, v]) => {
-      let e;
-      if (t === 'h') { e = document.createElement('h3'); e.textContent = v; }
-      else if (t === 'ul') { e = document.createElement('ul'); v.forEach(x => { const li = document.createElement('li'); li.textContent = x; e.appendChild(li); }); }
-      else { e = document.createElement('p'); if (t === 'p up') e.className = 'up'; e.textContent = v; }
-      body.appendChild(e);
-    });
-    lg.hidden = false; lg.querySelector('.lg-panel').scrollTop = 0;
-  }
-  const closeLg = () => { lg.hidden = true; };
   L.querySelectorAll('.legal button').forEach(b => { b.onclick = () => showLg(b.dataset.lg); });
-  $('lgX').onclick = closeLg;
-  lg.onclick = e => { if (e.target === lg) closeLg(); };
   const lb = $('llb'); let lbI = 0;
   const lbOpen = () => !lb.hidden;
   function showLb(i) {
@@ -1939,6 +1947,9 @@ async function exportImage() {
     const h = document.createElement('button'); h.className = 'mbtn'; h.textContent = 'Home';
     h.onclick = () => { location.href = '/'; };
     b.before(h);
+    const row = document.createElement('div'); row.className = 'lgrow';
+    [['Privacy policy', 'privacy'], ['Terms of service', 'terms']].forEach(([t, k]) => { const x = document.createElement('button'); x.className = 'mbtn alt'; x.textContent = t; x.onclick = () => { $('menu').classList.remove('open'); showLg(k); }; row.appendChild(x); });
+    $('gridsec').before(row);
   }
 })();
 
