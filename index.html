@@ -15,7 +15,7 @@
 <script src="milsymbol.js"></script>
 <script src="symdata.js"></script>
 <script>document.documentElement.className = typeof window.require === 'function' ? 'desk' : 'web';
-try { if (document.documentElement.className === 'web' && !navigator.standalone && !matchMedia('(display-mode: standalone)').matches && !sessionStorage.getItem('ro-landed')) document.documentElement.classList.add('land'); } catch (e) {}</script>
+try { if (document.documentElement.className === 'web' && !navigator.standalone && !matchMedia('(display-mode: standalone)').matches && !/^\/play\/?$/.test(location.pathname)) document.documentElement.classList.add('land'); } catch (e) {}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1575,7 +1575,7 @@ function goGrid(mark) {
   $('lchatX').onclick = () => { stopChat(); $('lchat').hidden = true; };
   function enter() {
     stopChat();
-    try { sessionStorage.setItem('ro-landed', '1'); } catch (e) {}
+    try { history.pushState(null, '', '/play'); } catch (e) {}
     L.classList.add('out');
     setTimeout(() => { document.documentElement.classList.remove('land'); L.classList.remove('out'); L.remove(); }, 400);
     removeEventListener('keydown', onKey, true);
@@ -1741,7 +1741,14 @@ async function exportImage() {
   const b = document.createElement('button'); b.className = 'mbtn'; b.id = 'exportBtn'; b.textContent = 'Save map as image';
   b.onclick = () => { $('menu').classList.remove('open'); exportImage(); };
   $('gridsec').before(b);
+  if (!IS_ELECTRON) {
+    const h = document.createElement('button'); h.className = 'mbtn'; h.textContent = 'Home';
+    h.onclick = () => { location.href = '/'; };
+    b.before(h);
+  }
 })();
+
+addEventListener('popstate', () => { if (!IS_ELECTRON && !/^\/play\/?$/.test(location.pathname)) location.reload(); });
 
 /* ---------- rooms ---------- */
 const SUPABASE_URL = 'https://cnzkjmukhkeexpdcoxak.supabase.co';
