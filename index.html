@@ -1681,6 +1681,8 @@ function goGrid(mark) {
       ['p', "Browsing the site collects nothing from you, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the name you pick, the map you upload and everything drawn on it."],
       ['h', 'Rooms'],
       ['p', "Anyone with a room code can join, see the map and marks, and edit them. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't upload anything private."],
+      ['h', 'Deletion'],
+      ['p', 'A room is deleted automatically, along with its marks and map file, once nobody has been connected to it for 2 hours. I can also delete one sooner on request.'],
       ['h', 'Without a room'],
       ['p', "If you don't join a room, your map and marks stay in your browser and are never sent to me."],
       ['h', 'Analytics'],
@@ -1702,6 +1704,8 @@ function goGrid(mark) {
       ['p', "You're free to use it. Don't try to break it, overload it or abuse rooms with scripts or spam."],
       ['h', 'Maps and uploads'],
       ['p', "You keep ownership of what you upload. Only upload maps and images you're allowed to use. Everyone in your room can see them. I can remove any room or file at any time."],
+      ['h', 'Room deletion'],
+      ['p', 'Rooms are deleted automatically after 2 hours with nobody connected. Everything in them is lost.'],
       ['h', 'Ownership'],
       ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them.'],
       ['h', 'Downloads'],
@@ -2154,7 +2158,10 @@ function setJoinedUI(on) {
   $('roomIn').readOnly = on;
   $('nameIn').readOnly = on;
 }
+let hbTimer = null;
+function touchRoom() { if (room) db().from('rooms').update({ last_active: new Date().toISOString() }).eq('code', room).then(() => {}, () => {}); }
 function teardown() {
+  clearInterval(hbTimer); hbTimer = null;
   if (channel) { try { db().removeChannel(channel); } catch (e) {} channel = null; }
 }
 
@@ -2175,6 +2182,7 @@ async function joinRoom(code, nick) {
     const up = await db().from('rooms').upsert({ code }, { onConflict: 'code', ignoreDuplicates: true });
     if (up.error) throw up.error;
     if (room !== code) return;
+    touchRoom(); hbTimer = setInterval(touchRoom, 300000);
     channel = db().channel('atak:' + code, { config: { presence: { key: clientId } } });
     channel
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'marks', filter: 'room=eq.' + code }, p => onInsert(p.new))
