@@ -1329,7 +1329,7 @@ addEventListener('keydown', e => {
 });
 
 /* ---------- map loading ---------- */
-function setTitle() { $('title').textContent = room ? room.toUpperCase() : name; }
+function setTitle() { $('title').textContent = room ? room.replace(/-/g, ' ').toUpperCase() : name; }
 function setImg(src, opt = {}) {
   const i = new Image();
   i.onload = () => {
@@ -2235,17 +2235,18 @@ function teardown() {
 }
 
 async function joinRoom(code, nick) {
-  code = String(code || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24);
+  const rawCode = String(code || '');
+  code = rawCode.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 24).replace(/-$/, '');
   nick = String(nick || '').slice(0, 16) || 'Player' + Math.floor(100 + Math.random() * 900);
   if (!code) return showErr('Enter a room code');
-  if (isBad(code) || isBad(nick)) return showErr('That name or room code is not allowed');
+  if (isBad(rawCode) || isBad(code) || isBad(nick)) return showErr('That name or room code is not allowed');
   await libReady;
   if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
   teardown();
   room = code; curPath = null; roomHasMap = false; setCredit(null); loadGridLocal();
   items = []; hist = []; img = null; v = { x: 0, y: 0, s: 1, r: 0 };
-  $('roomIn').value = code; $('nameIn').value = nick;
+  $('roomIn').value = code.replace(/-/g, ' '); $('nameIn').value = nick;
   setJoinedUI(true); showErr(''); setTitle(); draw();
   try { localStorage.setItem('atak-room', JSON.stringify({ code, name: nick })); localStorage.setItem('atak-name', nick); } catch (e) {}
   try {
