@@ -70,6 +70,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #menu { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column;
     gap: 12px; padding: 12px 16px; background: rgba(20,20,22,.94); border-radius: 14px; color: #ddd; font-size: 11px; }
   #menu.open { display: flex; }
+  #toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 1200; max-width: calc(100vw - 32px); padding: 8px 14px; border-radius: 8px; background: rgba(20,20,22,.96); color: #fff; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s; text-align: center; }
   input[type=number] { -moz-appearance: textfield; appearance: textfield; text-align: center; }
   input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; display: none; }
   #menu > * { flex: none; }
@@ -602,7 +603,7 @@ let sbEdit = null, sbBefore = null, sbBuilt = false, sbUpdT = 0;
 const sbSidc = () => sidc20(SB.si, SB.set, SB);
 function sbItem() {
   const o = {};
-  Object.keys(SB.o).forEach(k => { if (SB.o[k] !== '' && SB.o[k] !== undefined) o[k] = SB.o[k]; });
+  Object.keys(SB.o).forEach(k => { if (SB.o[k] !== '' && SB.o[k] !== undefined) { if (isBad(String(SB.o[k]))) { toast('That text is not allowed'); return; } o[k] = SB.o[k]; } });
   return { sidc: sbSidc(), std: SB.std, o: clone(o) };
 }
 const E = {};
@@ -1256,7 +1257,7 @@ $('nPre').oninput = () => { numPre = $('nPre').value.slice(0, 3); };
 ['nVal', 'nPre', 'selLbl'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $(id).blur(); }));
 $('selLbl').onchange = () => {
   if (!sel || (sel.type !== 'num' && sel.type !== 'wp')) return;
-  const t = $('selLbl').value.trim().slice(0, sel.type === 'wp' ? 24 : 8); if (!t || t === sel.n) { $('selLbl').value = sel.n; return; }
+  const t = $('selLbl').value.trim().slice(0, sel.type === 'wp' ? 24 : 8); if (isBad(t)) toast('That text is not allowed'); if (!t || isBad(t) || t === sel.n) { $('selLbl').value = sel.n; return; }
   const before = clone(sel); sel.n = t; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
 };
 buildSettings(); paintNum();
@@ -1276,7 +1277,8 @@ function openText(e) {
 }
 function commitText() {
   if (!tp) return;
-  const t = txt.value.trim();
+  let t = txt.value.trim();
+  if (t && isBad(t)) { toast('That text is not allowed'); t = ''; }
   if (t) {
     const it = { id: uuid(), type: 'text', color, t, x: tp.p[0], y: tp.p[1], fs: 18 * unit() };
     items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
@@ -1610,6 +1612,18 @@ function goGrid(mark) {
 
 
 
+/* ---------- word filter ---------- */
+const BAD_TOK = /\b(?:nigg(?:er|a|ah|uh|az|as)s?|fag(?:s|got|gots|git|it|ot)?|dykes?|trann(?:y|ies)|shemales?|chinks?|gooks?|spic(?:s|k|ks)?|kikes?|coons?|wetbacks?|beaners?|pakis?|towelheads?|japs?|darkies?|retard(?:s|ed)?)\b/;
+const BAD_SQ = /n+i+g{2,}(?:e+r+|a+h+|a+(?!r))|f+a+g{2,}o+t+/;
+function normBad(t) { return String(t).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/0/g, 'o').replace(/[1!|]/g, 'i').replace(/3/g, 'e').replace(/[4@]/g, 'a').replace(/[5$]/g, 's').replace(/7/g, 't').replace(/8/g, 'b'); }
+function isBad(t) { if (typeof t !== 'string' || !t) return false; const n = normBad(t); return BAD_TOK.test(n.replace(/[^a-z]+/g, ' ')) || BAD_SQ.test(n.replace(/[^a-z]/g, '')); }
+let toastT = null;
+function toast(msg) {
+  let e = document.getElementById('toast');
+  if (!e) { e = document.createElement('div'); e.id = 'toast'; document.body.appendChild(e); }
+  e.textContent = msg; e.style.opacity = '1'; clearTimeout(toastT); toastT = setTimeout(() => { e.style.opacity = '0'; }, 3200);
+}
+
 /* ---------- legal ---------- */
 const LEGAL = {
   privacy: ['Privacy policy', [
@@ -1627,7 +1641,7 @@ const LEGAL = {
     ['h', 'Saved on your device'],
     ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your last room and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
     ['h', 'Other services'],
-    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
+    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, and carries the live sync between players.', 'OpenAI checks uploaded maps automatically for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
     ['h', 'Contact'],
     ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
   ]],
@@ -1639,6 +1653,8 @@ const LEGAL = {
     ['p', 'It is provided as is. It may be wrong, break, lose your marks or go offline without notice. Use it at your own risk. I am not liable for anything that comes from using it.'],
     ['h', 'Use of the site'],
     ['p', "You're free to use it. Don't try to break it, overload it or abuse rooms with scripts or spam."],
+    ['h', 'Conduct'],
+    ['p', 'Slurs and inappropriate images are not tolerated. If I hear about this, the relevant users will be banned.'],
     ['h', 'Maps and uploads'],
     ['p', "You keep ownership of what you upload. Only upload maps and images you're allowed to use. Everyone in your room can see them. I can remove any room or file at any time."],
     ['h', 'Room deletion'],
@@ -1832,6 +1848,7 @@ function tReset(t) { t.end = 0; t.left = t.d; tUpd(t); }
 function tDel(t) { const i = items.indexOf(t); if (i > -1) items.splice(i, 1); pushDel([t.id]); save(); paintSide(true); paintChips(true); }
 function addTimer(n, secs) {
   if (!(secs >= 1)) return;
+  if (isBad(n)) { toast('That text is not allowed'); return; }
   const it = { id: uuid(), type: 'timer', color, n: (n || 'Timer').trim().slice(0, 24) || 'Timer', d: Math.min(86400, Math.round(secs)), end: 0, left: Math.min(86400, Math.round(secs)) };
   items.push(it); pushAdd(it); save(); paintSide(true); paintChips(true);
 }
@@ -1858,7 +1875,7 @@ function paintSide(force) {
   const mkb = (txt, cls, fn, title) => { const b = document.createElement('button'); b.className = 'sb ' + (cls || ''); b.textContent = txt; if (title) b.title = title; b.onclick = fn; return b; };
   const nameIn = (it, max) => { const i = document.createElement('input'); i.type = 'text'; i.maxLength = max; i.value = it.n; i.autocomplete = 'off';
     i.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') i.blur(); });
-    i.onchange = () => { const t = i.value.trim().slice(0, max); if (!t) { i.value = it.n; return; } if (t === it.n) return; const before = clone(it); it.n = t; hist.push({ t: 'mod', it, before }); pushUpd(it); save(); draw(); };
+    i.onchange = () => { const t = i.value.trim().slice(0, max); if (isBad(t)) toast('That text is not allowed'); if (!t || isBad(t)) { i.value = it.n; return; } if (t === it.n) return; const before = clone(it); it.n = t; hist.push({ t: 'mod', it, before }); pushUpd(it); save(); draw(); };
     return i; };
   const wl = $('wpList'); wl.textContent = '';
   wps.forEach(w => {
@@ -2021,6 +2038,12 @@ function cleanOpts(o) {
   return r;
 }
 function cleanItem(d, id) {
+  const it = cleanItemRaw(d, id);
+  if (!it) return null;
+  const vals = [it.n, it.t]; if (it.o) Object.keys(it.o).forEach(k => vals.push(typeof it.o[k] === 'string' ? it.o[k] : ''));
+  return vals.some(v => isBad(v)) ? null : it;
+}
+function cleanItemRaw(d, id) {
   if (!d || typeof d !== 'object' || typeof id !== 'string') return null;
   const color = typeof d.color === 'string' && /^#[0-9a-f]{3,8}$/i.test(d.color) ? d.color : '#ff7a1a';
   if (d.type === 'pen') {
@@ -2118,12 +2141,30 @@ async function syncRoom() {
   draw();
 }
 
+async function shrinkImage(f) {
+  if (f.size <= 10e6) return f;
+  const bmp = await createImageBitmap(f), k = Math.min(1, 4096 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.88));
+  return b ? new File([b], 'map.jpg', { type: 'image/jpeg' }) : f;
+}
 async function uploadMap(f, cr) {
-  const ext = (f.type.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'png';
-  const path = room + '/' + Date.now() + '.' + ext;
   showErr('');
-  const up = await db().storage.from('maps').upload(path, f, { contentType: f.type });
-  if (up.error) return fail(up.error);
+  const my = room;
+  try { f = await shrinkImage(f); } catch (e) {}
+  if (f.size > 12e6) return showErr('Image is too large (12 MB max)');
+  toast('Checking image...');
+  let out;
+  try {
+    const fd = new FormData(); fd.append('room', room); fd.append('file', f);
+    const r = await fetch(SUPABASE_URL + '/functions/v1/upload-map', { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }, body: fd });
+    out = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(out.error || 'Upload failed');
+  } catch (e) { toast(e.message || 'Upload failed'); return showErr(e.message || 'Upload failed'); }
+  if (room !== my) return;
+  toast('Map uploaded');
+  const path = out.path;
   curPath = path; roomHasMap = true;
   items = []; hist = [];
   setImg(URL.createObjectURL(f), { fit: true });
@@ -2139,7 +2180,7 @@ function hue(str) { let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt
 function renderPresence(state) {
   const box = $('avs');
   if (!state) { box.innerHTML = decorAvs; return; }
-  const people = Object.values(state).map(a => a[0] && a[0].name).filter(n => typeof n === 'string' && n);
+  const people = Object.values(state).map(a => a[0] && a[0].name).filter(n => typeof n === 'string' && n).map(n => isBad(n) ? 'Player' : n);
   box.textContent = '';
   const add = (text, bg, title) => {
     const d = document.createElement('div');
@@ -2182,6 +2223,7 @@ async function joinRoom(code, nick) {
   code = String(code || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24);
   nick = String(nick || '').slice(0, 16) || 'Player' + Math.floor(100 + Math.random() * 900);
   if (!code) return showErr('Enter a room code');
+  if (isBad(code) || isBad(nick)) return showErr('That name or room code is not allowed');
   await libReady;
   if (!createClient) return showErr(IS_ELECTRON ? 'Run npm install' : 'Could not load sync library');
   if (!/^https:\/\//.test(SUPABASE_URL) || !SUPABASE_KEY) return showErr('Server not set');
