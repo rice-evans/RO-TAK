@@ -93,6 +93,12 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #join input { flex: 1; min-width: 0; height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff;
     padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #join input::placeholder { color: #777; }
+  #recent { display: none; flex-wrap: wrap; gap: 6px; }
+  #recent.on { display: flex; }
+  .rc { display: flex; align-items: center; height: 24px; border-radius: 12px; background: #2a2a2d; overflow: hidden; }
+  .rc button { height: 100%; border: 0; background: transparent; color: #ddd; font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; text-transform: uppercase; cursor: pointer; padding: 0 8px 0 10px; }
+  .rc button.rx { padding: 0 9px 0 2px; color: #888; text-transform: none; }
+  .rc button:hover { color: #fff; }
   #join input:read-only { color: #888; }
   #join button { height: 26px; padding: 0 14px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff;
     font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
@@ -450,6 +456,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
+          <div id="recent"></div>
           <div id="joinErr"></div>
           <div id="settings"></div>
           <div id="gridsec"></div>
@@ -1548,6 +1555,7 @@ function undo() {
   if (h.t === 'add') { if (h.it.type === 'num' && h.it.n === numPre + (nextNum - 1)) { nextNum--; paintNum(); } const i = items.indexOf(h.it); if (i > -1) items.splice(i, 1); pushDel([h.it.id]); }
   else if (h.t === 'del') { items.splice(h.i, 0, h.it); pushAdd(h.it); }
   else if (h.t === 'clear') { items = h.list; pushAdd(h.list); }
+  else if (h.t === 'import') { const ids = h.list.map(i => i.id), gone = new Set(ids); items = items.filter(i => !gone.has(i.id)); for (let i = 0; i < ids.length; i += 100) pushDel(ids.slice(i, i + 100)); }
   else if (h.t === 'mod') { for (const k in h.it) delete h.it[k]; Object.assign(h.it, h.before); pushUpd(h.it); }
   save(); draw();
 }
@@ -1831,7 +1839,7 @@ const LEGAL = {
     ['h', 'Analytics'],
     ['p', "I don't use analytics."],
     ['h', 'Saved on your device'],
-    ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your last room, which layers you hide, whether you have seen the tutorial, a key that marks you as the host of rooms you created and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
+    ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your recent rooms, which layers you hide, whether you have seen the tutorial, a key that marks you as the host of rooms you created and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
     ['h', 'Other services'],
     ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, carries the live sync between players and keeps standard server logs, which include IP addresses. I can see these.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download.']],
     ['h', 'Contact'],
@@ -2179,7 +2187,11 @@ let roomUI = () => {};
   };
   const b = document.createElement('button'); b.className = 'mbtn'; b.id = 'exportBtn'; b.textContent = 'Save map as image';
   b.onclick = () => { $('menu').classList.remove('open'); exportImage(); };
-  $('gridsec').before(b);
+  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = '.json,application/json'; fi.hidden = true; document.body.appendChild(fi);
+  fi.onchange = () => { const f = fi.files[0]; fi.value = ''; importMarks(f); };
+  const ex = document.createElement('button'); ex.className = 'mbtn'; ex.textContent = 'Export marks'; ex.onclick = () => { $('menu').classList.remove('open'); exportMarks(); };
+  const im = document.createElement('button'); im.className = 'mbtn'; im.textContent = 'Import marks'; im.onclick = () => { $('menu').classList.remove('open'); fi.click(); };
+  $('gridsec').before(b); b.after(ex, im);
   if (!IS_ELECTRON) {
     const h = document.createElement('button'); h.className = 'mbtn'; h.textContent = 'Home';
     h.onclick = () => { location.href = '/'; };
@@ -2516,8 +2528,50 @@ function setJoinedUI(on) {
   $('joinBtn').classList.toggle('leave', on);
   $('roomIn').readOnly = on;
   $('nameIn').readOnly = on;
+  paintRecent();
 }
 let hbTimer = null;
+const recentRooms = () => {
+  try {
+    const a = JSON.parse(localStorage.getItem('atak-recent') || '[]');
+    return Array.isArray(a) ? a.filter(x => x && typeof x.code === 'string' && /^[a-z0-9-]{1,24}$/.test(x.code) && Date.now() - x.t < 6048e5).slice(0, 8) : [];
+  } catch (e) { return []; }
+};
+function rememberRoom(code) {
+  try { const a = recentRooms().filter(x => x.code !== code); a.unshift({ code, t: Date.now() }); localStorage.setItem('atak-recent', JSON.stringify(a.slice(0, 8))); } catch (e) {}
+}
+function forgetRoom(code) {
+  try { localStorage.setItem('atak-recent', JSON.stringify(recentRooms().filter(x => x.code !== code))); } catch (e) {}
+}
+function paintRecent() {
+  const box = $('recent'), list = room ? [] : recentRooms();
+  box.textContent = ''; box.classList.toggle('on', list.length > 0);
+  list.forEach(x => {
+    const w = document.createElement('div'); w.className = 'rc';
+    const b = document.createElement('button'); b.textContent = x.code.replace(/-/g, ' '); b.onclick = () => joinRoom(x.code, $('nameIn').value.trim());
+    const d = document.createElement('button'); d.className = 'rx'; d.textContent = '✕'; d.title = 'Remove'; d.onclick = () => { forgetRoom(x.code); paintRecent(); };
+    w.append(b, d); box.appendChild(w);
+  });
+}
+function exportMarks() {
+  const list = items.filter(i => i.type !== 'timer');
+  if (!list.length) { toast('Nothing to export'); return; }
+  const blob = new Blob([JSON.stringify({ app: 'rotak', version: 1, items: list })], { type: 'application/json' });
+  const base = (room || (name !== 'RO-TAK' && name) || 'marks').toString().replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'marks';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = base + '-RO-TAK.json'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function importMarks(file) {
+  if (!file || lockedOut()) return;
+  if (file.size > 5e6) { toast('File is too large'); return; }
+  let d; try { d = JSON.parse(await file.text()); } catch (e) { toast('Not a RO-TAK file'); return; }
+  if (!d || d.app !== 'rotak' || !Array.isArray(d.items)) { toast('Not a RO-TAK file'); return; }
+  const list = [];
+  for (const raw of d.items.slice(0, 1500)) { if (raw && raw.type === 'timer') continue; const it = cleanItem(raw, uuid()); if (it) list.push(it); }
+  if (!list.length) { toast('Nothing to import'); return; }
+  items.push(...list); hist.push({ t: 'import', list }); pushAdd(list); save(); draw();
+  toast('Imported ' + list.length + ' marks');
+}
 function touchRoom() { if (room) db().from('rooms').update({ last_active: new Date().toISOString() }).eq('code', room).then(() => {}, () => {}); }
 function teardown() {
   clearInterval(hbTimer); hbTimer = null;
@@ -2540,6 +2594,7 @@ async function joinRoom(code, nick) {
   $('roomIn').value = code.replace(/-/g, ' '); $('nameIn').value = nick;
   setJoinedUI(true); showErr(''); setTitle(); draw();
   try { localStorage.setItem('atak-room', JSON.stringify({ code, name: nick })); localStorage.setItem('atak-name', nick); } catch (e) {}
+  rememberRoom(code);
   if (!IS_ELECTRON && /^\/play/.test(location.pathname)) { try { history.replaceState(null, '', '/play?room=' + encodeURIComponent(code)); } catch (e) {} }
   try {
     try { myKey = hostKeyOf(code) || rndKey(); myHash = await sha256hex(myKey); } catch (e) { myKey = ''; myHash = ''; }
@@ -2612,6 +2667,7 @@ if (!IS_ELECTRON && 'serviceWorker' in navigator && /^https?:/.test(location.pro
 paintColor(); paintSize(); setTool('pen');
 load();
 resize();
+paintRecent();
 try {
   $('nameIn').value = localStorage.getItem('atak-name') || ('Player' + Math.floor(100 + Math.random() * 900));
   const r = JSON.parse(localStorage.getItem('atak-room') || 'null');
