@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, ipcMain, screen, shell } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, net, screen, shell } = require('electron');
 const path = require('path');
 
 const BASE_W = 860;
@@ -8,6 +8,48 @@ let win;
 let scale = 1;
 let opacity = 1;
 let locked = false;
+let update = null;
+const RELEASES = 'https://github.com/rice-evans/RO-TAK/releases/latest';
+const autoUpdater = process.platform === 'win32' ? require('electron-updater').autoUpdater : null;
+
+function pushUpdate(u) {
+  update = u;
+  if (win && !win.isDestroyed()) win.webContents.send('update', u);
+}
+
+function newer(a, b) {
+  const x = a.split('.').map(Number), y = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0);
+  }
+  return false;
+}
+
+async function checkLatest() {
+  try {
+    const r = await net.fetch('https://api.github.com/repos/rice-evans/RO-TAK/releases/latest', { headers: { Accept: 'application/vnd.github+json' } });
+    if (!r.ok) return;
+    const v = String((await r.json()).tag_name || '').replace(/^v/, '');
+    if (/^\d+\.\d+\.\d+$/.test(v) && newer(v, app.getVersion())) pushUpdate({ state: 'available', version: v, url: RELEASES });
+  } catch (e) {}
+}
+
+function checkUpdates() {
+  if (!app.isPackaged || (update && update.state === 'ready')) return;
+  if (autoUpdater) autoUpdater.checkForUpdates().catch(() => {});
+  else checkLatest();
+}
+
+function startUpdates() {
+  if (autoUpdater) {
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.on('update-downloaded', info => pushUpdate({ state: 'ready', version: info.version }));
+    autoUpdater.on('error', () => {});
+  }
+  setTimeout(checkUpdates, 20000);
+  setInterval(checkUpdates, 4 * 60 * 60 * 1000);
+}
 
 function applyScale(s) {
   scale = Math.min(2, Math.max(0.4, Math.round(s * 100) / 100));
@@ -32,6 +74,10 @@ ipcMain.on('drag-start', () => {
   }, 8);
 });
 ipcMain.on('drag-end', () => clearInterval(dragTimer));
+ipcMain.on('update-install', event => {
+  if (!win || event.sender !== win.webContents) return;
+  if (autoUpdater && update && update.state === 'ready') autoUpdater.quitAndInstall();
+});
 ipcMain.on('open-external', (event, url) => {
   if (!win || event.sender !== win.webContents) return;
   try {
@@ -74,6 +120,7 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win.webContents.setZoomFactor(scale);
     win.webContents.send('locked', locked);
+    if (update) win.webContents.send('update', update);
   });
 
   globalShortcut.register('CommandOrControl+Shift+A', () => setLocked(!locked));
@@ -98,6 +145,6 @@ function createWindow() {
   globalShortcut.register('CommandOrControl+Shift+Q', () => app.quit());
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => { createWindow(); startUpdates(); });
 app.on('window-all-closed', () => app.quit());
 app.on('will-quit', () => globalShortcut.unregisterAll());
