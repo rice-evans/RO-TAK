@@ -27,6 +27,8 @@
 <a href="https://github.com/rice-evans/RO-TAK/releases">Releases</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/SECURITY.md">Security</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE">License</a>
 </p>
 
+<p>If you enjoy RO-TAK, be sure to star the GitHub repository, and post photos in respective Discord servers and @ me!</p>
+
 </div>
 
 ## What it does and does not do
