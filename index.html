@@ -2072,11 +2072,21 @@ function showLg(k) {
     body.appendChild(e);
   });
   lg.hidden = false; lg.querySelector('.lg-panel').scrollTop = 0;
+  const p = LEGAL_PATH[k];
+  if (!IS_ELECTRON && p) {
+    document.title = title + ' | RO-TAK';
+    if (location.pathname !== p) { try { history.pushState(null, '', p); } catch (e) {} }
+  }
 }
-const closeLg = () => { lg.hidden = true; };
+const LEGAL_PATH = { privacy: '/privacy', terms: '/tos' };
+const closeLg = () => {
+  lg.hidden = true;
+  if (!IS_ELECTRON && /^\/(privacy|tos)\/?$/.test(location.pathname)) { document.title = 'RO-TAK'; try { history.replaceState(null, '', '/'); } catch (e) {} }
+};
 $('lgX').onclick = closeLg;
 lg.onclick = e => { if (e.target === lg) closeLg(); };
 addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg(); e.preventDefault(); e.stopPropagation(); } }, true);
+if (!IS_ELECTRON) { const m = location.pathname.match(/^\/(privacy|tos)\/?$/); if (m) showLg(m[1] === 'tos' ? 'terms' : 'privacy'); }
 
 (function () {
   const L = $('landing');
@@ -2167,7 +2177,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && lgOpen()) { closeLg
   let idle, typer;
   function showChat() {
     const box = $('lchat'), txt = $('lchatText');
-    if (!box.hidden || introOpen() || !document.documentElement.classList.contains('land')) return;
+    if (!box.hidden || introOpen() || lgOpen() || !document.documentElement.classList.contains('land')) return;
     box.hidden = false; txt.textContent = '';
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { txt.textContent = MSG; return; }
     txt.classList.add('typing');
