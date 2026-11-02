@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/op-silent-talon.webp" alt="Op Silent Talon: an example plan drawn in RO-TAK" width="100%">
+
 # RO-TAK
 
 **Real-time shared map annotation for games.** Upload a map, draw, drop military symbols and waypoints, measure bearings and share a room link.

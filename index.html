@@ -19,7 +19,7 @@
 <meta name="twitter:description" content="Draw, place symbols, measure bearings and ping with your team in real time. Free, open source, no account.">
 <meta name="twitter:image" content="https://ro-tak.vercel.app/images/og.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#0b0d0f">
+<meta name="theme-color" content="#0b0d10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -47,25 +47,25 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     overflow: hidden; display: flex; flex-direction: column;
     clip-path: polygon(4.37% 0.00%, 3.39% 0.94%, 2.26% 3.13%, 0.98% 6.43%, 0.53% 8.78%, 0.53% 9.56%, 0.45% 9.72%, 0.45% 13.64%, 0.38% 13.79%, 0.23% 31.50%, 0.15% 31.66%, 0.15% 37.62%, 0.08% 37.77%, 0.08% 43.89%, 0.00% 44.04%, 0.00% 55.80%, 0.08% 55.96%, 0.08% 62.07%, 0.15% 62.23%, 0.15% 68.18%, 0.23% 68.34%, 0.23% 74.29%, 0.30% 74.45%, 0.30% 80.25%, 0.38% 80.41%, 0.45% 90.13%, 0.53% 90.28%, 0.53% 91.07%, 0.75% 92.48%, 1.58% 95.14%, 3.17% 98.59%, 3.47% 99.06%, 4.37% 99.84%, 95.70% 99.84%, 96.91% 99.06%, 97.81% 97.81%, 98.57% 96.39%, 99.32% 94.67%, 99.77% 92.95%, 99.85% 91.85%, 99.92% 91.69%, 99.92% 90.75%, 100.00% 90.60%, 100.00% 78.37%, 99.92% 78.21%, 99.92% 76.96%, 99.47% 75.08%, 98.94% 73.98%, 96.98% 70.38%, 94.95% 67.08%, 93.36% 64.26%, 92.76% 63.01%, 92.38% 61.60%, 92.31% 60.34%, 92.23% 60.19%, 92.23% 39.66%, 92.31% 39.50%, 92.38% 38.24%, 92.76% 36.83%, 94.42% 33.70%, 97.96% 27.74%, 99.47% 24.76%, 99.77% 23.82%, 99.92% 22.88%, 99.92% 21.63%, 100.00% 21.47%, 100.00% 9.25%, 99.92% 9.09%, 99.92% 8.15%, 99.85% 7.99%, 99.77% 6.90%, 99.32% 5.17%, 97.51% 1.57%, 96.53% 0.47%, 95.63% 0.00%); }
 
-  #bar { height: 32px; position: absolute; top: 10px; left: 26px; right: 26px; z-index: 2; border-radius: 10px; background: rgba(28,28,30,.94); color: #fff; display: flex; align-items: center;
-    padding: 0 14px; gap: 10px; font-size: 12px; font-weight: 700; letter-spacing: .3px; }
+  #bar { height: 32px; position: absolute; top: 10px; left: 26px; right: 26px; z-index: 2; border-radius: 10px; background: rgba(20,20,22,.94); color: #fff; display: flex; align-items: center;
+    padding: 0 14px; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .3px; }
   #title { flex: 1; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #bar svg { width: 16px; height: 16px; stroke: #ddd; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .av { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #1c1c1e; margin-left: -8px; display: flex; align-items: center; justify-content: center;
-    font: 700 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  .av { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #141416; margin-left: -8px; display: flex; align-items: center; justify-content: center;
+    font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
   #avs { display: flex; padding-left: 8px; }
-  .av:nth-child(1) { background: radial-gradient(circle at 40% 40%, #777, #222); }
-  .av:nth-child(2) { background: radial-gradient(circle at 40% 40%, #c8b6ff, #5b3fa0); }
+  .av:nth-child(1) { background: radial-gradient(circle at 40% 40%, #888, #1a1a1c); }
+  .av:nth-child(2) { background: radial-gradient(circle at 40% 40%, #3b82f6, #0b0d10); }
 
   #stage { position: absolute; inset: 0; }
   #c { display: block; width: 100%; height: 100%; touch-action: none; }
-  .pill { position: absolute; top: 52px; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 12px; pointer-events: none; }
-  #clock { left: 26px; background: #d93025; color: #fff; }
+  .pill { position: absolute; top: 52px; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; pointer-events: none; }
+  #clock { left: 26px; background: #ef4444; color: #fff; }
   #clock::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
     border: 2px solid #fff; margin-right: 5px; vertical-align: -1px; }
 
   #toolbar, #palette { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
-    gap: 3px; padding: 4px; background: rgba(20,20,22,.9); border-radius: 22px; }
+    gap: 3px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #toolbar { bottom: 10px; }
   #palette { bottom: 54px; gap: 6px; padding: 7px 9px; display: none; }
   #palette.open { display: flex; }
@@ -74,52 +74,52 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #toolbar button:hover { background: #333; }
   #toolbar button.on { background: #3b82f6; color: #fff; }
   #toolbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .sep { width: 1px; height: 18px; background: #444; margin: 0 3px; }
+  .sep { width: 1px; height: 18px; background: #333; margin: 0 3px; }
   #colorBtn i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff8; display: block; }
   #sizeBtn i { background: #ddd; border-radius: 50%; display: block; }
-  .sw { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,.5); cursor: pointer; }
+  .sw { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,.6); cursor: pointer; }
   .sw.on { border-color: #fff; }
 
   #menu { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column;
-    gap: 12px; padding: 12px 16px; background: rgba(20,20,22,.94); border-radius: 14px; color: #ddd; font-size: 11px; }
+    gap: 12px; padding: 12px 16px; background: rgba(20,20,22,.94); border-radius: 10px; color: #ddd; font-size: 11px; }
   #menu.open { display: flex; }
-  #toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 1200; max-width: calc(100vw - 32px); padding: 8px 14px; border-radius: 8px; background: rgba(20,20,22,.96); color: #fff; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s; text-align: center; }
+  #toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 1200; max-width: calc(100vw - 32px); padding: 8px 14px; border-radius: 6px; background: rgba(20,20,22,.94); color: #fff; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s; text-align: center; }
   input[type=number] { -moz-appearance: textfield; appearance: textfield; text-align: center; }
   input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; appearance: none; margin: 0; display: none; }
   #menu > * { flex: none; }
-  .mbtn.alt { background: #444; }
+  .mbtn.alt { background: #333; }
   .lgrow { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   #credit { display: none !important; }
   #join { display: flex; gap: 6px; align-items: center; }
   #join input { flex: 1; min-width: 0; height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff;
     padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
-  #join input::placeholder { color: #777; }
+  #join input::placeholder { color: #888; }
   #recent { display: none; flex-wrap: wrap; gap: 6px; }
   #recent.on { display: flex; }
-  .rc { display: flex; align-items: center; height: 24px; border-radius: 12px; background: #2a2a2d; overflow: hidden; }
+  .rc { display: flex; align-items: center; height: 24px; border-radius: 999px; background: #2a2a2d; overflow: hidden; }
   .rc button { height: 100%; border: 0; background: transparent; color: #ddd; font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; text-transform: uppercase; cursor: pointer; padding: 0 8px 0 10px; }
   .rc button.rx { padding: 0 9px 0 2px; color: #888; text-transform: none; }
   .rc button:hover { color: #fff; }
   #join input:read-only { color: #888; }
   #join button { height: 26px; padding: 0 14px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff;
     font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
-  #join button.leave { background: #444; }
-  #joinErr { color: #f87171; display: none; max-width: 460px; white-space: normal; }
+  #join button.leave { background: #333; }
+  #joinErr { color: #ef4444; display: none; max-width: 460px; white-space: normal; }
   #binds { display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; gap: 7px 26px; }
   #binds div { display: flex; justify-content: space-between; align-items: center; gap: 16px; white-space: nowrap; }
-  #binds b { font: 600 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: #333; padding: 2px 6px; border-radius: 4px; }
+  #binds b { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: #333; padding: 2px 6px; border-radius: 6px; }
   #menu { max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; }
   #legend { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 18px; align-items: center; justify-items: start; border-top: 1px solid #333; padding-top: 10px; }
   #legend .lg { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
   #legend .lgh { color: #888; justify-self: center; }
   #legend .lgfr { grid-column: 1 / -1; display: grid; grid-template-columns: 64px repeat(4, 1fr); gap: 4px 6px; align-items: center; justify-items: center; }
-  #toolbar button.arm { background: #dc2626; color: #fff; }
+  #toolbar button.arm { background: #ef4444; color: #fff; }
 
-  #txt { position: absolute; display: none; font: 700 18px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
+  #txt { position: absolute; display: none; font: 600 18px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
     border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
   #file { display: none; }
 
-  html.web, html.web body { width: 100%; height: 100%; background: #0b0d0f; overscroll-behavior: none; }
+  html.web, html.web body { width: 100%; height: 100%; background: #0b0d10; overscroll-behavior: none; }
   html.web body { position: fixed; inset: 0; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
   html.web #frame { display: none; }
   html.web #screen { left: 0; top: 0; width: 100%; height: 100%; clip-path: none; }
@@ -130,18 +130,18 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #palette { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
-  #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 22px; }
+  #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #selbar.open { display: flex; }
-  #selNum { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 14px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #selNum { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #selNum:disabled { opacity: .4; }
   #selbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   #selbar button:hover { background: #333; }
-  #selbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  #selbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   html.web #selbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
   @media (pointer: coarse) { #selNum { height: 36px; width: 90px; font-size: 16px; } }
   #sympanel { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px;
     padding: 8px; width: 392px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y;
-    background: rgba(20,20,22,.94); border-radius: 14px; }
+    background: rgba(20,20,22,.94); border-radius: 10px; }
   #sympanel.open { display: flex; }
   #stage.hassel #sympanel { bottom: 100px; max-height: calc(100% - 190px); }
   html.web #stage.hassel #sympanel { bottom: calc(var(--tb, 44px) + 70px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 150px); }
@@ -150,15 +150,15 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #sympanel .sb-code { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #aaa; word-break: break-all; user-select: text; -webkit-user-select: text; }
   #sympanel .sb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
   #sympanel .sb-f { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  #sympanel .sb-f span { color: #888; font-size: 10px; }
+  #sympanel .sb-f span { color: #888; font-size: 11px; }
   #sympanel select, #sympanel input[type=text], #sympanel input[type=search] { width: 100%; min-width: 0; height: 28px; background: #2a2a2d; color: #fff; border: 0; border-radius: 6px; padding: 0 6px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #sympanel select:disabled { opacity: .4; }
   #sympanel .sb-chk { display: flex; gap: 16px; }
   #sympanel .sb-chk label { display: flex; align-items: center; gap: 5px; }
-  #sympanel .sb-list { height: 190px; overflow-y: auto; background: #1a1a1c; border-radius: 8px; flex: none; touch-action: pan-y; }
+  #sympanel .sb-list { height: 190px; overflow-y: auto; background: #1a1a1c; border-radius: 10px; flex: none; touch-action: pan-y; }
   #sympanel .sb-row { display: flex; align-items: center; gap: 8px; padding: 2px 8px; min-height: 34px; cursor: pointer; }
   #sympanel .sb-row canvas { flex: none; }
-  #sympanel .sb-row:hover { background: #26282b; }
+  #sympanel .sb-row:hover { background: #2a2a2d; }
   #sympanel .sb-row.on { background: #3b82f6; }
   #sympanel summary { cursor: pointer; padding: 4px 0; }
   #sympanel .sb-txt .sb-grid { margin-top: 6px; }
@@ -174,177 +174,177 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #compass { width: 46px; height: 46px; cursor: pointer; }
   #compass svg { width: 100%; height: 100%; display: block; transition: transform .12s; }
   #navbtns { display: flex; gap: 4px; }
-  #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+  #navbtns button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.94); color: #ddd; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
   #navbtns button:hover, #numTog:hover { background: #333; }
   #navbtns #ctrBtn { display: flex; align-items: center; justify-content: center; padding: 0; }
-  #ctrBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  #ctrBtn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   @media (pointer: coarse) { #ctrBtn svg { width: 16px; height: 16px; } }
-  #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; padding: 0; }
-  #numTog.off { color: #777; text-decoration: line-through; }
-  @media (pointer: coarse) { #numTog { width: 30px; height: 30px; font-size: 15px; } }
+  #numTog { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.94); color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; padding: 0; }
+  #numTog.off { color: #888; text-decoration: line-through; }
+  @media (pointer: coarse) { #numTog { width: 30px; height: 30px; font-size: 14px; } }
   html.desk #nav { top: 46px; right: 62px; }
   html.desk #compass { width: 38px; height: 38px; }
   html.desk #menu, html.desk #numbar, html.desk #sympanel { left: 47%; z-index: 3; }
   html.desk #menu { max-width: calc(100% - 110px); }
-  html.desk #binds { gap: 5px 18px; font-size: 10px; }
+  html.desk #binds { gap: 5px 18px; font-size: 11px; }
   html.desk #sympanel { max-width: calc(100% - 110px); }
-  #hdg { font: 700 10px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.9); border-radius: 8px; padding: 1px 6px; display: none; }
+  #hdg { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.94); border-radius: 6px; padding: 1px 6px; display: none; }
   html.web #nav { top: calc(52px + env(safe-area-inset-top)); right: calc(14px + env(safe-area-inset-right)); }
   @media (pointer: coarse) { #compass { width: 54px; height: 54px; } #navbtns button { width: 30px; height: 30px; font-size: 18px; } }
-  #numbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 5px; background: rgba(20,20,22,.94); border-radius: 22px; }
+  #numbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 5px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #numbar.open { display: flex; }
   #numbar button { width: 30px; height: 30px; border: 0; border-radius: 50%; background: #2a2a2d; color: #fff; font-size: 18px; line-height: 1; cursor: pointer; }
-  #numbar input { height: 30px; background: #2a2a2d; border: 0; border-radius: 15px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #numbar input { height: 30px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #nPre { width: 54px; } #nVal { width: 74px; }
   html.web #numbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
   @media (pointer: coarse) { #numbar button, #numbar input { height: 40px; } #numbar button { width: 40px; } #numbar input { font-size: 16px; } }
-  #selLbl { display: none; width: 70px; height: 28px; background: #2a2a2d; border: 0; border-radius: 14px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #selLbl { display: none; width: 70px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   @media (pointer: coarse) { #selLbl { height: 36px; font-size: 16px; width: 80px; } }
   #settings { display: grid; grid-template-columns: auto 1fr 64px; gap: 8px 10px; align-items: center; border-top: 1px solid #333; padding-top: 10px; }
   #settings input[type=range] { width: 100%; min-width: 120px; accent-color: #3b82f6; }
   #settings input[type=number] { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; text-align: center; font-size: 12px; font-family: inherit; outline: none; width: 100%; user-select: text; -webkit-user-select: text; }
-  #settings .sh { grid-column: 1 / -1; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #settings .sh { grid-column: 1 / -1; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
   #settings button { grid-column: 1 / -1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #settings input[type=number] { height: 36px; font-size: 16px; } #settings button { height: 36px; font-size: 14px; } }
 
-  #credit { position: absolute; top: 78px; left: 26px; max-width: 46%; font-size: 10px; color: #ddd; background: rgba(20,20,22,.82); padding: 2px 8px; border-radius: 10px; display: none; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 1; }
+  #credit { position: absolute; top: 78px; left: 26px; max-width: 46%; font-size: 11px; color: #ddd; background: rgba(20,20,22,.94); padding: 2px 8px; border-radius: 10px; display: none; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 1; }
   html.web #credit { top: calc(78px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
   #source { display: grid; grid-template-columns: 1fr; gap: 6px; border-top: 1px solid #333; padding-top: 10px; }
-  #source .sh { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #source .sh { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
   #source input { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; width: 100%; min-width: 0; user-select: text; -webkit-user-select: text; }
-  #source input::placeholder { color: #777; }
+  #source input::placeholder { color: #888; }
   #source .srow { display: flex; gap: 6px; }
   #source button { flex: 1; height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
-  #source button.alt { background: #444; }
+  #source button.alt { background: #333; }
   @media (pointer: coarse) { #source input, #source button { height: 36px; font-size: 16px; } }
 
-  #mm { position: absolute; top: 52px; left: 26px; display: none; z-index: 1; background: rgba(20,20,22,.9); border: 1px solid rgba(255,255,255,.4); touch-action: none; cursor: pointer; }
+  #mm { position: absolute; top: 52px; left: 26px; display: none; z-index: 1; background: rgba(20,20,22,.94); border: 1px solid rgba(255,255,255,.4); touch-action: none; cursor: pointer; }
   html.web #mm { top: calc(52px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
   #stage.mm #coord { top: 168px; }
   html.web #stage.mm #coord { top: calc(168px + env(safe-area-inset-top)); }
-  #coord { position: absolute; top: 104px; left: 26px; font: 700 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.88); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
+  #coord { position: absolute; top: 104px; left: 26px; font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.94); padding: 2px 8px; border-radius: 10px; display: none; pointer-events: none; z-index: 1; }
   html.web #coord { top: calc(104px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); }
-  #gridbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 6px; padding: 6px 8px; background: rgba(20,20,22,.95); border-radius: 22px; color: #ddd; font-size: 12px; max-width: calc(100% - 16px); z-index: 3; }
+  #gridbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 6px; padding: 6px 8px; background: rgba(20,20,22,.94); border-radius: 999px; color: #ddd; font-size: 12px; max-width: calc(100% - 16px); z-index: 3; }
   #gridbar.open { display: flex; }
   #gbMsg { max-width: 260px; white-space: normal; line-height: 1.25; }
-  #gbIn { width: 110px; height: 30px; background: #2a2a2d; border: 0; border-radius: 15px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
-  #gridbar button { height: 30px; min-width: 30px; padding: 0 12px; border: 0; border-radius: 15px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
-  #gridbar button#gbX { background: #444; padding: 0; }
+  #gbIn { width: 110px; height: 30px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 14px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #gridbar button { height: 30px; min-width: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+  #gridbar button#gbX { background: #333; padding: 0; }
   html.web #gridbar { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); }
   html.desk #gridbar { left: 47%; }
   @media (pointer: coarse) { #gridbar button, #gbIn { height: 40px; } #gbIn { font-size: 16px; } }
   #gridsec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-top: 1px solid #333; padding-top: 10px; }
-  #gridsec .sh { grid-column: 1 / -1; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .6px; }
+  #gridsec .sh { grid-column: 1 / -1; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; }
   #gridsec .gst { grid-column: 1 / -1; color: #ddd; }
   #gridsec input[type=text] { height: 26px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; width: 100%; min-width: 0; user-select: text; -webkit-user-select: text; }
   #gridsec button { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
-  #gridsec button.alt { background: #444; }
+  #gridsec button.alt { background: #333; }
   #gridsec label { display: flex; align-items: center; gap: 6px; }
   #gridMsg { grid-column: 1 / -1; color: #aaa; font-size: 11px; white-space: normal; max-width: 460px; display: none; }
   @media (pointer: coarse) { #gridsec input[type=text], #gridsec button { height: 36px; font-size: 16px; } }
 
   #navbtns2 { display: flex; gap: 4px; }
-  #numTog, #wpBtn, #tmBtn, #lyBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.9); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 700 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  #wpBtn svg, #tmBtn svg, #lyBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #numTog, #wpBtn, #tmBtn, #lyBtn { width: 22px; height: 22px; border: 0; border-radius: 50%; background: rgba(20,20,22,.94); color: #ddd; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #wpBtn svg, #tmBtn svg, #lyBtn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #wpBtn:hover, #tmBtn:hover, #lyBtn:hover { background: #333; }
   #wpBtn.on, #tmBtn.on, #lyBtn.on { background: #3b82f6; color: #fff; }
   @media (pointer: coarse) { #numTog, #wpBtn, #tmBtn, #lyBtn { width: 30px; height: 30px; } #wpBtn svg, #tmBtn svg, #lyBtn svg { width: 16px; height: 16px; } }
   #tchips { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 1; }
   html.web #tchips { top: calc(52px + env(safe-area-inset-top)); }
   html.desk #tchips { left: 47%; }
-  .tchip { font: 700 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.9); padding: 2px 9px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
-  .tchip.done { background: #d93025; animation: tpulse 1s infinite; }
+  .tchip { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.94); padding: 2px 9px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+  .tchip.done { background: #ef4444; animation: tpulse 1s infinite; }
   @keyframes tpulse { 50% { opacity: .55; } }
-  #side { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px; padding: 8px; width: 420px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; background: rgba(20,20,22,.95); border-radius: 14px; color: #ddd; font-size: 12px; z-index: 3; }
+  #side { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px; padding: 8px; width: 420px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; background: rgba(20,20,22,.94); border-radius: 10px; color: #ddd; font-size: 12px; z-index: 3; }
   #side.open { display: flex; }
   html.web #side { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
   html.desk #side { left: 47%; max-width: calc(100% - 110px); }
   #sideTabs { display: flex; gap: 6px; position: sticky; top: -8px; background: #141416; padding: 2px 0 4px; z-index: 2; }
-  #sideTabs button { flex: 1; height: 28px; border: 0; border-radius: 14px; background: #2a2a2d; color: #ddd; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #sideTabs button { flex: 1; height: 28px; border: 0; border-radius: 6px; background: #2a2a2d; color: #ddd; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   #sideTabs button.on { background: #3b82f6; color: #fff; }
-  #sideTabs #sideX { flex: none; width: 28px; padding: 0; background: #444; }
+  #sideTabs #sideX { flex: none; width: 28px; padding: 0; background: #333; }
   #side .sl { display: none; flex-direction: column; gap: 4px; }
   #side.tab-wp #wpList, #side.tab-tm #tmList { display: flex; }
   #tmNew { display: none; flex-wrap: wrap; gap: 6px; align-items: center; }
   #side.tab-tm #tmNew { display: flex; }
   #side.tab-ly #lyList { display: flex; }
-  .lyrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: #1a1a1c; border: 0; border-radius: 8px; padding: 7px 10px; color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; text-align: left; }
-  .lyrow i { width: 28px; height: 16px; border-radius: 8px; background: #444; position: relative; flex: none; }
+  .lyrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; background: #1a1a1c; border: 0; border-radius: 6px; padding: 7px 10px; color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; text-align: left; }
+  .lyrow i { width: 28px; height: 16px; border-radius: 6px; background: #333; position: relative; flex: none; }
   .lyrow i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #aaa; transition: left .12s; }
   .lyrow.on i { background: #3b82f6; }
   .lyrow.on i::after { left: 14px; background: #fff; }
-  #follow { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); display: none; align-items: center; gap: 8px; padding: 3px 4px 3px 12px; border-radius: 14px; background: rgba(20,20,22,.92); color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; white-space: nowrap; z-index: 1; }
+  #follow { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); display: none; align-items: center; gap: 8px; padding: 3px 4px 3px 12px; border-radius: 10px; background: rgba(20,20,22,.94); color: #ddd; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; white-space: nowrap; z-index: 1; }
   html.web #follow { top: calc(84px + env(safe-area-inset-top)); }
   html.desk #follow { left: 47%; }
-  #follow button { height: 22px; padding: 0 10px; border: 0; border-radius: 11px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
-  #tour { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(300px, calc(100% - 32px)); display: none; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: #141416; border: 1px solid #2a2a2d; color: #ddd; z-index: 30; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+  #follow button { height: 22px; padding: 0 10px; border: 0; border-radius: 999px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  #tour { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(300px, calc(100% - 32px)); display: none; flex-direction: column; gap: 8px; padding: 14px; border-radius: 10px; background: #141416; border: 1px solid #2a2a2d; color: #ddd; z-index: 30; box-shadow: 0 8px 30px rgba(0,0,0,.6); }
   html.desk #tour { left: 47%; }
-  #tourT { font: 700 14px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
+  #tourT { font: 600 14px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
   #tourB { font: 500 13px/1.45 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
   #tourF { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
   #tourDots { flex: 1; display: flex; gap: 5px; }
-  #tourDots i { width: 6px; height: 6px; border-radius: 50%; background: #444; }
+  #tourDots i { width: 6px; height: 6px; border-radius: 50%; background: #333; }
   #tourDots i.on { background: #3b82f6; }
   #tour button { height: 28px; padding: 0 12px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
-  #tour button.alt { background: #444; }
+  #tour button.alt { background: #333; }
   #side input[type=text], #side input[type=number] { height: 28px; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; min-width: 0; user-select: text; -webkit-user-select: text; }
   #tnName { flex: 1 1 110px; } #tnMin, #tnSec { width: 56px; }
   #side button.sb { height: 28px; min-width: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
-  #side button.sb.alt { background: #444; }
+  #side button.sb.alt { background: #333; }
   #tnQuick { display: flex; gap: 6px; width: 100%; }
-  .srowi { display: flex; align-items: center; gap: 6px; background: #1a1a1c; border-radius: 8px; padding: 4px 6px; }
+  .srowi { display: flex; align-items: center; gap: 6px; background: #1a1a1c; border-radius: 6px; padding: 4px 6px; }
   .srowi .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .srowi input[type=text] { flex: 1; background: transparent; padding: 0 4px; }
   .srowi .gc { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #aaa; white-space: nowrap; }
-  .srowi .tt { font: 700 16px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; min-width: 64px; text-align: center; }
-  .srowi.done .tt { color: #f87171; }
+  .srowi .tt { font: 600 16px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; min-width: 64px; text-align: center; }
+  .srowi.done .tt { color: #ef4444; }
   .mbtn { height: 26px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
   @media (pointer: coarse) { #side input[type=text], #side input[type=number], #side button.sb, #sideTabs button { height: 40px; font-size: 16px; } .mbtn { height: 36px; font-size: 14px; } }
 
-  #landing { display: none; position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #080808; transition: opacity .4s ease; font-family: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: auto; }
+  #landing { display: none; position: fixed; inset: 0; z-index: 1000; overflow: hidden; background: #0b0d10; transition: opacity .4s ease; font-family: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: auto; }
   html.land #landing { display: block; }
   #landing.out { opacity: 0; pointer-events: none; }
   #landing .rows { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
   #landing .row { overflow: hidden; }
   #landing .track { display: flex; gap: 12px; height: 100%; width: max-content; animation: lslide 140s linear infinite; }
   #landing .row.rev .track { animation-direction: reverse; animation-duration: 170s; }
-  #landing .slide { cursor: zoom-in; position: relative; flex: none; height: 100%; aspect-ratio: 3 / 2; border-radius: 4px; overflow: hidden; background: #161616; }
+  #landing .slide { cursor: zoom-in; position: relative; flex: none; height: 100%; aspect-ratio: 3 / 2; border-radius: 6px; overflow: hidden; background: #0b0d10; }
   #landing .slide img { display: block; width: 100%; height: 100%; object-fit: cover; filter: brightness(.9) saturate(1.05); user-select: none; -webkit-user-drag: none; }
-  #landing .slide span { position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: rgba(255,255,255,.75); text-shadow: 0 1px 6px rgba(0,0,0,.9); }
+  #landing .slide span { position: absolute; right: 10px; bottom: 8px; font-size: 12px; color: rgba(255,255,255,.64); text-shadow: 0 1px 6px rgba(0,0,0,.9); }
   @keyframes lslide { to { transform: translateX(calc(-50% - 6px)); } }
-  #landing .veil { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,8,8,.78) 0%, rgba(8,8,8,.45) 40%, rgba(8,8,8,.08) 100%); }
+  #landing .veil { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,13,16,.78) 0%, rgba(11,13,16,.45) 40%, rgba(11,13,16,.08) 100%); }
   #landing .hero { pointer-events: none; position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; padding: 24px clamp(24px, 8vw, 128px); }
-  #landing .avatar { display: block; width: 140px; height: 140px; margin: 0; border-radius: 50%; object-fit: cover; background: #fff; border: 1px solid rgba(255,255,255,.28); box-shadow: 0 8px 32px rgba(0,0,0,.5); animation: lrise .8s ease-out .1s both; }
-  #landing .hero h1 { text-shadow: 0 2px 24px rgba(0,0,0,.5); margin: 0 0 40px; font-weight: 600; font-size: clamp(44px, 9vw, 112px); line-height: .98; letter-spacing: -.035em; color: #fff; max-width: 9ch; animation: lrise .8s ease-out .3s both; }
-  #landing .enter { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 4px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background .15s, color .15s, border-color .15s; animation: lrise .8s ease-out .5s both; }
+  #landing .avatar { display: block; width: 140px; height: 140px; margin: 0; border-radius: 50%; object-fit: cover; background: #fff; border: 1px solid rgba(255,255,255,.4); box-shadow: 0 8px 32px rgba(0,0,0,.6); animation: lrise .8s ease-out .1s both; }
+  #landing .hero h1 { text-shadow: 0 2px 24px rgba(0,0,0,.6); margin: 0 0 40px; font-weight: 600; font-size: clamp(44px, 9vw, 112px); line-height: .98; letter-spacing: -.035em; color: #fff; max-width: 9ch; animation: lrise .8s ease-out .3s both; }
+  #landing .enter { pointer-events: auto; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background .15s, color .15s, border-color .15s; animation: lrise .8s ease-out .5s both; }
   #landing a.enter { text-decoration: none; }
   #landing .enter:hover { background: #fff; color: #0b0d10; border-color: #fff; }
-  #landing .enter svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  #landing .enter svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   @keyframes lrise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   #landing .enter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
-  #landing .updated { font-size: 13px; color: rgba(255,255,255,.55); text-shadow: 0 1px 12px rgba(0,0,0,.6); animation: lrise .8s ease-out .7s both; }
+  #landing .updated { font-size: 13px; color: rgba(255,255,255,.64); text-shadow: 0 1px 12px rgba(0,0,0,.6); animation: lrise .8s ease-out .7s both; }
   #landing .avatar-wrap { position: relative; width: fit-content; margin: 0 0 28px 6px; }
-  #landing .chat { position: absolute; left: calc(100% + 18px); top: 6px; z-index: 5; width: min(320px, calc(100vw - 240px)); padding: 14px 16px 16px; border-radius: 16px; background: #fff; color: #1a1a1a; box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 14px; line-height: 1.5; pointer-events: auto; transform-origin: 0 44px; animation: lchatpop .4s cubic-bezier(.2,.9,.3,1.2); }
+  #landing .chat { position: absolute; left: calc(100% + 18px); top: 6px; z-index: 5; width: min(320px, calc(100vw - 240px)); padding: 14px 16px 16px; border-radius: 10px; background: #fff; color: #111; box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 14px; line-height: 1.5; pointer-events: auto; transform-origin: 0 44px; animation: lchatpop .4s cubic-bezier(.2,.9,.3,1.2); }
   #landing .chat[hidden] { display: none; }
   #landing .chat::before { content: ''; position: absolute; left: -8px; top: 38px; border: 8px solid transparent; border-left: 0; border-right-color: #fff; }
-  #landing .chat-name { font-weight: 600; font-size: 12px; color: #666; margin-bottom: 6px; }
+  #landing .chat-name { font-weight: 600; font-size: 12px; color: #888; margin-bottom: 6px; }
   #landing .chat p { margin: 0; min-height: 4.5em; }
-  #landing .chat p.typing::after { content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: #1a1a1a; animation: lblink 1s steps(1) infinite; }
-  #landing .chat-x { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #666; cursor: pointer; padding: 0; }
-  #landing .chat-x:hover { background: #eee; color: #000; }
-  #landing .chat-x svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  #landing .chat p.typing::after { content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: #111; animation: lblink 1s steps(1) infinite; }
+  #landing .chat-x { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #888; cursor: pointer; padding: 0; }
+  #landing .chat-x:hover { background: #ddd; color: #000; }
+  #landing .chat-x svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   @keyframes lchatpop { from { opacity: 0; transform: translateX(-14px) scale(.7); } to { opacity: 1; transform: none; } }
   @keyframes lblink { 50% { opacity: 0; } }
-  #landing .lb { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(6,6,6,.92); animation: lblin .2s ease; }
+  #landing .lb { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(11,13,16,.92); animation: lblin .2s ease; }
   #landing .lb[hidden] { display: none; }
   #landing .lb img { max-width: min(calc(100vw - 168px), 1600px); max-height: 84vh; border-radius: 6px; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
   #landing .lb.single img { max-width: min(calc(100vw - 48px), 1600px); }
-  #landing .lb-by { font-size: 13px; color: rgba(255,255,255,.7); }
+  #landing .lb-by { font-size: 13px; color: rgba(255,255,255,.64); }
   #landing .lb-by a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
   #landing .lb-by a:hover { color: #fff; }
-  #landing .lb-btn { position: absolute; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; background: rgba(30,30,30,.8); color: #fff; cursor: pointer; padding: 0; }
+  #landing .lb-btn { position: absolute; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.4); border-radius: 50%; background: rgba(20,20,22,.94); color: #fff; cursor: pointer; padding: 0; }
   #landing .lb-btn:hover { border-color: #fff; }
-  #landing .lb-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  #landing .lb-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #landing .lb-close { top: 20px; right: 20px; }
   #landing .lb-prev { left: 20px; top: 50%; transform: translateY(-50%) rotate(180deg); }
   #landing .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
@@ -360,7 +360,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     #landing .chat { left: 0; top: calc(100% + 14px); width: min(320px, calc(100vw - 48px)); transform-origin: 60px 0; }
     #landing .chat::before { left: 56px; top: -8px; border: 8px solid transparent; border-top: 0; border-bottom-color: #fff; }
   }
-  #landing .mapfx { pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; overflow: hidden; background: rgba(8,8,8,.78);
+  #landing .mapfx { pointer-events: none; position: absolute; top: 0; right: 0; bottom: 0; width: 70%; overflow: hidden; background: rgba(11,13,16,.78);
     -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 50%); mask-image: linear-gradient(90deg, transparent 0%, #000 50%); }
   #landing .mf-box { position: absolute; top: 50%; right: 2%; height: 78%; aspect-ratio: 4 / 3; transform: translateY(-50%); opacity: 0; transition: opacity 1.6s ease; }
   #landing .mf-box.on { opacity: 1; }
@@ -374,37 +374,37 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #intro[hidden] { display: none; }
   #intro.show { opacity: 1; }
   #intro code { font: inherit; }
-  #intro .in-bg { position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; pointer-events: none; background: rgba(8,8,8,.82); z-index: 0; }
+  #intro .in-bg { position: sticky; top: 0; height: 100vh; margin-bottom: -100vh; pointer-events: none; background: rgba(11,13,16,.82); z-index: 0; }
   #intro > section, #intro > header, #intro > div#inFeats { position: relative; z-index: 1; }
   #intro > .in-top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 14px clamp(24px, 6vw, 96px); }
   #intro > .in-top::before { content: ""; position: absolute; inset: 0 0 -18px; z-index: -1; pointer-events: none; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
-  #intro .in-brand { font: 700 20px "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .02em; }
-  #intro .in-btn, #intro #inSkip { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: auto; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 4px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+  #intro .in-brand { font: 600 20px "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .02em; }
+  #intro .in-btn, #intro #inSkip { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: auto; padding: 14px 26px; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; background: rgba(255,255,255,.06); color: #fff; font: 500 13px "IBM Plex Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
   #intro #inSkip { padding: 10px 18px; }
   #intro .in-btn:hover, #intro #inSkip:hover { background: #fff; color: #0b0d10; border-color: #fff; }
   #intro button:focus-visible, #intro a:focus-visible { outline: 3px solid var(--pencil); outline-offset: 3px; }
   #intro .in-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   #intro .in-hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 32px; min-height: calc(100vh - 62px); padding: 24px clamp(16px, 3vw, 48px) 64px clamp(24px, 6vw, 96px); }
   #intro .in-copy h2 { margin: 0 0 22px; font: 600 clamp(44px, min(7.4vw, 13vh), 112px)/.98 "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: -.035em; text-wrap: balance; }
-  #intro .in-copy p { margin: 0; max-width: 34ch; font-size: 19px; line-height: 1.55; color: var(--ink2); }
+  #intro .in-copy p { margin: 0; max-width: 34ch; font-size: 18px; line-height: 1.55; color: var(--ink2); }
   #intro .in-devices { position: relative; margin-bottom: 4%; }
-  #intro .laptop { filter: drop-shadow(0 28px 36px rgba(0,0,0,.35)); }
-  #intro .laptop .lid { padding: 0.9% 0.9% 1.2%; border: 1px solid #2e2e33; border-radius: 16px 16px 4px 4px; background: #1a1a1c; }
-  #intro .screen { position: relative; overflow: hidden; background: #101418; }
+  #intro .laptop { filter: drop-shadow(0 28px 36px rgba(0,0,0,.45)); }
+  #intro .laptop .lid { padding: 0.9% 0.9% 1.2%; border: 1px solid #2a2a2d; border-radius: 16px 16px 4px 4px; background: #1a1a1c; }
+  #intro .screen { position: relative; overflow: hidden; background: #0b0d10; }
   #intro .laptop .screen { aspect-ratio: 1440 / 900; border-radius: 3px; }
   #intro .screen img, #intro .screen svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-  #intro .laptop .base { position: relative; height: 15px; margin: 0 -3.5%; border-radius: 0 0 26px 26px; background: linear-gradient(#cfd3d0, #9ba19d); }
-  #intro .laptop .base::after { content: ''; position: absolute; top: 0; left: 50%; width: 15%; height: 6px; transform: translateX(-50%); border-radius: 0 0 8px 8px; background: #868c88; }
-  #intro .phone { position: absolute; right: -1%; bottom: -12%; width: 46%; padding: 0.45% 0.8%; border: 1px solid #2e2e33; border-radius: 4% / 8%; background: #1a1a1c; box-shadow: 0 26px 40px rgba(0,0,0,.45); }
+  #intro .laptop .base { position: relative; height: 15px; margin: 0 -3.5%; border-radius: 0 0 26px 26px; background: linear-gradient(#ddd, #888); }
+  #intro .laptop .base::after { content: ''; position: absolute; top: 0; left: 50%; width: 15%; height: 6px; transform: translateX(-50%); border-radius: 0 0 8px 8px; background: #888; }
+  #intro .phone { position: absolute; right: -1%; bottom: -12%; width: 46%; padding: 0.45% 0.8%; border: 1px solid #2a2a2d; border-radius: 4% / 8%; background: #1a1a1c; box-shadow: 0 26px 40px rgba(0,0,0,.45); }
   #intro .phone .screen { aspect-ratio: 844 / 390; border-radius: 3.5% / 7.5%; }
-  #intro .phone .screen::after { content: ''; position: absolute; left: 1.2%; top: 50%; z-index: 2; width: 1.3%; height: 22%; transform: translateY(-50%); border-radius: 99px; background: #080a09; }
+  #intro .phone .screen::after { content: ''; position: absolute; left: 1.2%; top: 50%; z-index: 2; width: 1.3%; height: 22%; transform: translateY(-50%); border-radius: 99px; background: #0b0d10; }
   #intro .in-feat { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: clamp(24px, 4vw, 64px); padding: clamp(40px, 7vw, 104px) 0 clamp(40px, 7vw, 104px) clamp(24px, 6vw, 96px); }
   #intro .in-feat.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding: clamp(40px, 7vw, 104px) clamp(24px, 6vw, 96px) clamp(40px, 7vw, 104px) 0; }
   #intro .in-feat.flip .in-txt { order: 2; }
   #intro .in-txt h3, #intro .in-small h3, #intro .in-oss h3 { margin: 0 0 16px; font: 600 clamp(34px, 4.2vw, 60px)/1 "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: -.03em; text-wrap: balance; }
   #intro .in-txt p { margin: 0; max-width: 36ch; font-size: 18px; line-height: 1.6; color: var(--ink2); }
-  #intro .in-feat .sc { overflow: hidden; border: 1px solid rgba(255,255,255,.08); border-right: 0; border-radius: 18px 0 0 18px; box-shadow: 0 22px 50px rgba(0,0,0,.28); }
-  #intro .in-feat.flip .sc { border-radius: 0 18px 18px 0; border-right: 1px solid rgba(255,255,255,.08); border-left: 0; }
+  #intro .in-feat .sc { overflow: hidden; border: 1px solid rgba(255,255,255,.06); border-right: 0; border-radius: 10px 0 0 10px; box-shadow: 0 22px 50px rgba(0,0,0,.45); }
+  #intro .in-feat.flip .sc { border-radius: 0 10px 10px 0; border-right: 1px solid rgba(255,255,255,.06); border-left: 0; }
   #intro .in-feat .sc svg { display: block; width: 100%; height: auto; aspect-ratio: 800 / 560; }
   #intro .sc { position: relative; }
   #intro .sc [data-a] { opacity: 0; }
@@ -430,32 +430,32 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   @keyframes inRipple { from { opacity: .9; transform: scale(.15); } to { opacity: 0; transform: scale(1.7); } }
   @keyframes inHide { to { opacity: 0; } }
   @keyframes inLead { from { transform: translate(0, 0); } to { transform: translate(260px, -140px); } }
-  @keyframes inSwBg { to { background: #444; } }
+  @keyframes inSwBg { to { background: #333; } }
   @keyframes inSwKnob { to { left: 2px; background: #aaa; } }
   #intro .ui-room { position: absolute; inset: 14px 14px auto 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; pointer-events: none; }
   #intro .ui-code { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 12px; border-radius: 10px; background: #141416; color: #fff; font: 600 13px "IBM Plex Sans", sans-serif; text-transform: uppercase; }
   #intro .ui-code button, #intro .ui-pill button { height: 26px; padding: 0 10px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 12px "IBM Plex Sans", sans-serif; text-transform: none; }
-  #intro .ui-av { display: flex; padding: 4px 4px 4px 12px; border-radius: 22px; background: #141416; }
-  #intro .ui-av span { width: 30px; height: 30px; margin-left: -8px; display: grid; place-items: center; border: 2px solid #141416; border-radius: 50%; color: #fff; font: 700 13px "IBM Plex Sans", sans-serif; }
-  #intro .ui-lock { position: absolute; right: 14px; bottom: 14px; padding: 8px 14px; border-radius: 8px; background: #141416; color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; }
-  #intro .ui-pill { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 14px; border-radius: 16px; background: rgba(20,20,22,.92); color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; white-space: nowrap; }
-  #intro .ui-pill button { border-radius: 12px; }
+  #intro .ui-av { display: flex; padding: 4px 4px 4px 12px; border-radius: 999px; background: #141416; }
+  #intro .ui-av span { width: 30px; height: 30px; margin-left: -8px; display: grid; place-items: center; border: 2px solid #141416; border-radius: 50%; color: #fff; font: 600 13px "IBM Plex Sans", sans-serif; }
+  #intro .ui-lock { position: absolute; right: 14px; bottom: 14px; padding: 8px 14px; border-radius: 6px; background: #141416; color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; }
+  #intro .ui-pill { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 14px; border-radius: 10px; background: rgba(20,20,22,.94); color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; white-space: nowrap; }
+  #intro .ui-pill button { border-radius: 10px; }
   #intro .ui-layers { position: absolute; left: 14px; top: 14px; width: 190px; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 10px; background: #141416; }
-  #intro .ui-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 8px; background: #1a1a1c; color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; }
-  #intro .ui-row i { position: relative; width: 28px; height: 16px; border-radius: 8px; background: #3b82f6; }
+  #intro .ui-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 6px; background: #1a1a1c; color: #ddd; font: 600 13px "IBM Plex Sans", sans-serif; }
+  #intro .ui-row i { position: relative; width: 28px; height: 16px; border-radius: 6px; background: #3b82f6; }
   #intro .ui-row i::after { content: ''; position: absolute; top: 2px; left: 14px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
   #intro .in-small { padding: clamp(40px, 6vw, 80px) clamp(24px, 6vw, 96px); }
   #intro .in-small ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 56px; margin: 28px 0 0; padding: 0; list-style: none; max-width: 980px; }
-  #intro .in-small li b { display: block; margin-bottom: 4px; font-size: 17px; }
+  #intro .in-small li b { display: block; margin-bottom: 4px; font-size: 16px; }
   #intro .in-small li span { display: block; max-width: 44ch; font-size: 16px; line-height: 1.55; color: var(--ink2); }
   #intro .in-oss { padding: clamp(56px, 9vw, 120px) clamp(24px, 6vw, 96px); background: var(--panel); color: #fff; }
   #intro .in-oss-in { max-width: 760px; }
-  #intro .in-oss p { margin: 0 0 18px; font-size: 19px; line-height: 1.6; max-width: 52ch; }
+  #intro .in-oss p { margin: 0 0 18px; font-size: 18px; line-height: 1.6; max-width: 52ch; }
   #intro .in-oss ul { margin: 0 0 28px; padding: 0; list-style: none; display: grid; gap: 10px; }
-  #intro .in-oss li { position: relative; padding-left: 22px; font-size: 17px; line-height: 1.55; max-width: 56ch; }
+  #intro .in-oss li { position: relative; padding-left: 22px; font-size: 16px; line-height: 1.55; max-width: 56ch; }
   #intro .in-oss li::before { content: ''; position: absolute; left: 0; top: .6em; width: 8px; height: 8px; background: var(--pencil); }
-  #intro .in-oss p.in-vf { margin: 0 0 8px; font-size: 15px; color: rgba(255,255,255,.6); }
-  #intro .in-oss pre { margin: 0; padding: 14px 16px; overflow-x: auto; border-radius: 8px; background: #0b0d10; color: #e5e7eb; font: 500 13px/1.5 "IBM Plex Sans", system-ui, sans-serif; font-variant-numeric: tabular-nums; user-select: text; -webkit-user-select: text; }
+  #intro .in-oss p.in-vf { margin: 0 0 8px; font-size: 14px; color: rgba(255,255,255,.64); }
+  #intro .in-oss pre { margin: 0; padding: 14px 16px; overflow-x: auto; border-radius: 10px; background: #0b0d10; color: #ddd; font: 500 13px/1.5 "IBM Plex Sans", system-ui, sans-serif; font-variant-numeric: tabular-nums; user-select: text; -webkit-user-select: text; }
   @media (max-width: 820px) {
     #intro .in-hero { grid-template-columns: 1fr; min-height: 0; gap: 36px; padding: 28px 24px 64px; }
     #intro .in-copy h2 { font-size: clamp(52px, 16vw, 84px); }
@@ -477,38 +477,38 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     #intro .sc [data-a="ripple"] { opacity: 0; }
     #intro .sc .mv.lead { transform: translate(260px, -140px); }
     #intro .sc .mv.trail { transform: translate(230px, -125px); }
-    #intro .sc .ui-row.off1 i, #intro .sc .ui-row.off2 i { background: #444; }
+    #intro .sc .ui-row.off1 i, #intro .sc .ui-row.off2 i { background: #333; }
     #intro .sc .ui-row.off1 i::after, #intro .sc .ui-row.off2 i::after { left: 2px; background: #aaa; }
     #intro .sc [data-a="hide1"], #intro .sc [data-a="hide2"] { opacity: 0; }
   }
   #landing .hero, #landing .legal, #landing .veil, #landing .mapfx { transition: opacity .3s ease, visibility 0s; }
   #landing.intro-on .hero, #landing.intro-on .legal, #landing.intro-on .veil, #landing.intro-on .mapfx { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s ease, visibility 0s .3s; }
   #landing .legal { position: absolute; left: clamp(24px, 8vw, 128px); bottom: 22px; z-index: 3; display: flex; flex-wrap: wrap; gap: 6px 22px; }
-  #landing .legal button, #landing .legal a { padding: 4px 0; border: 0; background: none; color: rgba(255,255,255,.6); font: 400 13px "IBM Plex Sans", system-ui, sans-serif; text-shadow: 0 1px 10px rgba(0,0,0,.9); cursor: pointer; text-decoration: none; }
+  #landing .legal button, #landing .legal a { padding: 4px 0; border: 0; background: none; color: rgba(255,255,255,.64); font: 400 13px "IBM Plex Sans", system-ui, sans-serif; text-shadow: 0 1px 10px rgba(0,0,0,.9); cursor: pointer; text-decoration: none; }
   #landing .legal button:hover, #landing .legal a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-  #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(6,6,6,.88); animation: lblin .2s ease; }
+  #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(11,13,16,.88); animation: lblin .2s ease; }
   #llg[hidden] { display: none; }
   #leave { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
   #leave[hidden] { display: none; }
-  #leave .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
+  #leave .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
   #leave h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
   #leave p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
-  #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d0f; color: #888; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
+  #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d10; color: #888; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
   #lvUrl b { color: #fff; font-weight: 600; }
   .lv-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
   .lv-btns button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 13px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
   .lv-btns button#lvNo { background: #333; }
-  #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0e0f11; color: #e6e6e6; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
+  #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0b0d10; color: #ddd; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
   #llg .lg-x { color: #aaa; }
-  #llg .lg-x:hover { background: #222; color: #fff; }
+  #llg .lg-x:hover { background: #1a1a1c; color: #fff; }
   #llg .lg-panel h2 { margin: 0 32px 6px 0; font-size: 26px; font-weight: 600; letter-spacing: -.02em; color: #fff; }
-  #llg .lg-panel h3 { margin: 26px 0 8px; font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-  #llg .lg-panel p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; }
-  #llg .lg-panel p.up { font-size: 13px; color: rgba(255,255,255,.5); }
-  #llg .lg-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 15px; line-height: 1.6; }
+  #llg .lg-panel h3 { margin: 26px 0 8px; font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.64); }
+  #llg .lg-panel p { margin: 0 0 10px; font-size: 14px; line-height: 1.6; }
+  #llg .lg-panel p.up { font-size: 13px; color: rgba(255,255,255,.64); }
+  #llg .lg-panel ul { margin: 0 0 10px; padding-left: 20px; font-size: 14px; line-height: 1.6; }
   #llg .lg-panel li { margin-bottom: 6px; }
   #llg .lg-x { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; padding: 0; }
-  #llg .lg-x svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+  #llg .lg-x svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #llg .lg-panel * { user-select: text; -webkit-user-select: text; }
   @media (max-width: 700px) { #llg .lg-panel { padding: 24px 20px 28px; } #landing .legal { left: 24px; } }
   @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
@@ -554,12 +554,12 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     </div>
   </section>
   <div id="inFeats">
-<section class="in-feat"><div class="in-txt"><h3>Draw the plan</h3><p>Sketch routes with the pen, line and arrow. Box an objective, drop numbered markers and label what matters.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><rect data-a="dash" pathLength="1" style="--d:2.2s;--t:.9s" x="840" y="280" width="290" height="230" fill="none" stroke="#ef4444" stroke-width="7"/><path data-a="dash" pathLength="1" style="--d:.3s;--t:1.4s" d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path data-a="fade" style="--d:1.6s" d="M906.2,382.7 L950.0,370.0 L937.3,413.8" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter"/><g data-a="pop" style="--d:2.8s"><circle cx="650" cy="660" r="26" fill="#facc15" stroke="#000" stroke-width="5"/><text x="650" y="671" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="32" fill="#111">1</text></g><g data-a="pop" style="--d:3.1s"><circle cx="780" cy="480" r="26" fill="#facc15" stroke="#000" stroke-width="5"/><text x="780" y="491" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="32" fill="#111">2</text></g><g data-a="fade" style="--d:3.5s"><text x="548" y="735" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">RP Zulu</text></g></svg></div></section>
-<section class="in-feat flip"><div class="in-txt"><h3>Place units</h3><p>Friendly, hostile and neutral symbols in MIL-STD-2525 or APP-6. Pick the unit type, size and echelon and place it where it belongs.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="drop" style="--d:0.3s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:0.6499999999999999s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:1.0s" href="images/intro/sf_rec.svg" x="579.0" y="571.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:1.3499999999999999s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><image data-a="drop" style="--d:1.7s" href="images/intro/se_arm.svg" x="1000.5" y="400.5" width="79.0" height="79.0"/><image data-a="drop" style="--d:2.05s" href="images/intro/se_mech.svg" x="840.5" y="260.5" width="79.0" height="79.0"/></svg></div></section>
-<section class="in-feat"><div class="in-txt"><h3>Take bearings</h3><p>Drag from one point to another to read the bearing from north.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0.1s" href="images/intro/sf_inf.svg" x="559.0" y="671.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0.1s" href="images/intro/se_inf.svg" x="900.5" y="340.5" width="79.0" height="79.0"/><line data-a="dash" pathLength="1" style="--d:.8s;--t:.8s" x1="600" y1="700" x2="600" y2="530" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/><text data-a="fade" style="--d:1.2s" x="614" y="550" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="34" fill="#fff" stroke="#000" stroke-width="7" paint-order="stroke">N</text><line data-a="dash" pathLength="1" style="--d:1.5s;--t:1s" x1="600" y1="700" x2="940" y2="380" stroke="#facc15" stroke-width="8" stroke-linecap="round"/><circle data-a="fade" style="--d:1.4s" cx="600" cy="700" r="20" fill="none" stroke="#facc15" stroke-width="6"/><circle data-a="fade" style="--d:2.4s" cx="940" cy="380" r="20" fill="none" stroke="#facc15" stroke-width="6"/><g data-a="pop" style="--d:2.6s"><rect x="708.0" y="510.0" width="124" height="56" rx="10" fill="#111"/><text x="770.0" y="551.0" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="34" fill="#facc15">047°</text></g></svg></div></section>
-<section class="in-feat"><div class="in-txt"><h3>Share a room</h3><p>Pick a room code or send an invite link. Everyone sees the same map and marks as they change. No accounts.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><path data-a="dash" pathLength="1" style="--d:3.2s;--t:1s" d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round"/><image data-a="drop" style="--d:1.5s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:2.2s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:2.9s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/></svg><div class="ui-room"><div class="ui-code"><span>alpha team</span><button type="button" tabindex="-1">Copy invite link</button></div><div class="ui-av"><span data-a="pop-h" style="--d:0.8s;background:hsl(28,55%,42%)">B</span><span data-a="pop-h" style="--d:1.5s;background:hsl(205,55%,42%)">S</span><span data-a="pop-h" style="--d:2.2s;background:hsl(140,55%,42%)">M</span></div></div></div></section>
-<section class="in-feat flip"><div class="in-txt"><h3>Lead, and everyone follows</h3><p>Lead the room and your view carries to anyone who taps Follow. Pan, zoom or rotate and they go with you.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_arm.svg" x="1000.5" y="400.5" width="79.0" height="79.0"/><g class="mv lead"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(255,122,26,.12)" stroke="#ff7a1a" stroke-width="6"/><g><rect x="470" y="430" width="108" height="40" rx="8" fill="#ff7a1a"/><text x="524" y="459" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#111">Alex</text></g></g><g class="mv trail"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(59,130,246,.12)" stroke="#3b82f6" stroke-width="6" stroke-dasharray="18 12"/><g><rect x="470" y="630" width="108" height="40" rx="8" fill="#3b82f6"/><text x="524" y="659" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#fff">Sam</text></g></g></svg><div class="ui-pill"><span>Following Alex</span><button type="button" tabindex="-1">Stop</button></div></div></section>
-<section class="in-feat"><div class="in-txt"><h3>Hide what you don’t need</h3><p>Switch symbols, drawings, text, numbers or waypoints off for your own view. Everyone else’s map stays as it is.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#101418"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><g data-a="hide1" style="--d:1.6s"><path d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round"/><rect x="840" y="280" width="290" height="230" fill="none" stroke="#ef4444" stroke-width="7"/></g><g data-a="hide2" style="--d:3s"><text x="548" y="745" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">RP Zulu</text><text x="760" y="262" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">OBJ</text></g></svg><div class="ui-layers"><div class="ui-row "><span>Symbols</span><i></i></div><div class="ui-row off1"><span>Drawings</span><i></i></div><div class="ui-row off2"><span>Text</span><i></i></div></div></div></section>
+<section class="in-feat"><div class="in-txt"><h3>Draw the plan</h3><p>Sketch routes with the pen, line and arrow. Box an objective, drop numbered markers and label what matters.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><rect data-a="dash" pathLength="1" style="--d:2.2s;--t:.9s" x="840" y="280" width="290" height="230" fill="none" stroke="#ef4444" stroke-width="7"/><path data-a="dash" pathLength="1" style="--d:.3s;--t:1.4s" d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path data-a="fade" style="--d:1.6s" d="M906.2,382.7 L950.0,370.0 L937.3,413.8" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter"/><g data-a="pop" style="--d:2.8s"><circle cx="650" cy="660" r="26" fill="#facc15" stroke="#000" stroke-width="5"/><text x="650" y="671" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="32" fill="#111">1</text></g><g data-a="pop" style="--d:3.1s"><circle cx="780" cy="480" r="26" fill="#facc15" stroke="#000" stroke-width="5"/><text x="780" y="491" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="32" fill="#111">2</text></g><g data-a="fade" style="--d:3.5s"><text x="548" y="735" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">RP Zulu</text></g></svg></div></section>
+<section class="in-feat flip"><div class="in-txt"><h3>Place units</h3><p>Friendly, hostile and neutral symbols in MIL-STD-2525 or APP-6. Pick the unit type, size and echelon and place it where it belongs.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="drop" style="--d:0.3s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:0.6499999999999999s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:1.0s" href="images/intro/sf_rec.svg" x="579.0" y="571.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:1.3499999999999999s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><image data-a="drop" style="--d:1.7s" href="images/intro/se_arm.svg" x="1000.5" y="400.5" width="79.0" height="79.0"/><image data-a="drop" style="--d:2.05s" href="images/intro/se_mech.svg" x="840.5" y="260.5" width="79.0" height="79.0"/></svg></div></section>
+<section class="in-feat"><div class="in-txt"><h3>Take bearings</h3><p>Drag from one point to another to read the bearing from north.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0.1s" href="images/intro/sf_inf.svg" x="559.0" y="671.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0.1s" href="images/intro/se_inf.svg" x="900.5" y="340.5" width="79.0" height="79.0"/><line data-a="dash" pathLength="1" style="--d:.8s;--t:.8s" x1="600" y1="700" x2="600" y2="530" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/><text data-a="fade" style="--d:1.2s" x="614" y="550" font-family="IBM Plex Sans, sans-serif" font-weight="800" font-size="34" fill="#fff" stroke="#000" stroke-width="7" paint-order="stroke">N</text><line data-a="dash" pathLength="1" style="--d:1.5s;--t:1s" x1="600" y1="700" x2="940" y2="380" stroke="#facc15" stroke-width="8" stroke-linecap="round"/><circle data-a="fade" style="--d:1.4s" cx="600" cy="700" r="20" fill="none" stroke="#facc15" stroke-width="6"/><circle data-a="fade" style="--d:2.4s" cx="940" cy="380" r="20" fill="none" stroke="#facc15" stroke-width="6"/><g data-a="pop" style="--d:2.6s"><rect x="708.0" y="510.0" width="124" height="56" rx="10" fill="#111"/><text x="770.0" y="551.0" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="34" fill="#facc15">047°</text></g></svg></div></section>
+<section class="in-feat"><div class="in-txt"><h3>Share a room</h3><p>Pick a room code or send an invite link. Everyone sees the same map and marks as they change. No accounts.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><path data-a="dash" pathLength="1" style="--d:3.2s;--t:1s" d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round"/><image data-a="drop" style="--d:1.5s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:2.2s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="drop" style="--d:2.9s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/></svg><div class="ui-room"><div class="ui-code"><span>alpha team</span><button type="button" tabindex="-1">Copy invite link</button></div><div class="ui-av"><span data-a="pop-h" style="--d:0.8s;background:hsl(28,55%,42%)">B</span><span data-a="pop-h" style="--d:1.5s;background:hsl(205,55%,42%)">S</span><span data-a="pop-h" style="--d:2.2s;background:hsl(140,55%,42%)">M</span></div></div></div></section>
+<section class="in-feat flip"><div class="in-txt"><h3>Lead, and everyone follows</h3><p>Lead the room and your view carries to anyone who taps Follow. Pan, zoom or rotate and they go with you.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_arm.svg" x="1000.5" y="400.5" width="79.0" height="79.0"/><g class="mv lead"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(255,122,26,.12)" stroke="#ff7a1a" stroke-width="6"/><g><rect x="470" y="430" width="108" height="40" rx="8" fill="#ff7a1a"/><text x="524" y="459" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#111">Alex</text></g></g><g class="mv trail"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(59,130,246,.12)" stroke="#3b82f6" stroke-width="6" stroke-dasharray="18 12"/><g><rect x="470" y="630" width="108" height="40" rx="8" fill="#3b82f6"/><text x="524" y="659" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#fff">Sam</text></g></g></svg><div class="ui-pill"><span>Following Alex</span><button type="button" tabindex="-1">Stop</button></div></div></section>
+<section class="in-feat"><div class="in-txt"><h3>Hide what you don’t need</h3><p>Switch symbols, drawings, text, numbers or waypoints off for your own view. Everyone else’s map stays as it is.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><g data-a="hide1" style="--d:1.6s"><path d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round"/><rect x="840" y="280" width="290" height="230" fill="none" stroke="#ef4444" stroke-width="7"/></g><g data-a="hide2" style="--d:3s"><text x="548" y="745" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">RP Zulu</text><text x="760" y="262" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">OBJ</text></g></svg><div class="ui-layers"><div class="ui-row "><span>Symbols</span><i></i></div><div class="ui-row off1"><span>Drawings</span><i></i></div><div class="ui-row off2"><span>Text</span><i></i></div></div></div></section>
   </div>
   <section class="in-small"><h3>And the rest</h3><ul><li><b>Grid coordinates</b><span>Calibrate the map once and read or jump to any grid reference.</span></li><li><b>Waypoints and timers</b><span>Numbered waypoints with grid references, and countdown timers shared with the room.</span></li><li><b>Minimap and rotation</b><span>Rotate the map to your heading and keep the full picture in the corner when zoomed in.</span></li><li><b>Export and import</b><span>Save your marks to a file, or load them into another room. Save the map as an image.</span></li><li><b>Rooms clean up</b><span>A room is deleted after 2 hours with nobody in it.</span></li><li><b>Runs anywhere</b><span>In the browser, installed as an app on a phone, or as the desktop app for macOS and Windows.</span></li></ul></section>
   <section class="in-oss">
@@ -611,7 +611,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="tchips"></div>
         <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button data-tab="ly">Layers</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="lyList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
-        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#555" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#e5e5e5"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="IBM Plex Sans, system-ui, sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button><button id="lyBtn" title="Layers"><svg viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M22 17.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="M22 12.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></button></div><div id="hdg"></div></div>
+        <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#333" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#ddd"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="IBM Plex Sans, system-ui, sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button><button id="lyBtn" title="Layers"><svg viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M22 17.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="M22 12.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></button></div><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
@@ -1294,11 +1294,11 @@ function drawPings() {
 function draw() {
   const w = c.width, h = c.height;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = '#14171a';
+  ctx.fillStyle = '#141416';
   ctx.fillRect(0, 0, w, h);
 
   if (!img) {
-    ctx.strokeStyle = '#1f2428'; ctx.lineWidth = 1;
+    ctx.strokeStyle = '#2a2a2d'; ctx.lineWidth = 1;
     const g = 40 * dpr;
     ctx.beginPath();
     for (let x = 0; x < w; x += g) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
