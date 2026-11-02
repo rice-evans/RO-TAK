@@ -374,6 +374,16 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .legal button:hover, #landing .legal a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
   #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(6,6,6,.88); animation: lblin .2s ease; }
   #llg[hidden] { display: none; }
+  #leave { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #leave[hidden] { display: none; }
+  #leave .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
+  #leave h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
+  #leave p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
+  #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d0f; color: #888; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
+  #lvUrl b { color: #fff; font-weight: 600; }
+  .lv-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+  .lv-btns button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 13px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  .lv-btns button#lvNo { background: #333; }
   #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0e0f11; color: #e6e6e6; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
   #llg .lg-x { color: #aaa; }
   #llg .lg-x:hover { background: #222; color: #fff; }
@@ -1642,7 +1652,35 @@ function setCredit(c, persist) {
 if (document.fonts) Promise.all([500, 600, 700].map(w => document.fonts.load(w + ' 16px "IBM Plex Sans"'))).then(() => { try { draw(); } catch (e) {} }).catch(() => {});
   if (persist && !room) { try { credit ? localStorage.setItem('atak-credit', JSON.stringify(credit)) : localStorage.removeItem('atak-credit'); } catch (e) {} }
 }
-function openLink(u) { if (!u) return; if (IS_ELECTRON) window.rotak.openExternal(u); else window.open(u, '_blank', 'noopener'); }
+const leaveEl = document.createElement('div');
+leaveEl.id = 'leave'; leaveEl.hidden = true;
+leaveEl.innerHTML = '<div class="lv-panel" role="dialog" aria-modal="true" aria-labelledby="lvT"><h2 id="lvT">Leaving RO-TAK</h2><p>You are about to open a link outside the site:</p><div id="lvUrl"></div><div class="lv-btns"><button type="button" id="lvNo">Stay here</button><button type="button" id="lvGo">Open link</button></div></div>';
+document.body.appendChild(leaveEl);
+let leaveTo = '';
+function closeLeave() { leaveEl.hidden = true; leaveTo = ''; }
+function askLeave(u) {
+  let x; try { x = new URL(u); } catch (e) { return; }
+  if (!/^https?:$/.test(x.protocol)) return;
+  leaveTo = x.href;
+  const box = document.getElementById('lvUrl'); box.textContent = '';
+  const host = document.createElement('b'); host.textContent = x.origin;
+  box.append(host, document.createTextNode(x.href.slice(x.origin.length)));
+  leaveEl.hidden = false; document.getElementById('lvNo').focus();
+}
+document.getElementById('lvNo').onclick = closeLeave;
+document.getElementById('lvGo').onclick = () => { const u = leaveTo; closeLeave(); if (!u) return; if (IS_ELECTRON) window.rotak.openExternal(u); else window.open(u, '_blank', 'noopener,noreferrer'); };
+leaveEl.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === leaveEl) closeLeave(); });
+document.addEventListener('keydown', e => { if (!leaveEl.hidden && e.key === 'Escape') { e.stopPropagation(); closeLeave(); } }, true);
+function interceptLink(e) {
+  const a = e.target && e.target.closest && e.target.closest('a[href]');
+  if (!a) return;
+  let u; try { u = new URL(a.href, location.href); } catch (err) { return; }
+  if (!/^https?:$/.test(u.protocol) || u.origin === location.origin) return;
+  e.preventDefault(); e.stopPropagation(); askLeave(u.href);
+}
+document.addEventListener('click', interceptLink, true);
+document.addEventListener('auxclick', interceptLink, true);
+function openLink(u) { if (u) askLeave(u); }
 $('credit').addEventListener('pointerdown', e => e.stopPropagation());
 $('credit').onclick = () => credit && openLink(credit.u);
 
