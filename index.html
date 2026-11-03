@@ -64,16 +64,18 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #clock::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
     border: 2px solid #fff; margin-right: 5px; vertical-align: -1px; }
 
-  #toolbar, #palette { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
+  #toolbar, #palette, #drawbar { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
     gap: 3px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #toolbar { bottom: 10px; }
   #palette { bottom: 54px; gap: 6px; padding: 7px 9px; display: none; }
   #palette.open { display: flex; }
-  #toolbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd;
+  #drawbar { bottom: 54px; display: none; }
+  #drawbar.open { display: flex; }
+  #toolbar button, #drawbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd;
     cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  #toolbar button:hover { background: #333; }
-  #toolbar button.on { background: #3b82f6; color: #fff; }
-  #toolbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #toolbar button:hover, #drawbar button:hover { background: #333; }
+  #toolbar button.on, #drawbar button.on { background: #3b82f6; color: #fff; }
+  #toolbar svg, #drawbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .sep { width: 1px; height: 18px; background: #333; margin: 0 3px; }
   #colorBtn i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff8; display: block; }
   #sizeBtn i { background: #ddd; border-radius: 50%; display: block; }
@@ -126,14 +128,16 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.web #bar { top: calc(10px + env(safe-area-inset-top)); left: calc(14px + env(safe-area-inset-left)); right: calc(14px + env(safe-area-inset-right)); }
   html.web .pill { top: calc(52px + env(safe-area-inset-top)); }
   html.web #clock { left: calc(14px + env(safe-area-inset-left)); }
-  html.web #toolbar, html.web #palette, html.web #menu { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; max-width: calc(100% - 16px); }
+  html.web #toolbar, html.web #palette, html.web #drawbar, html.web #menu { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; max-width: calc(100% - 16px); }
   html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
-  html.web #palette { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
+  html.web #palette, html.web #drawbar { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
   #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #selbar.open { display: flex; }
-  #selNum { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #palette.open ~ #selbar.open, #drawbar.open ~ #selbar.open { display: none; }
+  #selNum, #selAng { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #selNum:disabled { opacity: .4; }
+  #selAng { display: none; }
   #selbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   #selbar button:hover { background: #333; }
   #selbar svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -164,8 +168,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #sympanel .sb-txt .sb-grid { margin-top: 6px; }
   html.web #sympanel { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
   @media (pointer: coarse) {
-    #toolbar button { width: 40px; height: 40px; }
-    #toolbar svg { width: 20px; height: 20px; }
+    #toolbar button, #drawbar button { width: 40px; height: 40px; }
+    #toolbar svg, #drawbar svg { width: 20px; height: 20px; }
     .sw { width: 28px; height: 28px; }
     #join input, #join button { height: 36px; font-size: 16px; }
   }
@@ -616,8 +620,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
         <input id="txt" type="text" autocomplete="off" spellcheck="false">
         <div id="palette"></div>
+        <div id="drawbar"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
+        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="recent"></div>
@@ -649,6 +654,7 @@ const ICONS = {
   pen: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4',
   line: 'M5 19L19 5',
   arrow: 'M7 7h10v10M7 17L17 7',
+  fire: 'M7 12h10M2 17l5-5-5-5M2 11V7h4M22 17l-5-5 5-5M18 7h4v4',
   box: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
   text: 'M4 7V4h16v3M9 20h6M12 4v16',
   ping: 'M4.9 19.1C1 15.2 1 8.8 4.9 4.9M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5M12 12h.01M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5M19.1 4.9C23 8.8 23 15.2 19.1 19.1',
@@ -670,7 +676,7 @@ let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
 const LAYERS = [['sym', 'Symbols'], ['draw', 'Drawings'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
-const LAYER_OF = { sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
+const LAYER_OF = { sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
 const hidL = new Set();
 try { (JSON.parse(localStorage.getItem('atak-layers') || '[]') || []).forEach(k => { if (typeof k === 'string') hidL.add(k); }); } catch (e) {}
 const hiddenIt = it => { const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
@@ -775,16 +781,29 @@ const sep = () => { const s = document.createElement('div'); s.className = 'sep'
 
 mk('open', svg(ICONS.open), 'Open map', () => hostOnly() ? toast('Only the host can change the map') : room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
 sep();
-[['pan', 'Move / select'], ['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
+[['pan', 'Move / select'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
+const DRAWS = [['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['fire', 'Fire arc']];
+let lastDraw = 'pen';
+const drawBtn = mk('draw', svg(ICONS.pen), 'Drawing', () => {
+  const db = $('drawbar'), was = db.classList.contains('open');
+  if (!DRAWS.some(d => d[0] === tool)) setTool(lastDraw);
+  $('palette').classList.remove('open'); $('menu').classList.remove('open'); closeSym();
+  db.classList.toggle('open', !was);
+});
+$('b-pan').after(drawBtn);
+DRAWS.forEach(([t, title]) => {
+  const b = document.createElement('button'); b.id = 'b-' + t; b.title = title; b.innerHTML = svg(ICONS[t]); b.onclick = () => setTool(t);
+  $('drawbar').appendChild(b);
+});
 sep();
-mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
+mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('drawbar').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
 mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
 sep();
 mk('undo', svg(ICONS.undo), 'Undo', undo);
 mk('clear', svg(ICONS.clear), 'Clear', () => hostOnly() ? toast('Only the host can clear the room') : room && items.length ? confirmTap('clear', clearAll) : clearAll());
 sep();
-mk('menu', svg(ICONS.menu), 'Menu', () => { if (typeof closeSide === 'function') closeSide(); $('palette').classList.remove('open'); $('numbar').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
+mk('menu', svg(ICONS.menu), 'Menu', () => { if (typeof closeSide === 'function') closeSide(); $('palette').classList.remove('open'); $('drawbar').classList.remove('open'); $('numbar').classList.remove('open'); closeSym(); $('menu').classList.toggle('open'); if ($('menu').classList.contains('open')) buildLegend(); });
 $('b-color').id = 'colorBtn'; $('b-size').id = 'sizeBtn';
 
 let legendDone = false;
@@ -965,7 +984,10 @@ $('b-sym').onclick = () => {
 COLORS.forEach(col => {
   const s = document.createElement('div');
   s.className = 'sw'; s.style.background = col; s.dataset.c = col;
-  s.onclick = () => { color = col; paintColor(); $('palette').classList.remove('open'); };
+  s.onclick = () => {
+    color = col; paintColor(); $('palette').classList.remove('open');
+    if (tool === 'pan' && sel && sel.type !== 'sym' && sel.color !== col && !ro()) { const before = clone(sel); sel.color = col; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw(); }
+  };
   $('palette').appendChild(s);
 });
 
@@ -1028,7 +1050,11 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'ping', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'line', 'arrow', 'fire', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'ping', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  $('drawbar').classList.remove('open');
+  const isD = DRAWS.some(d => d[0] === t);
+  if (isD) { lastDraw = t; drawBtn.innerHTML = svg(ICONS[t]); }
+  drawBtn.classList.toggle('on', isD);
   if (t !== 'sym') closeSym();
   $('numbar').classList.toggle('open', t === 'num');
   if (t === 'num') { $('palette').classList.remove('open'); $('menu').classList.remove('open'); paintNum(); }
@@ -1055,6 +1081,22 @@ function fit() {
   v = { s, r: 0, x: (r.width - img.width * s) / 2, y: T + (h - img.height * s) / 2 };
 }
 
+function arrowHead(x, y, an, hl) {
+  const sp = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(x - hl * Math.cos(an - sp), y - hl * Math.sin(an - sp));
+  ctx.lineTo(x, y);
+  ctx.lineTo(x - hl * Math.cos(an + sp), y - hl * Math.sin(an + sp));
+  ctx.stroke();
+}
+function fireGeom(it) {
+  const dx = it.b[0] - it.a[0], dy = it.b[1] - it.a[1], ln = Math.hypot(dx, dy);
+  if (ln < 1e-6) return null;
+  const t = Math.min(85, Math.max(5, it.ang || 45)) * Math.PI / 180, L = ln * 0.5, base = Math.atan2(dy, dx);
+  const na = base + Math.PI + t, pa_ = base + Math.PI - t, nb = base - t, pb_ = base + t;
+  const at = (p, an) => [p[0] + L * Math.cos(an), p[1] + L * Math.sin(an)];
+  return { L, na, nb, aa: at(it.a, na), pa: at(it.a, pa_), ab: at(it.b, nb), pb: at(it.b, pb_) };
+}
 function drawItem(it) {
   if (hiddenIt(it)) return;
   ctx.lineCap = 'butt'; ctx.lineJoin = it.type === 'pen' ? 'bevel' : 'miter'; ctx.miterLimit = 4;
@@ -1065,7 +1107,7 @@ function drawItem(it) {
   if (it.type === 'wp') {
     const d = badgeD(), r = d * 0.42, cy = -1.9 * r;
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
-    const shape = () => { ctx.beginPath(); ctx.arc(0, cy, r, 0, TAU); ctx.moveTo(-r * 0.8, cy + r * 0.6); ctx.lineTo(0, 0); ctx.lineTo(r * 0.8, cy + r * 0.6); ctx.closePath(); };
+    const th = Math.acos(r / -cy), shape = () => { ctx.beginPath(); ctx.arc(0, cy, r, Math.PI / 2 + th, Math.PI / 2 - th + TAU); ctx.lineTo(0, 0); ctx.closePath(); };
     shape(); ctx.lineWidth = d * 0.16; ctx.strokeStyle = '#000'; ctx.lineJoin = 'miter'; ctx.stroke();
     shape(); ctx.fillStyle = it.color; ctx.fill();
     ctx.beginPath(); ctx.arc(0, cy, r * 0.38, 0, TAU); ctx.fillStyle = inkFor(it.color); ctx.fill();
@@ -1094,12 +1136,17 @@ function drawItem(it) {
   } else if (it.type === 'arrow') {
     const [ax, ay] = it.a, [bx, by] = it.b, ln = Math.hypot(bx - ax, by - ay);
     ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-    const an = Math.atan2(by - ay, bx - ax), hl = Math.min(Math.max(it.w * 7, unit() * 1.6), ln * 0.6), sp2 = 0.5;
+    arrowHead(bx, by, Math.atan2(by - ay, bx - ax), Math.min(Math.max(it.w * 7, unit() * 1.6), ln * 0.6));
+  } else if (it.type === 'fire') {
+    const g = fireGeom(it); if (!g) return;
+    ctx.miterLimit = 8;
     ctx.beginPath();
-    ctx.moveTo(bx - hl * Math.cos(an - sp2), by - hl * Math.sin(an - sp2));
-    ctx.lineTo(bx, by);
-    ctx.lineTo(bx - hl * Math.cos(an + sp2), by - hl * Math.sin(an + sp2));
+    ctx.moveTo(g.pa[0], g.pa[1]); ctx.lineTo(it.a[0], it.a[1]); ctx.lineTo(g.aa[0], g.aa[1]);
+    ctx.moveTo(g.pb[0], g.pb[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.lineTo(g.ab[0], g.ab[1]);
+    ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]);
     ctx.stroke();
+    const hl = Math.min(Math.max(it.w * 7, unit() * 1.6), g.L * 0.6);
+    arrowHead(g.aa[0], g.aa[1], g.na, hl); arrowHead(g.ab[0], g.ab[1], g.nb, hl);
   } else if (it.type === 'box') {
     ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
       Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
@@ -1190,10 +1237,6 @@ function measText() {
   if (!dx && !dy) return '';
   const deg = ((Math.round(Math.atan2(dx, -dy) * 180 / Math.PI) % 360) + 360) % 360;
   let t = String(deg).padStart(3, '0') + '°';
-  if (grid) {
-    const m = gk(), d = Math.hypot(dx * m.kx, dy * m.ky) * 10;
-    t += '  ' + (d >= 1000 ? (d / 1000).toFixed(2) + ' km' : Math.round(d) + ' m');
-  }
   return t;
 }
 function drawMeas() {
@@ -1216,9 +1259,10 @@ function drawMeas() {
   if (t) {
     ctx.save(); ctx.translate((a[0] + b[0]) / 2, (a[1] + b[1]) / 2); ctx.rotate(-v.r);
     ctx.font = `700 ${13 * u}px ${F}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const tw = ctx.measureText(t).width;
-    ctx.fillStyle = 'rgba(20,20,22,.92)'; ctx.fillRect(-tw / 2 - 7 * u, -32 * u, tw + 14 * u, 22 * u);
-    ctx.fillStyle = '#facc15'; ctx.fillText(t, 0, -21 * u);
+    const gt = grid && img ? fmt8(toGrid(b)) : '', tw = Math.max(ctx.measureText(t).width, gt ? ctx.measureText(gt).width : 0), top = gt ? -50 : -32;
+    ctx.fillStyle = 'rgba(20,20,22,.94)'; ctx.fillRect(-tw / 2 - 7 * u, top * u, tw + 14 * u, (gt ? 40 : 22) * u);
+    ctx.fillStyle = '#facc15'; ctx.fillText(t, 0, (gt ? -39 : -21) * u);
+    if (gt) ctx.fillText(gt, 0, -21 * u);
     ctx.restore();
   }
   ctx.restore();
@@ -1325,6 +1369,8 @@ function draw() {
   $('selbar').classList.toggle('open', !!sel && tool === 'pan');
   $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
   paintSelNum(); paintNav(); _drawSide();
+  $('selAng').style.display = sel && sel.type === 'fire' ? 'block' : 'none';
+  if (sel && sel.type === 'fire' && document.activeElement !== $('selAng')) $('selAng').value = Math.round(sel.ang || 45);
   $('selLbl').style.display = sel && (sel.type === 'num' || sel.type === 'wp') ? 'block' : 'none';
   if (sel && (sel.type === 'num' || sel.type === 'wp') && document.activeElement !== $('selLbl')) { $('selLbl').maxLength = sel.type === 'wp' ? 24 : 8; $('selLbl').value = sel.n; }
   $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
@@ -1382,6 +1428,11 @@ function hit(it, p, tol) {
     return false;
   }
   if (it.type === 'line' || it.type === 'arrow') return segDist(p, it.a, it.b) < tol + it.w / 2;
+  if (it.type === 'fire') {
+    const g = fireGeom(it); if (!g) return false;
+    const r = tol + it.w / 2;
+    return [[it.a, it.b], [it.a, g.aa], [it.a, g.pa], [it.b, g.ab], [it.b, g.pb]].some(q => segDist(p, q[0], q[1]) < r);
+  }
   if (it.type === 'box') {
     const [x1, y1] = it.a, [x2, y2] = it.b;
     const k = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
@@ -1460,6 +1511,7 @@ c.addEventListener('pointerdown', e => {
   const p = world(e), w = SIZES[si] * unit();
   if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
   else if (tool === 'line' || tool === 'box' || tool === 'arrow') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
+  else if (tool === 'fire') cur = { id: uuid(), type: 'fire', color, w, ang: fireAng, a: p, b: p };
   else if (tool === 'text') openText(e);
   else if (tool === 'sym') placeSym(p);
   else if (tool === 'num') placeNum(p);
@@ -1526,7 +1578,7 @@ c.addEventListener('wheel', e => {
   draw(); save();
 }, { passive: false });
 
-let sel = null, drag = null;
+let sel = null, drag = null, fireAng = 45;
 const clone = o => JSON.parse(JSON.stringify(o));
 function bbox(it) {
   if (it.type === 'pen') {
@@ -1538,6 +1590,10 @@ function bbox(it) {
     const h = it.w / 2;
     return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
   }
+  if (it.type === 'fire') {
+    const g = fireGeom(it), h = it.w / 2, q = [it.a, it.b].concat(g ? [g.aa, g.pa, g.ab, g.pb] : []);
+    return [Math.min(...q.map(x => x[0])) - h, Math.min(...q.map(x => x[1])) - h, Math.max(...q.map(x => x[0])) + h, Math.max(...q.map(x => x[1])) + h];
+  }
   if (it.type === 'sym') { const z = symS(); return [it.x - z * .55, it.y - z * .6, it.x + z * .55, it.y + z * .5]; }
   if (it.type === 'num') { const h = badgeD() / 2; return [it.x - h, it.y - h, it.x + h, it.y + h]; }
   if (it.type === 'wp') { const r = badgeD() * 0.42; return [it.x - r, it.y - 2.9 * r, it.x + r, it.y]; }
@@ -1546,7 +1602,7 @@ function bbox(it) {
 }
 function moveFrom(it, b, dx, dy) {
   if (it.type === 'pen') it.pts = b.pts.map(q => [q[0] + dx, q[1] + dy]);
-  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
+  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow' || it.type === 'fire') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
   else { it.x = b.x + dx; it.y = b.y + dy; }
 }
 function gdim(it) {
@@ -1567,7 +1623,7 @@ function scaleSel(f) {
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
-  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow' || sel.type === 'fire') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
   else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
   hist.push({ t: 'mod', it: sel, before });
   pushUpd(sel); save(); draw();
@@ -1675,11 +1731,18 @@ $('nMinus').onclick = () => { nextNum = Math.max(0, nextNum - 1); paintNum(); };
 $('nPlus').onclick = () => { nextNum = Math.min(99999, nextNum + 1); paintNum(); };
 $('nVal').onchange = () => { const n = parseInt($('nVal').value, 10); nextNum = isFinite(n) ? Math.min(99999, Math.max(0, n)) : nextNum; $('nVal').blur(); paintNum(); };
 $('nPre').oninput = () => { numPre = $('nPre').value.slice(0, 3); };
-['nVal', 'nPre', 'selLbl'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $(id).blur(); }));
+['nVal', 'nPre', 'selLbl', 'selAng'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') $(id).blur(); }));
 $('selLbl').onchange = () => {
   if (!sel || (sel.type !== 'num' && sel.type !== 'wp')) return;
   const t = $('selLbl').value.trim().slice(0, sel.type === 'wp' ? 24 : 8); if (isBad(t)) toast('That text is not allowed'); if (!t || isBad(t) || t === sel.n) { $('selLbl').value = sel.n; return; }
   const before = clone(sel); sel.n = t; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
+};
+$('selAng').onchange = () => {
+  if (!sel || sel.type !== 'fire' || lockedOut()) return;
+  const n = parseFloat($('selAng').value);
+  if (!isFinite(n)) { $('selAng').value = Math.round(sel.ang || 45); return; }
+  const before = clone(sel); sel.ang = fireAng = Math.min(85, Math.max(5, Math.round(n)));
+  hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
 };
 buildSettings(); paintNum();
 
@@ -2513,6 +2576,10 @@ function cleanItemRaw(d, id) {
   if (d.type === 'pen') {
     if (!Array.isArray(d.pts) || !d.pts.length || d.pts.length > 5000 || !d.pts.every(pt) || !num(d.w)) return null;
     return { id, type: 'pen', color, w: d.w, pts: d.pts };
+  }
+  if (d.type === 'fire') {
+    if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
+    return { id, type: 'fire', color, w: d.w, ang: num(d.ang) ? Math.min(85, Math.max(5, d.ang)) : 45, a: d.a, b: d.b };
   }
   if (d.type === 'line' || d.type === 'box' || d.type === 'arrow') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
