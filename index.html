@@ -134,6 +134,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
   #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
   #selbar.open { display: flex; }
+  #selRotL, #selRotR { display: none !important; }
+  #selbar.rot #selRotL, #selbar.rot #selRotR { display: flex !important; }
   #palette.open ~ #selbar.open, #drawbar.open ~ #selbar.open { display: none; }
   #selNum, #selAng { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #selNum:disabled { opacity: .4; }
@@ -622,7 +624,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="palette"></div>
         <div id="drawbar"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
+        <div id="selbar"><button id="selRotL" title="Rotate left 15°"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></button><button id="selRotR" title="Rotate right 15°"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5"/></svg></button><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code" maxlength="24"><button id="joinBtn">Join</button></div>
           <div id="recent"></div>
@@ -1081,6 +1083,29 @@ function fit() {
   v = { s, r: 0, x: (r.width - img.width * s) / 2, y: T + (h - img.height * s) / 2 };
 }
 
+function rotHandle(it) { const b = bbox(it); return [(b[0] + b[2]) / 2, b[1] - 5 / v.s - 22 / v.s]; }
+function boxPts(it) {
+  const cx = (it.a[0] + it.b[0]) / 2, cy = (it.a[1] + it.b[1]) / 2, hx = Math.abs(it.b[0] - it.a[0]) / 2, hy = Math.abs(it.b[1] - it.a[1]) / 2;
+  const co = Math.cos(it.rot || 0), si = Math.sin(it.rot || 0);
+  return [[-hx, -hy], [hx, -hy], [hx, hy], [-hx, hy]].map(q => [cx + q[0] * co - q[1] * si, cy + q[0] * si + q[1] * co]);
+}
+const ROTATABLE = it => it.type === 'pen' || it.type === 'line' || it.type === 'arrow' || it.type === 'box' || it.type === 'fire';
+function rotPivot(it) {
+  if (it.type === 'pen') { const b = bbox(it), h = it.w / 2; return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2]; }
+  return [(it.a[0] + it.b[0]) / 2, (it.a[1] + it.b[1]) / 2];
+}
+function rotateFrom(it, b, ang) {
+  const pv = rotPivot(b), co = Math.cos(ang), si = Math.sin(ang);
+  const rp = q => [pv[0] + (q[0] - pv[0]) * co - (q[1] - pv[1]) * si, pv[1] + (q[0] - pv[0]) * si + (q[1] - pv[1]) * co];
+  if (it.type === 'pen') it.pts = b.pts.map(rp);
+  else if (it.type === 'box') it.rot = (b.rot || 0) + ang;
+  else { it.a = rp(b.a); it.b = rp(b.b); }
+}
+function rotateSel(ang) {
+  if (!sel || !ROTATABLE(sel) || lockedOut()) return;
+  const before = clone(sel); rotateFrom(sel, before, ang);
+  hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
+}
 function arrowHead(x, y, an, hl) {
   const sp = 0.5;
   ctx.beginPath();
@@ -1092,10 +1117,14 @@ function arrowHead(x, y, an, hl) {
 function fireGeom(it) {
   const dx = it.b[0] - it.a[0], dy = it.b[1] - it.a[1], ln = Math.hypot(dx, dy);
   if (ln < 1e-6) return null;
-  const t = Math.min(85, Math.max(5, it.ang || 45)) * Math.PI / 180, L = ln * 0.5, base = Math.atan2(dy, dx);
-  const na = base + Math.PI + t, pa_ = base + Math.PI - t, nb = base - t, pb_ = base + t;
-  const at = (p, an) => [p[0] + L * Math.cos(an), p[1] + L * Math.sin(an)];
-  return { L, na, nb, aa: at(it.a, na), pa: at(it.a, pa_), ab: at(it.b, nb), pb: at(it.b, pb_) };
+  const base = Math.atan2(dy, dx), ar = it.arms || fireArms(it.ang);
+  const an = ar.map(q => base + q[0]), le = ar.map(q => q[1] * ln);
+  const at = (p, i) => [p[0] + le[i] * Math.cos(an[i]), p[1] + le[i] * Math.sin(an[i])];
+  return { ln, base, la: le[0], lb: le[2], na: an[0], nb: an[2], aa: at(it.a, 0), pa: at(it.a, 1), ab: at(it.b, 2), pb: at(it.b, 3) };
+}
+function fireArms(deg) {
+  const t = Math.min(85, Math.max(5, deg || 45)) * Math.PI / 180;
+  return [[Math.PI + t, 0.5], [Math.PI - t, 0.5], [-t, 0.5], [t, 0.5]];
 }
 function drawItem(it) {
   if (hiddenIt(it)) return;
@@ -1145,11 +1174,11 @@ function drawItem(it) {
     ctx.moveTo(g.pb[0], g.pb[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.lineTo(g.ab[0], g.ab[1]);
     ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]);
     ctx.stroke();
-    const hl = Math.min(Math.max(it.w * 7, unit() * 1.6), g.L * 0.6);
-    arrowHead(g.aa[0], g.aa[1], g.na, hl); arrowHead(g.ab[0], g.ab[1], g.nb, hl);
+    const h0 = Math.max(it.w * 7, unit() * 1.6);
+    arrowHead(g.aa[0], g.aa[1], g.na, Math.min(h0, g.la * 0.6)); arrowHead(g.ab[0], g.ab[1], g.nb, Math.min(h0, g.lb * 0.6));
   } else if (it.type === 'box') {
-    ctx.strokeRect(Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]),
-      Math.abs(it.b[0] - it.a[0]), Math.abs(it.b[1] - it.a[1]));
+    const k = boxPts(it);
+    ctx.beginPath(); k.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath(); ctx.stroke();
   } else if (it.type === 'text') {
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
@@ -1364,11 +1393,22 @@ function draw() {
     const b = bbox(sel), pad = 5 / v.s;
     ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
     if (UPRIGHT(sel)) { ctx.translate(sel.x, sel.y); ctx.rotate(-v.r); ctx.translate(-sel.x, -sel.y); }
-    ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad); ctx.restore();
+    ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad);
+    if (sel.type === 'fire' && tool === 'pan') {
+      const g = fireGeom(sel);
+      if (g) { ctx.setLineDash([]); ctx.fillStyle = '#141416'; [g.aa, g.pa, g.ab, g.pb].forEach(q => { ctx.beginPath(); ctx.arc(q[0], q[1], 6 / v.s, 0, TAU); ctx.fill(); ctx.stroke(); }); }
+    }
+    if (ROTATABLE(sel) && tool === 'pan') {
+      const hp = rotHandle(sel);
+      ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(hp[0], hp[1] + 14 / v.s); ctx.lineTo(hp[0], hp[1]); ctx.stroke();
+      ctx.beginPath(); ctx.arc(hp[0], hp[1], 7 / v.s, 0, TAU); ctx.fillStyle = '#141416'; ctx.fill(); ctx.stroke();
+    }
+    ctx.restore();
   }
   $('selbar').classList.toggle('open', !!sel && tool === 'pan');
   $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
   paintSelNum(); paintNav(); _drawSide();
+  $('selbar').classList.toggle('rot', !!sel && ROTATABLE(sel));
   $('selAng').style.display = sel && sel.type === 'fire' ? 'block' : 'none';
   if (sel && sel.type === 'fire' && document.activeElement !== $('selAng')) $('selAng').value = Math.round(sel.ang || 45);
   $('selLbl').style.display = sel && (sel.type === 'num' || sel.type === 'wp') ? 'block' : 'none';
@@ -1434,8 +1474,7 @@ function hit(it, p, tol) {
     return [[it.a, it.b], [it.a, g.aa], [it.a, g.pa], [it.b, g.ab], [it.b, g.pb]].some(q => segDist(p, q[0], q[1]) < r);
   }
   if (it.type === 'box') {
-    const [x1, y1] = it.a, [x2, y2] = it.b;
-    const k = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
+    const k = boxPts(it);
     return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
   }
   ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
@@ -1496,6 +1535,18 @@ c.addEventListener('pointerdown', e => {
   }
   if (tool === 'pan' && e.button === 0) {
     const p = world(e), tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
+    if (sel && sel.type === 'fire' && items.includes(sel) && !lockedOut()) {
+      const g = fireGeom(sel);
+      if (g) {
+        let bi = -1, bd = Infinity;
+        [g.aa, g.pa, g.ab, g.pb].forEach((q, i) => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (d < bd) { bd = d; bi = i; } });
+        if (bd < tol * 1.2 + 6 / v.s) { drag = { it: sel, before: clone(sel), arm: bi, moved: false }; return; }
+      }
+    }
+    if (sel && ROTATABLE(sel) && items.includes(sel) && !lockedOut()) {
+      const hp = rotHandle(sel);
+      if (Math.hypot(p[0] - hp[0], p[1] - hp[1]) < tol * 1.2 + 7 / v.s) { const pv = rotPivot(sel); drag = { it: sel, before: clone(sel), rot: true, pv, a0: Math.atan2(p[1] - pv[1], p[0] - pv[0]), moved: false }; return; }
+    }
     let h = null;
     for (let i = items.length - 1; i >= 0; i--) if (hit(items[i], p, tol)) { h = items[i]; break; }
     sel = h;
@@ -1528,7 +1579,18 @@ c.addEventListener('pointermove', e => {
   if (ignore) return;
   if (drag) {
     const p = world(e);
-    moveFrom(drag.it, drag.before, p[0] - drag.p0[0], p[1] - drag.p0[1]);
+    if (drag.arm !== undefined) {
+      const it = drag.it, g0 = fireGeom(drag.before);
+      if (g0) {
+        const o = drag.arm < 2 ? drag.before.a : drag.before.b, ar = clone(drag.before.arms || fireArms(drag.before.ang));
+        ar[drag.arm] = [normA(Math.atan2(p[1] - o[1], p[0] - o[0]) - g0.base), Math.min(4, Math.max(0.05, Math.hypot(p[0] - o[0], p[1] - o[1]) / g0.ln))];
+        it.arms = ar;
+      }
+    } else if (drag.rot) {
+      let a = Math.atan2(p[1] - drag.pv[1], p[0] - drag.pv[0]) - drag.a0;
+      if (!e.altKey) a = Math.round(a / (Math.PI / 36)) * (Math.PI / 36);
+      rotateFrom(drag.it, drag.before, a);
+    } else moveFrom(drag.it, drag.before, p[0] - drag.p0[0], p[1] - drag.p0[1]);
     drag.moved = true; draw(); return;
   }
   if (pan) {
@@ -1586,7 +1648,11 @@ function bbox(it) {
     it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
     return [a - it.w / 2, b - it.w / 2, x + it.w / 2, y + it.w / 2];
   }
-  if (it.type === 'line' || it.type === 'box' || it.type === 'arrow') {
+  if (it.type === 'box') {
+    const k = boxPts(it), h = it.w / 2;
+    return [Math.min(...k.map(q => q[0])) - h, Math.min(...k.map(q => q[1])) - h, Math.max(...k.map(q => q[0])) + h, Math.max(...k.map(q => q[1])) + h];
+  }
+  if (it.type === 'line' || it.type === 'arrow') {
     const h = it.w / 2;
     return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
   }
@@ -1633,6 +1699,8 @@ function endDrag() {
   if (drag.moved) { hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it); save(); }
   drag = null;
 }
+$('selRotL').onclick = () => rotateSel(-Math.PI / 12);
+$('selRotR').onclick = () => rotateSel(Math.PI / 12);
 $('selEdit').onclick = () => { if (sel && sel.type === 'sym') openSym(sel); };
 const selNum = $('selNum');
 function paintSelNum() {
@@ -1741,7 +1809,7 @@ $('selAng').onchange = () => {
   if (!sel || sel.type !== 'fire' || lockedOut()) return;
   const n = parseFloat($('selAng').value);
   if (!isFinite(n)) { $('selAng').value = Math.round(sel.ang || 45); return; }
-  const before = clone(sel); sel.ang = fireAng = Math.min(85, Math.max(5, Math.round(n)));
+  const before = clone(sel); sel.ang = fireAng = Math.min(85, Math.max(5, Math.round(n))); delete sel.arms;
   hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
 };
 buildSettings(); paintNum();
@@ -2579,11 +2647,15 @@ function cleanItemRaw(d, id) {
   }
   if (d.type === 'fire') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
-    return { id, type: 'fire', color, w: d.w, ang: num(d.ang) ? Math.min(85, Math.max(5, d.ang)) : 45, a: d.a, b: d.b };
+    const o = { id, type: 'fire', color, w: d.w, ang: num(d.ang) ? Math.min(85, Math.max(5, d.ang)) : 45, a: d.a, b: d.b };
+    if (Array.isArray(d.arms) && d.arms.length === 4 && d.arms.every(q => Array.isArray(q) && q.length === 2 && num(q[0]) && num(q[1]))) o.arms = d.arms.map(q => [normA(q[0]), Math.min(4, Math.max(0.05, q[1]))]);
+    return o;
   }
   if (d.type === 'line' || d.type === 'box' || d.type === 'arrow') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
-    return { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
+    const o = { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
+    if (d.type === 'box' && num(d.rot) && d.rot) o.rot = d.rot % TAU;
+    return o;
   }
   if (d.type === 'sym') {
     const okS = typeof d.sidc === 'string' && (/^\d{20}$/.test(d.sidc) || /^[A-Z][A-Z-]{3}[A-Z0-9-]{11}$/.test(d.sidc));
