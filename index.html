@@ -488,16 +488,17 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .legal button:hover, #landing .legal a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
   #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(11,13,16,.88); animation: lblin .2s ease; }
   #llg[hidden] { display: none; }
-  #leave { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  #leave[hidden] { display: none; }
-  #leave .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
-  #leave h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
+  #leave, #txm { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #leave[hidden], #txm[hidden] { display: none; }
+  #leave .lv-panel, #txm .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
+  #leave h2, #txm h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
   #leave p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
   #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d10; color: #888; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
   #lvUrl b { color: #fff; font-weight: 600; }
   .lv-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
   .lv-btns button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 13px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
-  .lv-btns button#lvNo { background: #333; }
+  .lv-btns button#lvNo, .lv-btns button.alt { background: #333; }
+  #txm textarea { display: block; width: 100%; height: 180px; resize: none; padding: 8px 10px; border: 0; border-radius: 6px; background: #0b0d10; color: #ddd; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; outline: none; user-select: text; -webkit-user-select: text; }
   #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0b0d10; color: #ddd; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
   #llg .lg-x { color: #aaa; }
   #llg .lg-x:hover { background: #1a1a1c; color: #fff; }
@@ -535,7 +536,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     <div class="enter-row">
       <button id="lenter" class="enter" type="button">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
       <a class="enter" id="lgh" href="https://github.com/rice-evans/RO-TAK" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
-      <span class="updated">Updated on 2nd November 2026</span>
+      <span class="updated">Updated on 3rd November 2026</span>
     </div>
   </main>
   <nav class="legal"><button type="button" data-lg="privacy">Privacy policy</button><button type="button" data-lg="terms">Terms of service</button><button type="button" id="lintro">Introduction</button><a href="https://emergency-protocols.vercel.app/" target="_blank" rel="noopener">My Projects</a></nav>
@@ -561,7 +562,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 <section class="in-feat flip"><div class="in-txt"><h3>Lead, and everyone follows</h3><p>Lead the room and your view carries to anyone who taps Follow. Pan, zoom or rotate and they go with you.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_arm.svg" x="1000.5" y="400.5" width="79.0" height="79.0"/><g class="mv lead"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(255,122,26,.12)" stroke="#ff7a1a" stroke-width="6"/><g><rect x="470" y="430" width="108" height="40" rx="8" fill="#ff7a1a"/><text x="524" y="459" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#111">Alex</text></g></g><g class="mv trail"><rect x="470" y="470" width="240" height="160" rx="6" fill="rgba(59,130,246,.12)" stroke="#3b82f6" stroke-width="6" stroke-dasharray="18 12"/><g><rect x="470" y="630" width="108" height="40" rx="8" fill="#3b82f6"/><text x="524" y="659" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="26" fill="#fff">Sam</text></g></g></svg><div class="ui-pill"><span>Following Alex</span><button type="button" tabindex="-1">Stop</button></div></div></section>
 <section class="in-feat"><div class="in-txt"><h3>Hide what you don’t need</h3><p>Switch symbols, drawings, text, numbers or waypoints off for your own view. Everyone else’s map stays as it is.</p></div><div class="sc "><svg viewBox="400 220 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-hidden="true"><rect x="0" y="0" width="1600" height="1200" fill="#0b0d10"/><image href="images/landing/map1.webp" x="0" y="0" width="1600" height="1200"/><image data-a="fade" style="--d:0s" href="images/intro/sf_inf.svg" x="519.0" y="691.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/sf_arm.svg" x="629.0" y="661.5" width="82.0" height="57.0"/><image data-a="fade" style="--d:0s" href="images/intro/se_inf.svg" x="890.5" y="340.5" width="79.0" height="79.0"/><g data-a="hide1" style="--d:1.6s"><path d="M610,700 C700,640 690,540 800,500 S900,430 950,370" fill="none" stroke="#ff7a1a" stroke-width="10" stroke-linecap="round"/><rect x="840" y="280" width="290" height="230" fill="none" stroke="#ef4444" stroke-width="7"/></g><g data-a="hide2" style="--d:3s"><text x="548" y="745" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">RP Zulu</text><text x="760" y="262" font-family="IBM Plex Sans, sans-serif" font-weight="700" font-size="44" fill="#fff" stroke="#000" stroke-width="9" paint-order="stroke" stroke-linejoin="round">OBJ</text></g></svg><div class="ui-layers"><div class="ui-row "><span>Symbols</span><i></i></div><div class="ui-row off1"><span>Drawings</span><i></i></div><div class="ui-row off2"><span>Text</span><i></i></div></div></div></section>
   </div>
-  <section class="in-small"><h3>And the rest</h3><ul><li><b>Grid coordinates</b><span>Calibrate the map once and read or jump to any grid reference.</span></li><li><b>Waypoints and timers</b><span>Numbered waypoints with grid references, and countdown timers shared with the room.</span></li><li><b>Minimap and rotation</b><span>Rotate the map to your heading and keep the full picture in the corner when zoomed in.</span></li><li><b>Export and import</b><span>Save your marks to a file, or load them into another room. Save the map as an image.</span></li><li><b>Rooms clean up</b><span>A room is deleted after 2 hours with nobody in it.</span></li><li><b>Runs anywhere</b><span>In the browser, installed as an app on a phone, or as the desktop app for macOS and Windows.</span></li></ul></section>
+  <section class="in-small"><h3>And the rest</h3><ul><li><b>Grid coordinates</b><span>Calibrate the map once and read or jump to any grid reference.</span></li><li><b>Waypoints and timers</b><span>Numbered waypoints with grid references, and countdown timers shared with the room.</span></li><li><b>Minimap and rotation</b><span>Rotate the map to your heading and keep the full picture in the corner when zoomed in.</span></li><li><b>Export and import</b><span>Copy your marks as text and paste them into another room. Save the map as an image.</span></li><li><b>Rooms clean up</b><span>A room is deleted after 2 hours with nobody in it.</span></li><li><b>Runs anywhere</b><span>In the browser, installed as an app on a phone, or as the desktop app for macOS and Windows.</span></li></ul></section>
   <section class="in-oss">
     <div class="in-oss-in">
       <h3>Open source, all of it.</h3>
@@ -1732,7 +1733,7 @@ function clearAll() {
   save(); draw();
 }
 addEventListener('keydown', e => {
-  if (e.target.tagName !== 'INPUT' && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  if (!/INPUT|TEXTAREA/.test(e.target.tagName) && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
 });
 
 function setTitle() { $('title').textContent = room ? room.replace(/-/g, ' ').toUpperCase() + (roomLocked ? ' · LOCKED' : '') : name; }
@@ -2406,10 +2407,8 @@ let roomUI = () => {};
   };
   const b = document.createElement('button'); b.className = 'mbtn'; b.id = 'exportBtn'; b.textContent = 'Save map as image';
   b.onclick = () => { $('menu').classList.remove('open'); exportImage(); };
-  const fi = document.createElement('input'); fi.type = 'file'; fi.accept = '.json,application/json'; fi.hidden = true; document.body.appendChild(fi);
-  fi.onchange = () => { const f = fi.files[0]; fi.value = ''; importMarks(f); };
   const ex = document.createElement('button'); ex.className = 'mbtn'; ex.textContent = 'Export marks'; ex.onclick = () => { $('menu').classList.remove('open'); exportMarks(); };
-  const im = document.createElement('button'); im.className = 'mbtn'; im.textContent = 'Import marks'; im.onclick = () => { $('menu').classList.remove('open'); fi.click(); };
+  const im = document.createElement('button'); im.className = 'mbtn'; im.textContent = 'Import marks'; im.onclick = () => { $('menu').classList.remove('open'); importDialog(); };
   $('gridsec').before(b); b.after(ex, im);
   if (IS_ELECTRON) {
     const ub = document.createElement('button'); ub.className = 'mbtn'; ub.id = 'updBtn'; ub.style.display = 'none';
@@ -2779,24 +2778,51 @@ function paintRecent() {
     w.append(b, d); box.appendChild(w);
   });
 }
+function txDialog(title, text, readOnly, actionLabel, onAction) {
+  const old = $('txm'); if (old) old.remove();
+  const m = document.createElement('div'); m.id = 'txm';
+  const p = document.createElement('div'); p.className = 'lv-panel';
+  const h = document.createElement('h2'); h.textContent = title;
+  const ta = document.createElement('textarea'); ta.value = text; ta.readOnly = readOnly; ta.spellcheck = false; ta.autocomplete = 'off';
+  if (!readOnly) ta.placeholder = 'Paste here';
+  const row = document.createElement('div'); row.className = 'lv-btns';
+  const close = document.createElement('button'); close.className = 'alt'; close.textContent = 'Close'; close.onclick = () => m.remove();
+  const go = document.createElement('button'); go.textContent = actionLabel;
+  go.onclick = () => { if (onAction(ta.value, ta)) m.remove(); };
+  row.append(close, go); p.append(h, ta, row); m.appendChild(p);
+  m.addEventListener('pointerdown', e => { if (e.target === m) m.remove(); });
+  m.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape') m.remove(); });
+  document.body.appendChild(m);
+  if (readOnly) ta.select(); else ta.focus();
+}
 function exportMarks() {
   const list = items.filter(i => i.type !== 'timer');
   if (!list.length) { toast('Nothing to export'); return; }
-  const blob = new Blob([JSON.stringify({ app: 'rotak', version: 1, items: list })], { type: 'application/json' });
-  const base = (room || (name !== 'RO-TAK' && name) || 'marks').toString().replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'marks';
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = base + '-RO-TAK.json'; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  const text = JSON.stringify({ app: 'rotak', version: 1, items: list });
+  txDialog('Export marks', text, true, 'Copy', (t, ta) => {
+    const done = () => toast('Copied');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => { ta.select(); document.execCommand('copy') ? done() : toast('Select and copy the text'); });
+    else { ta.select(); document.execCommand('copy') ? done() : toast('Select and copy the text'); }
+    return false;
+  });
 }
-async function importMarks(file) {
-  if (!file || lockedOut()) return;
-  if (file.size > 5e6) { toast('File is too large'); return; }
-  let d; try { d = JSON.parse(await file.text()); } catch (e) { toast('Not a RO-TAK file'); return; }
-  if (!d || d.app !== 'rotak' || !Array.isArray(d.items)) { toast('Not a RO-TAK file'); return; }
+function importDialog() {
+  if (lockedOut()) return;
+  txDialog('Import marks', '', false, 'Import', t => importMarks(t));
+}
+function importMarks(text) {
+  if (lockedOut()) return false;
+  text = String(text || '').trim();
+  if (!text) { toast('Paste the text first'); return false; }
+  if (text.length > 5e6) { toast('Text is too large'); return false; }
+  let d; try { d = JSON.parse(text); } catch (e) { toast('Not RO-TAK text'); return false; }
+  if (!d || d.app !== 'rotak' || !Array.isArray(d.items)) { toast('Not RO-TAK text'); return false; }
   const list = [];
   for (const raw of d.items.slice(0, 1500)) { if (raw && raw.type === 'timer') continue; const it = cleanItem(raw, uuid()); if (it) list.push(it); }
-  if (!list.length) { toast('Nothing to import'); return; }
+  if (!list.length) { toast('Nothing to import'); return false; }
   items.push(...list); hist.push({ t: 'import', list }); pushAdd(list); save(); draw();
   toast('Imported ' + list.length + ' marks');
+  return true;
 }
 function touchRoom() { if (room) db().from('rooms').update({ last_active: new Date().toISOString() }).eq('code', room).then(() => {}, () => {}); }
 function teardown() {
