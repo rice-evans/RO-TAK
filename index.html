@@ -2748,12 +2748,31 @@ document.addEventListener('visibilitychange', () => {
 });
 document.addEventListener('gesturestart', e => e.preventDefault());
 
+let joinChk = 0, joinTimer = null;
+function roomKey(raw) { return String(raw || '').trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 24).replace(/-$/, ''); }
+function joinLabel() {
+  clearTimeout(joinTimer); const my = ++joinChk;
+  if (room) return;
+  $('joinBtn').textContent = 'Join';
+  const code = roomKey($('roomIn').value);
+  if (!code || isBad(code)) return;
+  joinTimer = setTimeout(async () => {
+    try {
+      await libReady;
+      if (!createClient || my !== joinChk || room) return;
+      const r = await db().from('rooms').select('code').eq('code', code).maybeSingle();
+      if (my !== joinChk || room || r.error) return;
+      $('joinBtn').textContent = r.data ? 'Join' : 'Create';
+    } catch (e) {}
+  }, 350);
+}
 function setJoinedUI(on) {
   $('joinBtn').textContent = on ? 'Leave' : 'Join';
   $('joinBtn').classList.toggle('leave', on);
   $('roomIn').readOnly = on;
   $('nameIn').readOnly = on;
   paintRecent();
+  if (!on) joinLabel();
 }
 let hbTimer = null;
 const recentRooms = () => {
@@ -2889,6 +2908,7 @@ function leaveRoom() {
   load(); setTitle(); draw();
 }
 
+$('roomIn').addEventListener('input', joinLabel);
 $('joinBtn').onclick = () => room ? leaveRoom() : joinRoom($('roomIn').value, $('nameIn').value.trim());
 ['roomIn', 'nameIn'].forEach(id => $(id).addEventListener('keydown', e => {
   e.stopPropagation();
