@@ -653,6 +653,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 const IS_ELECTRON = !!window.rotak;
 let dragging = false, pinned = false;
 try { pinned = !!localStorage.getItem('atak-pin'); } catch (e) {}
+let charcoal = false;
+try { charcoal = localStorage.getItem('atak-case') === 'charcoal'; } catch (e) {}
 const $ = id => document.getElementById(id);
 const c = $('c'); let ctx = c.getContext('2d');
 
@@ -2599,6 +2601,10 @@ let roomUI = () => {};
     const paintPin = () => { pn.textContent = pinned ? 'Unlock position' : 'Lock position'; };
     pn.onclick = () => { pinned = !pinned; try { localStorage.setItem('atak-pin', pinned ? '1' : ''); } catch (e) {} paintPin(); $('menu').classList.remove('open'); toast(pinned ? 'Position locked' : 'Position unlocked'); };
     paintPin(); b.before(pn);
+    const cs = document.createElement('button'); cs.className = 'mbtn';
+    const paintCase = () => { cs.textContent = charcoal ? 'FDE case' : 'Charcoal case'; };
+    cs.onclick = () => { charcoal = !charcoal; try { localStorage.setItem('atak-case', charcoal ? 'charcoal' : ''); } catch (e) {} $('frame').src = charcoal ? 'frame-charcoal.png' : 'frame.png'; paintCase(); $('menu').classList.remove('open'); };
+    paintCase(); b.before(cs);
     window.rotak.onUpdate(u => { upd = u; ub.textContent = u.state === 'ready' ? 'Restart to update to ' + u.version : 'Update to ' + u.version; ub.style.display = ''; toast('Update ' + u.version + (u.state === 'ready' ? ' ready' : ' available')); });
   }
   if (!IS_ELECTRON) {
@@ -3144,7 +3150,7 @@ $('case').addEventListener('mousedown', e => {
 addEventListener('mouseup', stopDrag);
 addEventListener('blur', stopDrag);
 
-if (IS_ELECTRON) $('frame').src = 'frame.png';
+if (IS_ELECTRON) $('frame').src = charcoal ? 'frame-charcoal.png' : 'frame.png';
 new ResizeObserver(() => document.documentElement.style.setProperty('--tb', $('toolbar').offsetHeight + 'px')).observe($('toolbar'));
 if (!IS_ELECTRON && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 paintColor(); paintSize(); setTool('pen');
