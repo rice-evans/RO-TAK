@@ -11,7 +11,7 @@
 <a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rice-evans/RO-TAK?style=flat" alt="License"></a>
 <a href="https://github.com/rice-evans/RO-TAK/commits/main"><img src="https://img.shields.io/github/last-commit/rice-evans/RO-TAK?style=flat" alt="Last commit"></a>
 <a href="https://github.com/rice-evans/RO-TAK/releases/latest"><img src="https://img.shields.io/github/v/release/rice-evans/RO-TAK?style=flat" alt="Release"></a>
-<a href="https://github.com/rice-evans/RO-TAK/releases"><img src="https://img.shields.io/github/downloads/rice-evans/RO-TAK/total?style=flat" alt="Downloads"></a>
+<a href="https://github.com/rice-evans/RO-TAK/releases"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fro-tak.vercel.app%2Fapi%2Fdownloads&style=flat" alt="Downloads"></a>
 <img src="https://img.shields.io/badge/JavaScript-f7df1e?style=flat&logo=javascript&logoColor=black" alt="JavaScript">
 <img src="https://img.shields.io/badge/Electron-47848f?style=flat&logo=electron&logoColor=white" alt="Electron">
 </p>
