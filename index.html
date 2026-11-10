@@ -515,6 +515,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #leave p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
   #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d10; color: #888; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
   #lvUrl b { color: #fff; font-weight: 600; }
+  #lvGh a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
   .lv-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
   .lv-btns button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 13px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
   .lv-btns button#lvNo, .lv-btns button.alt { background: #333; }
@@ -1958,21 +1959,32 @@ if (document.fonts) Promise.all([500, 600, 700].map(w => document.fonts.load(w +
 }
 const leaveEl = document.createElement('div');
 leaveEl.id = 'leave'; leaveEl.hidden = true;
-leaveEl.innerHTML = '<div class="lv-panel" role="dialog" aria-modal="true" aria-labelledby="lvT"><h2 id="lvT">Leaving RO-TAK</h2><p>You are about to open a link outside the site:</p><div id="lvUrl"></div><div class="lv-btns"><button type="button" id="lvNo">Stay here</button><button type="button" id="lvGo">Open link</button></div></div>';
+leaveEl.innerHTML = '<div class="lv-panel" role="dialog" aria-modal="true" aria-labelledby="lvT"><h2 id="lvT">Leaving RO-TAK</h2><p id="lvP">You are about to open a link outside the site:</p><div id="lvUrl"></div><p id="lvGh" hidden>RO-TAK is open source. You can read the code and download it from <a href="https://github.com/rice-evans/RO-TAK/releases">our GitHub</a> instead.</p><div class="lv-btns"><button type="button" id="lvNo">Stay here</button><button type="button" id="lvGo">Open link</button></div></div>';
 document.body.appendChild(leaveEl);
-let leaveTo = '';
-function closeLeave() { leaveEl.hidden = true; leaveTo = ''; }
+let leaveTo = '', leaveDl = '';
+function closeLeave() { leaveEl.hidden = true; leaveTo = ''; leaveDl = ''; }
+function showLeave(title, text, origin, rest, go, gh) {
+  document.getElementById('lvT').textContent = title;
+  document.getElementById('lvP').textContent = text;
+  document.getElementById('lvGo').textContent = go;
+  document.getElementById('lvGh').hidden = !gh;
+  const box = document.getElementById('lvUrl'); box.textContent = '';
+  const host = document.createElement('b'); host.textContent = origin;
+  box.append(host, document.createTextNode(rest));
+  leaveEl.hidden = false; document.getElementById('lvNo').focus();
+}
 function askLeave(u) {
   let x; try { x = new URL(u); } catch (e) { return; }
   if (!/^https?:$/.test(x.protocol)) return;
-  leaveTo = x.href;
-  const box = document.getElementById('lvUrl'); box.textContent = '';
-  const host = document.createElement('b'); host.textContent = x.origin;
-  box.append(host, document.createTextNode(x.href.slice(x.origin.length)));
-  leaveEl.hidden = false; document.getElementById('lvNo').focus();
+  leaveDl = ''; leaveTo = x.href;
+  showLeave('Leaving RO-TAK', 'You are about to open a link outside the site:', x.origin, x.href.slice(x.origin.length), 'Open link', false);
+}
+function askDownload(u) {
+  leaveTo = ''; leaveDl = u;
+  showLeave('Downloading RO-TAK', 'You are about to download a file:', 'https://github.com', '/rice-evans/RO-TAK/releases/latest', 'Download', true);
 }
 document.getElementById('lvNo').onclick = closeLeave;
-document.getElementById('lvGo').onclick = () => { const u = leaveTo; closeLeave(); if (!u) return; if (IS_ELECTRON) window.rotak.openExternal(u); else window.open(u, '_blank', 'noopener,noreferrer'); };
+document.getElementById('lvGo').onclick = () => { const d = leaveDl, u = leaveTo; closeLeave(); if (d) { location.href = d; return; } if (!u) return; if (IS_ELECTRON) window.rotak.openExternal(u); else window.open(u, '_blank', 'noopener,noreferrer'); };
 leaveEl.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === leaveEl) closeLeave(); });
 document.addEventListener('keydown', e => { if (!leaveEl.hidden && e.key === 'Escape') { e.stopPropagation(); closeLeave(); } }, true);
 function interceptLink(e) {
@@ -2372,6 +2384,7 @@ if (!IS_ELECTRON) { const m = location.pathname.match(/^\/(privacy|tos)\/?$/); i
     if (e.key === 'Enter' && document.documentElement.classList.contains('land') && !e.target.closest('button, a')) { e.preventDefault(); enter(); } }
   addEventListener('keydown', onKey, true);
   $('lenter').onclick = enter;
+  $('ldlm').addEventListener('click', e => { const l = e.target.closest('a'); if (!l) return; e.preventDefault(); $('ldlm').hidden = true; $('ldl').setAttribute('aria-expanded', 'false'); askDownload(l.href); });
   $('ldl').onclick = e => { e.stopPropagation(); const m = $('ldlm'); m.hidden = !m.hidden; $('ldl').setAttribute('aria-expanded', String(!m.hidden)); };
   document.addEventListener('click', e => { if (!e.target.closest('.dl')) { $('ldlm').hidden = true; $('ldl').setAttribute('aria-expanded', 'false'); } });
 })();
