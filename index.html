@@ -523,10 +523,14 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #leave p, #mrd p, #msd p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
   #mrd input, #msd input { display: block; width: 100%; height: 36px; padding: 0 10px; border: 0; border-radius: 6px; background: #0b0d10; color: #ddd; font: 500 13px "IBM Plex Sans", system-ui, sans-serif; outline: none; user-select: text; -webkit-user-select: text; }
   #mrdErr, #msdErr { min-height: 18px; margin-top: 6px; color: #ef4444; font-size: 12px; }
-  #miroFrame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
-  html.miro #miroFrame { display: block; top: 52px; height: calc(100% - 52px); }
-  html.desk.miro #miroFrame { left: 14px; width: calc(100% - 28px); height: calc(100% - 66px); border-radius: 0 0 36px 36px; }
-  html.web.miro #miroFrame { top: calc(52px + env(safe-area-inset-top)); height: calc(100% - 52px - env(safe-area-inset-top)); }
+  .mf { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
+  .mf:not(.on) { visibility: hidden; pointer-events: none; }
+  html.miro .mf { display: block; top: 52px; height: calc(100% - 52px); }
+  html.desk.miro .mf { left: 14px; width: calc(100% - 28px); height: calc(100% - 66px); border-radius: 0 0 36px 36px; }
+  html.web.miro .mf { top: calc(52px + env(safe-area-inset-top)); height: calc(100% - 52px - env(safe-area-inset-top)); }
+  html.miro #bar { top: 0; left: 0; right: 0; height: 52px; border-radius: 0; background: #141416; padding: 0 14px; }
+  html.desk.miro #bar { top: 3px; height: 49px; padding: 0 34px; }
+  html.web.miro #bar { height: calc(52px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) calc(14px + env(safe-area-inset-right)) 0 calc(14px + env(safe-area-inset-left)); }
   #mbar { display: none; flex: 1; min-width: 0; align-items: stretch; align-self: stretch; margin: 0 0 0 -8px; overflow-x: auto; scrollbar-width: none; }
   #mbar::-webkit-scrollbar { display: none; }
   html.miro #mbar { display: flex; }
@@ -536,6 +540,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #mbar .ms.empty { color: #777; }
   #mbar .ms.add { flex: none; min-width: 0; max-width: none; padding: 0 12px; color: #aaa; font-size: 16px; }
   #mbar .ms:hover { background: rgba(255,255,255,.06); }
+  #mbar .ms.on { box-shadow: inset 0 -2px 0 #3b82f6; }
   #mbar .ms i { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-style: normal; font-size: 11px; color: #aaa; }
   #mbar .ms:not(.empty):hover i { display: flex; }
   #mbar .ms i:hover { background: #333; color: #fff; }
@@ -670,7 +675,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 
       <div id="stage">
         <canvas id="c"></canvas>
-        <iframe id="miroFrame" title="Miro board" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+        <iframe id="miroFrame" class="mf on" title="Miro board" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
         <div id="coord"></div>
@@ -2766,9 +2771,34 @@ function setMiro(id) {
   else { $('lyBtn').before($('tmBtn')); $('toolbar').after($('miroMenu')); }
   miroUI(); paintSel();
 }
+const miroCache = new Map();
+let miroCur = '';
+function miroDrop(w) { const f = miroCache.get(w); if (!f) return; if (miroCur === w) miroGoTo(''); f.remove(); miroCache.delete(w); }
 function miroGoTo(w) {
-  const f = $('miroFrame'), src = miroId ? 'https://miro.com/app/live-embed/' + miroId + '/?autoplay=true' + (/^[0-9]{1,24}$/.test(w) ? '&moveToWidget=' + w : '') : 'about:blank';
-  if (f.getAttribute('src') !== src) f.setAttribute('src', src);
+  const base = $('miroFrame');
+  if (!miroId || base.dataset.board !== miroId) {
+    miroCache.forEach(f => f.remove()); miroCache.clear(); miroCur = '';
+    base.dataset.board = miroId;
+    base.setAttribute('src', miroId ? 'https://miro.com/app/live-embed/' + miroId + '/?autoplay=true' : 'about:blank');
+  }
+  if (!miroId) return;
+  w = /^[0-9]{1,24}$/.test(w || '') ? w : '';
+  if (w) {
+    let f = miroCache.get(w);
+    if (f) miroCache.delete(w);
+    else {
+      if (miroCache.size >= 4) { const old = miroCache.keys().next().value; miroCache.get(old).remove(); miroCache.delete(old); }
+      f = document.createElement('iframe'); f.className = 'mf'; f.title = 'Miro board';
+      f.setAttribute('allow', 'fullscreen; clipboard-read; clipboard-write'); f.setAttribute('allowfullscreen', '');
+      f.setAttribute('src', 'https://miro.com/app/live-embed/' + miroId + '/?autoplay=true&moveToWidget=' + w);
+      base.after(f);
+    }
+    miroCache.set(w, f);
+  }
+  miroCur = w;
+  base.classList.toggle('on', !w);
+  miroCache.forEach((f, k) => f.classList.toggle('on', k === w));
+  document.querySelectorAll('#mbar .ms[data-w]').forEach(b => b.classList.toggle('on', b.dataset.w === w));
 }
 const selKey = () => 'atak-miro-sel-' + miroId;
 function getSel() {
@@ -2790,8 +2820,9 @@ function paintSel() {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'ms';
     const t = document.createElement('span'); t.textContent = x.n; b.appendChild(t);
     const k = document.createElement('i'); k.textContent = '✕'; k.title = 'Remove';
-    k.onclick = e => { e.stopPropagation(); const a = getSel(); a.splice(i, 1); putSel(a); };
+    k.onclick = e => { e.stopPropagation(); const a = getSel(); const gone = a.splice(i, 1)[0]; putSel(a); if (gone && !a.some(y => y.w === gone.w)) miroDrop(gone.w); };
     b.appendChild(k);
+    b.dataset.w = x.w; if (x.w === miroCur) b.classList.add('on');
     b.onclick = () => miroGoTo(x.w);
     bar.appendChild(b);
   });
