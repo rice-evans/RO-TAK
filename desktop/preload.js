@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('rotak', {
+if (location.protocol === 'file:') contextBridge.exposeInMainWorld('rotak', {
   send: channel => {
     if (channel === 'drag-start' || channel === 'drag-end') ipcRenderer.send(channel);
   },

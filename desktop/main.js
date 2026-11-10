@@ -114,7 +114,16 @@ function createWindow() {
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   }
 
-  win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  win.webContents.setWindowOpenHandler(({ url }) => (/^https:\/\/(?:[a-z0-9-]+\.)*miro\.com\//i.test(url)
+    ? { action: 'allow', overrideBrowserWindowOptions: { width: 480, height: 720, frame: true, transparent: false, resizable: true, alwaysOnTop: true, autoHideMenuBar: true, hasShadow: true, backgroundColor: '#ffffff' } }
+    : { action: 'deny' }));
+  win.webContents.on('did-create-window', child => {
+    child.setAlwaysOnTop(true, 'screen-saver');
+    child.webContents.setWindowOpenHandler(({ url }) => {
+      if (/^https:\/\//i.test(url)) shell.openExternal(url);
+      return { action: 'deny' };
+    });
+  });
   win.webContents.on('will-navigate', event => event.preventDefault());
   win.loadFile('index.html');
   win.webContents.on('did-finish-load', () => {
