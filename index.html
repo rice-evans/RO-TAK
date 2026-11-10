@@ -335,6 +335,13 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .enter svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   @keyframes lrise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   #landing .enter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
+  #landing .dl { position: relative; pointer-events: auto; }
+  #landing .dl-menu { position: absolute; left: 0; top: calc(100% + 8px); z-index: 6; min-width: 100%; display: flex; flex-direction: column; padding: 6px; border-radius: 6px; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+  #landing .dl-menu[hidden] { display: none; }
+  #landing .dl-menu a { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 10px 14px; border-radius: 4px; color: #0b0d10; font-size: 14px; font-weight: 500; white-space: nowrap; text-decoration: none; }
+  #landing .dl-menu a:hover, #landing .dl-menu a:focus-visible { background: #ececec; outline: none; }
+  #landing .dl-menu img { height: 16px; width: auto; flex: none; }
+  #landing .dl-menu img.wide { height: 12px; }
   #landing .updated { font-size: 13px; color: rgba(255,255,255,.64); text-shadow: 0 1px 12px rgba(0,0,0,.6); animation: lrise .8s ease-out .7s both; }
   #landing .avatar-wrap { position: relative; width: fit-content; margin: 0 0 28px 6px; }
   #landing .chat { position: absolute; left: calc(100% + 18px); top: 6px; z-index: 5; width: min(320px, calc(100vw - 240px)); padding: 14px 16px 16px; border-radius: 10px; background: #fff; color: #111; box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 14px; line-height: 1.5; pointer-events: auto; transform-origin: 0 44px; animation: lchatpop .4s cubic-bezier(.2,.9,.3,1.2); }
@@ -548,6 +555,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     <h1>Banana's <span style="white-space:nowrap">RO-TAK</span></h1>
     <div class="enter-row">
       <button id="lenter" class="enter" type="button">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="dl"><button id="ldl" class="enter" type="button" aria-haspopup="menu" aria-expanded="false">Download RO-TAK <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button><div id="ldlm" class="dl-menu" role="menu" hidden><a role="menuitem" href="/api/download?f=win">Windows<img src="/images/os-windows.png" alt=""></a><a role="menuitem" href="/api/download?f=mac-intel">Mac (Intel)<img class="wide" src="/images/os-intel.png" alt=""></a><a role="menuitem" href="/api/download?f=mac-arm">Mac (Apple)<img src="/images/os-apple.png" alt=""></a></div></div>
       <a class="enter" id="lgh" href="https://github.com/rice-evans/RO-TAK" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
       <span class="updated">Updated on 10th November 2026</span>
     </div>
@@ -2157,7 +2165,7 @@ function toast(msg) {
 
 const LEGAL = {
   privacy: ['Privacy policy', [
-    ['p up', 'Last updated 2 November 2026.'],
+    ['p up', 'Last updated 10 November 2026.'],
     ['h', 'What I collect'],
     ['p', "Browsing the site collects nothing from you, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the map you upload, everything drawn on it and a one-way hash of a key that marks you as the room's host. The name you pick is shared live with the people in the room and is not kept."],
     ['h', 'Rooms'],
@@ -2175,12 +2183,12 @@ const LEGAL = {
     ['h', 'Saved on your device'],
     ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your recent rooms, which layers you hide, whether you have seen the tutorial and the introduction, a key that marks you as the host of rooms you created and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
     ['h', 'Other services'],
-    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, carries the live sync between players and keeps standard server logs, which include IP addresses. I can see these.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. Its own privacy policy applies when you download. The desktop app also asks GitHub whether a newer version exists, and GitHub receives that request like any other download.']],
+    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, carries the live sync between players and keeps standard server logs, which include IP addresses. I can see these.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. The Download RO-TAK button asks this site for the latest file, then sends you to GitHub. Its own privacy policy applies when you download. The desktop app also asks GitHub whether a newer version exists, and GitHub receives that request like any other download.', 'The Windows, Intel and Apple logos in the download menu are stored on this site. Microsoft, Intel and Apple receive nothing.']],
     ['h', 'Contact'],
     ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
   ]],
   terms: ['Terms of service', [
-    ['p up', 'Last updated 2 November 2026.'],
+    ['p up', 'Last updated 10 November 2026.'],
     ['h', 'Games only'],
     ['p', 'RO-TAK is a map and marking tool for entertainment and roleplay in games. It is not military, navigation, safety or emergency guidance, and it is not for real operations.'],
     ['h', 'No guarantee'],
@@ -2194,7 +2202,7 @@ const LEGAL = {
     ['h', 'Room deletion'],
     ['p', 'Rooms are deleted automatically after 24 hours with nobody connected. Everything in them is lost.'],
     ['h', 'Ownership'],
-    ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them.'],
+    ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them. Windows is a trademark of Microsoft Corporation, Intel is a trademark of Intel Corporation, and Apple and Mac are trademarks of Apple Inc. Their logos only show which download is for which system. RO-TAK is not affiliated with or endorsed by them.'],
     ['h', 'Downloads'],
     ['p', 'The project is open source. The desktop app is unsigned, so your system will warn you when you open it. Before running anything you download from the internet, read the code to check it is safe. Each release publishes checksums and build attestations so you can verify the file. The Windows app updates itself from GitHub releases. The Mac app tells you when a newer version exists and you install it yourself.'],
     ['h', 'Changes'],
@@ -2364,6 +2372,8 @@ if (!IS_ELECTRON) { const m = location.pathname.match(/^\/(privacy|tos)\/?$/); i
     if (e.key === 'Enter' && document.documentElement.classList.contains('land') && !e.target.closest('button, a')) { e.preventDefault(); enter(); } }
   addEventListener('keydown', onKey, true);
   $('lenter').onclick = enter;
+  $('ldl').onclick = e => { e.stopPropagation(); const m = $('ldlm'); m.hidden = !m.hidden; $('ldl').setAttribute('aria-expanded', String(!m.hidden)); };
+  document.addEventListener('click', e => { if (!e.target.closest('.dl')) { $('ldlm').hidden = true; $('ldl').setAttribute('aria-expanded', 'false'); } });
 })();
 
 var sideReady = false;
