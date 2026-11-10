@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; frame-src https://miro.com; base-uri 'self'; form-action 'self'">
 <title>RO-TAK | Tactical map for Roblox</title>
 <meta name="description" content="Free ATAK-style shared tactical map for Roblox. Draw, place units, take bearings and ping your squad in real time. Web, phone and desktop.">
 <link rel="canonical" href="https://ro-tak.vercel.app/">
@@ -516,17 +516,50 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .legal button:hover, #landing .legal a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
   #llg { position: fixed; inset: 0; z-index: 1100; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(11,13,16,.88); animation: lblin .2s ease; }
   #llg[hidden] { display: none; }
-  #leave, #txm { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  #leave[hidden], #txm[hidden] { display: none; }
-  #leave .lv-panel, #txm .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
-  #leave h2, #txm h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
-  #leave p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
+  #leave, #txm, #mrd, #msd { position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #leave[hidden], #txm[hidden], #mrd[hidden], #msd[hidden] { display: none; }
+  #leave .lv-panel, #txm .lv-panel, #mrd .lv-panel, #msd .lv-panel { width: min(420px, 100%); padding: 22px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: #141416; color: #ddd; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
+  #leave h2, #txm h2, #mrd h2, #msd h2 { margin: 0 0 10px; font-size: 18px; font-weight: 600; color: #fff; }
+  #leave p, #mrd p, #msd p { margin: 0 0 10px; font-size: 14px; line-height: 1.5; }
+  #mrd input, #msd input { display: block; width: 100%; height: 36px; padding: 0 10px; border: 0; border-radius: 6px; background: #0b0d10; color: #ddd; font: 500 13px "IBM Plex Sans", system-ui, sans-serif; outline: none; user-select: text; -webkit-user-select: text; }
+  #mrdErr, #msdErr { min-height: 18px; margin-top: 6px; color: #ef4444; font-size: 12px; }
+  #miroFrame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
+  html.miro #miroFrame { display: block; top: 52px; height: calc(100% - 52px); }
+  html.desk.miro #miroFrame { left: 14px; width: calc(100% - 28px); height: calc(100% - 66px); border-radius: 0 0 36px 36px; }
+  html.web.miro #miroFrame { top: calc(52px + env(safe-area-inset-top)); height: calc(100% - 52px - env(safe-area-inset-top)); }
+  #mbar { display: none; flex: 1; min-width: 0; align-items: stretch; align-self: stretch; margin: 0 0 0 -8px; overflow-x: auto; scrollbar-width: none; }
+  #mbar::-webkit-scrollbar { display: none; }
+  html.miro #mbar { display: flex; }
+  #mbar .ms { flex: 1 0 auto; min-width: 110px; max-width: 220px; position: relative; display: flex; align-items: center; justify-content: center; border: 0; background: none; color: #fff; font: 600 12px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .3px; cursor: pointer; padding: 0 22px; }
+  #mbar .ms + .ms { border-left: 1px solid rgba(255,255,255,.15); }
+  #mbar .ms span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #mbar .ms.empty { color: #777; }
+  #mbar .ms.add { flex: none; min-width: 0; max-width: none; padding: 0 12px; color: #aaa; font-size: 16px; }
+  #mbar .ms:hover { background: rgba(255,255,255,.06); }
+  #mbar .ms i { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-style: normal; font-size: 11px; color: #aaa; }
+  #mbar .ms:not(.empty):hover i { display: flex; }
+  #mbar .ms i:hover { background: #333; color: #fff; }
+  #msd input + input { margin-top: 8px; }
+  #miroMenu { position: absolute; right: 12px; bottom: 12px; z-index: 3; width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(20,20,22,.94); color: #ddd; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,.4); }
+  #miroMenu svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+  #miroMenu:hover { background: #333; }
+  html.miro #miroMenu { display: flex; }
+  #mtools { display: none; align-items: center; gap: 6px; flex: none; padding-left: 10px; border-left: 1px solid rgba(255,255,255,.15); }
+  html.miro #mtools { display: flex; }
+  html.miro #mtools #tmBtn { width: 24px; height: 24px; }
+  html.miro #mtools #miroMenu { position: static; width: 24px; height: 24px; box-shadow: none; }
+  html.miro #mtools #miroMenu svg { width: 14px; height: 14px; }
+  html.miro #mtools #miroMenu:hover { background: #333; }
+  html.miro #c, html.miro #toolbar, html.miro #palette, html.miro #drawbar, html.miro #sympanel, html.miro #selbar, html.miro #numbar, html.miro #txt, html.miro #clock, html.miro #credit, html.miro #coord, html.miro #mm, html.miro #tchips, html.miro #follow, html.miro #gridbar, html.miro #navbtns, html.miro #hdg, html.miro #numTog, html.miro #wpBtn, html.miro #lyBtn, html.miro #tour, html.miro #bar > :not(#mbar):not(#mtools), html.miro #nav { display: none !important; }
+  html.miro #menu { left: auto; right: 26px; top: 50px; bottom: auto; margin: 0; transform: none; max-height: calc(100% - 64px); }
+  html.desk.miro #menu { right: 112px; }
+  html.web.miro #menu { right: calc(14px + env(safe-area-inset-right)); top: calc(50px + env(safe-area-inset-top)); bottom: auto; max-height: calc(100% - 64px - env(safe-area-inset-top)); }
   #lvUrl { margin: 0 0 12px; padding: 8px 10px; border-radius: 6px; background: #0b0d10; color: #888; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; word-break: break-all; max-height: 120px; overflow-y: auto; user-select: text; -webkit-user-select: text; }
   #lvUrl b { color: #fff; font-weight: 600; }
   #lvGh a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
   .lv-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
   .lv-btns button { height: 34px; padding: 0 16px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font: 600 13px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
-  .lv-btns button#lvNo, .lv-btns button.alt { background: #333; }
+  .lv-btns button#lvNo, .lv-btns button#mrdNo, .lv-btns button#msdNo, .lv-btns button.alt { background: #333; }
   #txm textarea { display: block; width: 100%; height: 180px; resize: none; padding: 8px 10px; border: 0; border-radius: 6px; background: #0b0d10; color: #ddd; font: 500 12px/1.5 "IBM Plex Sans", system-ui, sans-serif; outline: none; user-select: text; -webkit-user-select: text; }
   #llg .lg-panel { position: relative; width: min(680px, 100%); max-height: 100%; overflow-y: auto; padding: 32px 36px 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; background: #0b0d10; color: #ddd; box-shadow: 0 16px 64px rgba(0,0,0,.6); }
   #llg .lg-x { color: #aaa; }
@@ -631,10 +664,13 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         <div id="avs"><div class="av"></div><div class="av"></div></div>
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+        <div id="mbar"></div>
+        <div id="mtools"></div>
       </div>
 
       <div id="stage">
         <canvas id="c"></canvas>
+        <iframe id="miroFrame" title="Miro board" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
         <div id="coord"></div>
@@ -659,6 +695,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
           <div id="legend"></div>
         </div>
         <div id="toolbar"></div>
+        <button id="miroMenu" type="button" title="Menu"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
         <div id="follow"><span id="followTxt"></span><button id="followBtn"></button></div>
         <div id="tour"><div id="tourT"></div><div id="tourB"></div><div id="tourF"><div id="tourDots"></div><button id="tourSkip" class="alt">Skip</button><button id="tourNext"></button></div></div>
       </div>
@@ -674,6 +711,9 @@ try { pinned = !!localStorage.getItem('atak-pin'); } catch (e) {}
 let charcoal = false;
 try { charcoal = localStorage.getItem('atak-case') === 'charcoal'; } catch (e) {}
 const $ = id => document.getElementById(id);
+let miroId = '';
+try { miroId = localStorage.getItem('atak-miro') || ''; } catch (e) {}
+if (!/^[A-Za-z0-9_=-]{6,40}$/.test(miroId)) miroId = '';
 const c = $('c'); let ctx = c.getContext('2d');
 
 const COLORS = ['#ff7a1a', '#ef4444', '#facc15', '#22c55e', '#3b82f6', '#ffffff', '#111111'];
@@ -1892,6 +1932,7 @@ function clearAll() {
   save(); draw();
 }
 addEventListener('keydown', e => {
+  if (miroId) return;
   if (!/INPUT|TEXTAREA/.test(e.target.tagName) && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
 });
 
@@ -2202,9 +2243,9 @@ const LEGAL = {
     ['h', 'Analytics'],
     ['p', 'The website uses Vercel Web Analytics to count visits. It records the page, the site you came from, your country, browser, operating system and device type. It uses no cookies and does not store your IP address. Visits are only linked by a code that resets every day, so you cannot be followed across days. The desktop app sends no analytics.'],
     ['h', 'Saved on your device'],
-    ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your recent rooms, which layers you hide, whether you have seen the tutorial and the introduction, a key that marks you as the host of rooms you created, a random key that identifies your browser in rooms and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
+    ['p', 'The site saves your symbol and badge sizes, your grid settings, your display name, your recent rooms, which layers you hide, whether you have seen the tutorial and the introduction, a key that marks you as the host of rooms you created, a random key that identifies your browser in rooms, the Miro board you connected and, if you work without a room, your map, marks and grid calibration. This stays in your browser. Clearing your browser data removes it. If you install the site as an app, its files are also saved on your device so it opens offline.'],
     ['h', 'Other services'],
-    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, carries the live sync between players and keeps standard server logs, which include IP addresses. I can\'t view these.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. The Download RO-TAK button asks this site for the latest file, then sends you to GitHub. Its own privacy policy applies when you download. The desktop app also asks GitHub whether a newer version exists, and GitHub receives that request like any other download.', 'The Windows, Intel and Apple logos in the download menu are stored on this site. Microsoft, Intel and Apple receive nothing.']],
+    ['ul', ["Vercel hosts the site and keeps standard server logs, which include IP addresses. I can't view these.", 'Supabase stores rooms, maps and marks, carries the live sync between players and keeps standard server logs, which include IP addresses. I can\'t view these.', 'OpenAI checks uploaded maps for explicit content. It only receives the image.', 'Google Fonts supplies the typeface, so Google receives your IP address and browser details when a page loads.', 'GitHub hosts the source code and the downloads. The Download RO-TAK button asks this site for the latest file, then sends you to GitHub. Its own privacy policy applies when you download. The desktop app also asks GitHub whether a newer version exists, and GitHub receives that request like any other download.', 'The Windows, Intel and Apple logos in the download menu are stored on this site. Microsoft, Intel and Apple receive nothing.', 'If you connect a Miro board, it loads directly from Miro, so Miro receives your IP address and browser details and its own privacy policy applies. I never see the board or what is on it.']],
     ['h', 'Contact'],
     ['p', 'Message rice.e on Discord with any question or request about this policy, including to have a room and its map removed.'],
   ]],
@@ -2223,7 +2264,7 @@ const LEGAL = {
     ['h', 'Room deletion'],
     ['p', 'Rooms are deleted automatically after 24 hours with nobody connected. Everything in them is lost.'],
     ['h', 'Ownership'],
-    ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them. Windows is a trademark of Microsoft Corporation, Intel is a trademark of Intel Corporation, and Apple and Mac are trademarks of Apple Inc. Their logos only show which download is for which system. RO-TAK is not affiliated with or endorsed by them.'],
+    ['p', 'Game names, maps and images belong to their owners. This project is not affiliated with or endorsed by Roblox or any game. Symbols are drawn with milsymbol, following MIL-STD-2525 and APP-6. The photos on the entrance page belong to the creators credited on them. Windows is a trademark of Microsoft Corporation, Intel is a trademark of Intel Corporation, and Apple and Mac are trademarks of Apple Inc. Their logos only show which download is for which system. Miro is a registered trademark of RealtimeBoard, Inc. RO-TAK is not affiliated with or endorsed by any of them.'],
     ['h', 'Downloads'],
     ['p', 'The project is open source. The desktop app is unsigned, so your system will warn you when you open it. Before running anything you download from the internet, read the code to check it is safe. Each release publishes checksums and build attestations so you can verify the file. The Windows app updates itself from GitHub releases. The Mac app tells you when a newer version exists and you install it yourself.'],
     ['h', 'Changes'],
@@ -2665,6 +2706,9 @@ let roomUI = () => {};
   const baseUI = roomUI;
   roomUI = () => { baseUI(); ld.style.display = room ? '' : 'none'; ld.textContent = leading ? 'Stop leading' : 'Lead the room'; };
   b.before(inv, lk, ld, tu);
+  const mi = document.createElement('button'); mi.className = 'mbtn'; mi.id = 'miroBtn';
+  mi.onclick = () => { $('menu').classList.remove('open'); if (miroId) setMiro(''); else askMiro(); };
+  b.before(mi); miroUI();
 })();
 
 addEventListener('popstate', () => { if (!IS_ELECTRON && !/^\/play\/?$/.test(location.pathname)) location.reload(); });
@@ -2711,6 +2755,85 @@ function showErr(msg) {
   e.textContent = msg || '';
   e.style.display = msg ? 'block' : 'none';
 }
+function miroUI() { const m = $('miroBtn'); if (m) m.textContent = miroId ? 'Disconnect Miro®' : 'Connect Miro®'; }
+function setMiro(id) {
+  miroId = /^[A-Za-z0-9_=-]{6,40}$/.test(id || '') ? id : '';
+  try { if (miroId) localStorage.setItem('atak-miro', miroId); else localStorage.removeItem('atak-miro'); } catch (e) {}
+  miroGoTo('');
+  document.documentElement.classList.toggle('miro', !!miroId);
+  $('menu').classList.remove('open');
+  if (miroId) $('mtools').append($('tmBtn'), $('miroMenu'));
+  else { $('lyBtn').before($('tmBtn')); $('toolbar').after($('miroMenu')); }
+  miroUI(); paintSel();
+}
+function miroGoTo(w) {
+  const f = $('miroFrame'), src = miroId ? 'https://miro.com/app/live-embed/' + miroId + '/?autoplay=true' + (/^[0-9]{1,24}$/.test(w) ? '&moveToWidget=' + w : '') : 'about:blank';
+  if (f.getAttribute('src') !== src) f.setAttribute('src', src);
+}
+const selKey = () => 'atak-miro-sel-' + miroId;
+function getSel() {
+  let a = [];
+  try { a = JSON.parse(localStorage.getItem(selKey()) || '[]'); } catch (e) {}
+  return (Array.isArray(a) ? a : []).filter(x => x && typeof x.n === 'string' && /^[0-9]{1,24}$/.test(x.w)).slice(0, 100).map(x => ({ n: x.n.slice(0, 24), w: x.w }));
+}
+function putSel(a) { try { localStorage.setItem(selKey(), JSON.stringify(a)); } catch (e) {} paintSel(); }
+function paintSel() {
+  const bar = $('mbar'); bar.textContent = '';
+  if (!miroId) return;
+  const list = getSel();
+  if (!list.length) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ms empty';
+    const t = document.createElement('span'); t.textContent = 'Selection N/A'; b.appendChild(t);
+    b.onclick = () => askSel(); bar.appendChild(b); return;
+  }
+  list.forEach((x, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ms';
+    const t = document.createElement('span'); t.textContent = x.n; b.appendChild(t);
+    const k = document.createElement('i'); k.textContent = '✕'; k.title = 'Remove';
+    k.onclick = e => { e.stopPropagation(); const a = getSel(); a.splice(i, 1); putSel(a); };
+    b.appendChild(k);
+    b.onclick = () => miroGoTo(x.w);
+    bar.appendChild(b);
+  });
+  const add = document.createElement('button'); add.type = 'button'; add.className = 'ms add'; add.textContent = '+'; add.title = 'New selection';
+  add.onclick = () => askSel(); bar.appendChild(add);
+}
+const msd = document.createElement('div');
+msd.id = 'msd'; msd.hidden = true;
+msd.innerHTML = '<div class="lv-panel" role="dialog" aria-modal="true" aria-labelledby="msdT"><h2 id="msdT">New selection</h2><p>In Miro, right-click a frame or object, choose Copy link and paste it here:</p><input id="msdLink" type="text" placeholder="https://miro.com/app/board/…moveToWidget=…" autocomplete="off" spellcheck="false"><input id="msdName" type="text" maxlength="24" placeholder="Name" autocomplete="off" spellcheck="false"><div id="msdErr"></div><div class="lv-btns"><button type="button" id="msdNo">Cancel</button><button type="button" id="msdGo">Save</button></div></div>';
+document.body.appendChild(msd);
+function askSel() { $('msdLink').value = ''; $('msdName').value = ''; $('msdErr').textContent = ''; msd.hidden = false; $('msdLink').focus(); }
+function selGo() {
+  const link = $('msdLink').value.trim(), name = $('msdName').value.trim().slice(0, 24);
+  const m = link.match(/^(?:https?:\/\/)?(?:www\.)?miro\.com\/app\/(?:board|live-embed)\/([A-Za-z0-9_=-]{6,40})\/?\?(?:.*&)?moveToWidget=([0-9]{1,24})(?:[&#].*)?$/);
+  if (!m) { $('msdErr').textContent = 'Not a Miro object link'; return; }
+  if (m[1] !== miroId) { $('msdErr').textContent = 'That link is for a different board'; return; }
+  if (!name) { $('msdErr').textContent = 'Enter a name'; $('msdName').focus(); return; }
+  if (isBad(name)) { $('msdErr').textContent = 'That name is not allowed'; return; }
+  const a = getSel(); a.push({ n: name, w: m[2] }); putSel(a); msd.hidden = true;
+}
+$('msdNo').onclick = () => { msd.hidden = true; };
+$('msdGo').onclick = selGo;
+['msdLink', 'msdName'].forEach(id => $(id).addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') selGo(); if (e.key === 'Escape') msd.hidden = true; }));
+msd.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === msd) msd.hidden = true; });
+const mrd = document.createElement('div');
+mrd.id = 'mrd'; mrd.hidden = true;
+mrd.innerHTML = '<div class="lv-panel" role="dialog" aria-modal="true" aria-labelledby="mrdT"><h2 id="mrdT">Connect Miro®</h2><p>Paste your Miro board link:</p><input id="mrdIn" type="text" placeholder="https://miro.com/app/board/…" autocomplete="off" spellcheck="false"><div id="mrdErr"></div><div class="lv-btns"><button type="button" id="mrdNo">Cancel</button><button type="button" id="mrdGo">Connect</button></div></div>';
+document.body.appendChild(mrd);
+function askMiro() { $('mrdIn').value = ''; $('mrdErr').textContent = ''; mrd.hidden = false; $('mrdIn').focus(); }
+function closeMiroDlg() { mrd.hidden = true; }
+function miroGo() {
+  const m = $('mrdIn').value.trim().match(/^(?:https?:\/\/)?(?:www\.)?miro\.com\/app\/(?:board|live-embed)\/([A-Za-z0-9_=-]{6,40})(?:[\/?#].*)?$/);
+  if (!m) { $('mrdErr').textContent = 'Not a Miro board link'; return; }
+  closeMiroDlg(); setMiro(m[1]);
+}
+$('mrdNo').onclick = closeMiroDlg;
+$('mrdGo').onclick = miroGo;
+$('mrdIn').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') miroGo(); if (e.key === 'Escape') closeMiroDlg(); });
+mrd.addEventListener('pointerdown', e => { e.stopPropagation(); if (e.target === mrd) closeMiroDlg(); });
+$('miroMenu').onclick = e => { e.stopPropagation(); $('menu').classList.toggle('open'); };
+if (miroId) setMiro(miroId);
+
 function fail(err) {
   const lm = err && err.message;
   if (typeof lm === 'string' && /removed from this room|rooms_not_banned|marks_not_banned/i.test(lm)) { kicked(); return; }
