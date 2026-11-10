@@ -342,7 +342,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #landing .dl-menu a:hover, #landing .dl-menu a:focus-visible { background: #ececec; outline: none; }
   #landing .dl-menu img { height: 16px; width: auto; flex: none; }
   #landing .dl-menu img.wide { height: 12px; }
-  #landing .updated { font-size: 13px; color: rgba(255,255,255,.64); text-shadow: 0 1px 12px rgba(0,0,0,.6); animation: lrise .8s ease-out .7s both; }
+  #landing .updated { position: absolute; right: clamp(24px, 8vw, 128px); bottom: 22px; z-index: 3; padding: 4px 0; font: 400 13px "IBM Plex Sans", system-ui, sans-serif; color: rgba(255,255,255,.64); text-shadow: 0 1px 10px rgba(0,0,0,.9); animation: lrise .8s ease-out .7s both; }
   #landing .avatar-wrap { position: relative; width: fit-content; margin: 0 0 28px 6px; }
   #landing .chat { position: absolute; left: calc(100% + 18px); top: 6px; z-index: 5; width: min(320px, calc(100vw - 240px)); padding: 14px 16px 16px; border-radius: 10px; background: #fff; color: #111; box-shadow: 0 12px 40px rgba(0,0,0,.45); font-size: 14px; line-height: 1.5; pointer-events: auto; transform-origin: 0 44px; animation: lchatpop .4s cubic-bezier(.2,.9,.3,1.2); }
   #landing .chat[hidden] { display: none; }
@@ -501,8 +501,8 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     #intro .sc .ui-row.off1 i::after, #intro .sc .ui-row.off2 i::after { left: 2px; background: #aaa; }
     #intro .sc [data-a="hide1"], #intro .sc [data-a="hide2"] { opacity: 0; }
   }
-  #landing .hero, #landing .legal, #landing .veil, #landing .mapfx { transition: opacity .3s ease, visibility 0s; }
-  #landing.intro-on .hero, #landing.intro-on .legal, #landing.intro-on .veil, #landing.intro-on .mapfx { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s ease, visibility 0s .3s; }
+  #landing .hero, #landing .legal, #landing .updated, #landing .veil, #landing .mapfx { transition: opacity .3s ease, visibility 0s; }
+  #landing.intro-on .hero, #landing.intro-on .legal, #landing.intro-on .updated, #landing.intro-on .veil, #landing.intro-on .mapfx { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s ease, visibility 0s .3s; }
   #landing .legal { position: absolute; left: clamp(24px, 8vw, 128px); bottom: 22px; z-index: 3; display: flex; flex-wrap: wrap; gap: 6px 22px; }
   #landing .legal button, #landing .legal a { padding: 4px 0; border: 0; background: none; color: rgba(255,255,255,.64); font: 400 13px "IBM Plex Sans", system-ui, sans-serif; text-shadow: 0 1px 10px rgba(0,0,0,.9); cursor: pointer; text-decoration: none; }
   #landing .legal button:hover, #landing .legal a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
@@ -531,7 +531,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #llg .lg-x { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; padding: 0; }
   #llg .lg-x svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   #llg .lg-panel * { user-select: text; -webkit-user-select: text; }
-  @media (max-width: 700px) { #llg .lg-panel { padding: 24px 20px 28px; } #landing .legal { left: 24px; } }
+  @media (max-width: 700px) { #llg .lg-panel { padding: 24px 20px 28px; } #landing .legal { left: 24px; } #landing .updated { right: 24px; } }
   @media (prefers-reduced-motion: reduce) { #landing .track, #landing .avatar, #landing .hero h1, #landing .enter, #landing .updated, #landing .chat { animation: none; } }
 </style>
 </head>
@@ -557,10 +557,10 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
       <button id="lenter" class="enter" type="button">Enter <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
       <div class="dl"><button id="ldl" class="enter" type="button" aria-haspopup="menu" aria-expanded="false">Download RO-TAK <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button><div id="ldlm" class="dl-menu" role="menu" hidden><a role="menuitem" href="/api/download?f=win">Windows<img src="/images/os-windows.png" alt=""></a><a role="menuitem" href="/api/download?f=mac-intel">Mac (Intel)<img class="wide" src="/images/os-intel.png" alt=""></a><a role="menuitem" href="/api/download?f=mac-arm">Mac (Apple)<img src="/images/os-apple.png" alt=""></a></div></div>
       <a class="enter" id="lgh" href="https://github.com/rice-evans/RO-TAK" target="_blank" rel="noopener"><svg viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
-      <span class="updated">Updated on 10th November 2026</span>
     </div>
   </main>
   <nav class="legal"><button type="button" data-lg="privacy">Privacy policy</button><button type="button" data-lg="terms">Terms of service</button><button type="button" id="lintro">Introduction</button><a href="https://emergency-protocols.vercel.app/" target="_blank" rel="noopener">My Projects</a></nav>
+  <span class="updated">Updated on 10th November 2026</span>
 <div id="intro" hidden>
   <div class="in-bg" aria-hidden="true"></div>
   <header class="in-top"><span class="in-brand">RO-TAK</span><button type="button" id="inSkip">Plan with RO-TAK</button></header>
