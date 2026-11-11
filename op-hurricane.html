@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OPORD 07-26 · Operation Hurricane</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1a17">
+<meta name="description" content="OPORD 07-26, Operation Hurricane. Copy 03 of 07.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='6' y='6' width='88' height='88' rx='6' fill='none' stroke='%23b3121b' stroke-width='10'/%3E%3Ctext x='50' y='68' font-size='52' font-family='Arial Black,Arial' font-weight='900' text-anchor='middle' fill='%23b3121b'%3ETS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Reenie+Beanie&family=Archivo+Black&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f1ecdf;
+    --ink: #1d1c1a;
+    --faint: #5b574f;
+    --red: #b3121b;
+    --blue: #1f3f8f;
+    --pen: #1b3a9a;
+    --bar: #0d0d0d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,240,210,.06), transparent 60%),
+      radial-gradient(ellipse at 50% 50%, #2a2622 0%, #171513 70%, #0f0e0c 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font: 15.5px/1.55 "Courier Prime", "Courier New", Courier, monospace;
+    padding: 56px 16px 96px;
+  }
+  .desk { position: fixed; inset: 0; pointer-events: none; opacity: .35; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .page {
+    position: relative;
+    width: 100%;
+    max-width: 816px;
+    min-height: 1056px;
+    margin: 0 auto 56px;
+    padding: 64px 76px 84px;
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.35) 0%, rgba(255,255,255,0) 55%),
+      radial-gradient(ellipse at 100% 100%, rgba(150,120,60,.16), transparent 45%),
+      radial-gradient(ellipse at 0% 0%, rgba(150,120,60,.12), transparent 40%),
+      linear-gradient(180deg, rgba(0,0,0,0) 32.9%, rgba(0,0,0,.045) 33.2%, rgba(255,255,255,.25) 33.5%, rgba(0,0,0,0) 34.2%),
+      linear-gradient(180deg, rgba(0,0,0,0) 66.2%, rgba(0,0,0,.04) 66.5%, rgba(255,255,255,.22) 66.8%, rgba(0,0,0,0) 67.4%);
+    box-shadow: 0 1px 1px rgba(0,0,0,.25), 0 14px 30px rgba(0,0,0,.45), 0 40px 80px rgba(0,0,0,.35);
+    transform: rotate(var(--tilt, 0deg));
+    overflow: hidden;
+  }
+  .page::before { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; opacity: .55;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .42 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .page::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 60px rgba(120,95,50,.18), inset 0 0 6px rgba(80,60,30,.25); }
+  .page:nth-of-type(1) { --tilt: -.35deg; }
+  .page:nth-of-type(2) { --tilt: .25deg; }
+  .page:nth-of-type(3) { --tilt: -.2deg; }
+  .page:nth-of-type(4) { --tilt: .4deg; }
+  .page:nth-of-type(5) { --tilt: -.3deg; }
+
+  .banner { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; font-size: 15px; letter-spacing: .06em; }
+  .banner.top { top: 22px; }
+  .banner.bot { bottom: 22px; }
+  .foot { position: absolute; left: 76px; right: 76px; bottom: 48px; display: flex; justify-content: space-between; font-size: 12px; color: var(--faint); }
+  .punch { position: absolute; left: 22px; width: 16px; height: 16px; border-radius: 50%; background: #1a1815; box-shadow: inset 0 2px 3px rgba(0,0,0,.8), 0 0 0 1px rgba(110,90,50,.25); }
+  .punch.a { top: 18%; } .punch.b { top: 50%; } .punch.c { top: 82%; }
+  .staple { position: absolute; top: 26px; left: 30px; width: 44px; height: 6px; transform: rotate(-38deg); border-radius: 2px;
+    background: linear-gradient(180deg, #d8d8d8, #8d8d8d 50%, #c8c8c8); box-shadow: 0 1px 2px rgba(0,0,0,.5); }
+
+  .hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-top: 18px; font-size: 13.5px; }
+  .hdr .l { line-height: 1.45; }
+  .hdr .rc { text-align: right; line-height: 1.45; }
+
+  .copy { display: inline-block; white-space: nowrap; border: 2px solid #2b2a28; padding: 2px 8px; font: 700 13px "Courier Prime", monospace; letter-spacing: .08em; transform: rotate(1.5deg); opacity: .82; }
+
+  .stamp {
+    position: absolute; top: 196px; right: 84px;
+    padding: 10px 26px 8px; border: 6px double var(--red); border-radius: 6px;
+    color: var(--red); font: 400 54px/1 "Archivo Black", "Arial Black", sans-serif; letter-spacing: .06em;
+    transform: rotate(-9deg); opacity: .86; mix-blend-mode: multiply;
+    filter: url(#stampf);
+  }
+  .stamp small { display: block; margin-top: 4px; font: 700 12px "Courier Prime", monospace; letter-spacing: .3em; text-align: center; }
+  .stamp.sm { position: absolute; padding: 4px 12px 3px; border-width: 4px; font-size: 22px; border-style: solid; border-radius: 3px; }
+  .rcvd { position: absolute; padding: 6px 12px; border: 2px solid var(--blue); border-radius: 4px; color: var(--blue); font: 700 12px/1.35 "Courier Prime", monospace; text-align: center; letter-spacing: .08em; opacity: .78; mix-blend-mode: multiply; filter: url(#bleed); }
+  .rcvd b { display: block; font-size: 17px; letter-spacing: .14em; }
+
+  h1 { margin: 120px 0 6px; font: 400 54px/1.02 "Special Elite", "Courier Prime", monospace; letter-spacing: .02em; }
+  .sub { font-size: 16px; letter-spacing: .14em; }
+  h2 { margin: 26px 0 10px; font-size: 15.5px; font-weight: 700; letter-spacing: .04em; }
+  h3 { margin: 18px 0 6px; font-size: 15.5px; font-weight: 700; }
+  p { margin: 0 0 10px; }
+  .pm { font-weight: 700; }
+  .ind { padding-left: 34px; }
+  .ind2 { padding-left: 68px; }
+  ol, ul { margin: 0 0 10px 34px; }
+  li { margin-bottom: 6px; }
+
+  .r { position: relative; display: inline-block; white-space: nowrap; max-width: 100%; overflow: hidden; vertical-align: -3px; background: var(--bar); color: transparent; border-radius: 1px; padding: 0 2px; margin: 0 -1px; line-height: 1.15; vertical-align: -1px; filter: url(#marker); user-select: none; -webkit-user-select: none; }
+  .r::selection { color: transparent; background: var(--bar); }
+  .r.blk { display: block; height: 1.15em; margin: 4px 0; }
+  .scrib { position: relative; display: inline-block; }
+  .scrib::after { content: ""; position: absolute; inset: -3px -4px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cpath d='M1 10 C10 2 14 18 22 9 S34 3 40 12 52 17 58 6 70 4 76 13 88 16 99 8 M2 14 C12 6 18 16 28 8 S44 4 50 14 62 16 70 6 84 6 98 13 M1 6 C14 12 24 3 34 11 S50 15 60 7 76 3 99 11' fill='none' stroke='%23111' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat; }
+
+  .hand { display: block; width: max-content; max-width: 100%; margin: -2px 0 8px auto; font: 400 26px/1 "Reenie Beanie", cursive; color: var(--pen); transform: rotate(var(--r, -4deg)); opacity: .92; }
+  .hand.l { margin-left: 34px; margin-right: 0; }
+  .circ { position: absolute; border: 2px solid var(--pen); border-radius: 50%; opacity: .75; transform: rotate(-6deg); }
+  .uline { text-decoration: underline; text-decoration-color: var(--pen); text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-style: wavy; }
+
+  .box { border: 1.5px solid #2b2a28; padding: 12px 16px; margin: 18px 0; }
+  .warn { border: 2px solid #2b2a28; padding: 12px 16px; margin: 28px 0 0; font-size: 13px; line-height: 1.45; }
+  .cls { position: absolute; left: 76px; bottom: 96px; font-size: 13px; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 14px; }
+  th, td { border: 1px solid #3a3835; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { font-weight: 700; background: rgba(0,0,0,.04); }
+
+  .photo { position: relative; margin: 22px auto 10px; width: 100%; padding: 10px 10px 34px; background: #fbfaf6; box-shadow: 0 2px 6px rgba(0,0,0,.35); transform: rotate(-1.2deg); }
+  .photo img { display: block; width: 100%; height: auto; filter: contrast(1.04) saturate(.9) sepia(.08); }
+  .photo figcaption { position: absolute; left: 14px; bottom: 9px; font-size: 12.5px; }
+  .tape { position: absolute; width: 120px; height: 30px; background: rgba(235,225,190,.62); box-shadow: 0 1px 2px rgba(0,0,0,.15); border-left: 1px dashed rgba(0,0,0,.08); border-right: 1px dashed rgba(0,0,0,.08); }
+  .tape.a { top: -12px; left: 30px; transform: rotate(-6deg); }
+  .tape.b { top: -10px; right: 34px; transform: rotate(5deg); }
+
+  .mug { position: absolute; width: 230px; height: 230px; border-radius: 50%; pointer-events: none; mix-blend-mode: multiply;
+    background: radial-gradient(circle, transparent 60%, rgba(120,72,22,.20) 63%, rgba(120,72,22,.07) 66%, transparent 70%); filter: url(#ring); opacity: .8; }
+
+  .hvt { display: grid; grid-template-columns: 170px 1fr; gap: 22px; margin: 14px 0 18px; }
+  .mugshot { position: relative; height: 210px; background: linear-gradient(180deg, #c9c4b6, #9e988a); border: 1px solid #555; overflow: hidden; filter: grayscale(1) contrast(1.1); }
+  .mugshot::before { content: ""; position: absolute; left: 50%; top: 34px; width: 74px; height: 88px; margin-left: -37px; border-radius: 46% 46% 42% 42%; background: #3a3732; }
+  .mugshot::after { content: ""; position: absolute; left: 50%; bottom: -40px; width: 150px; height: 110px; margin-left: -75px; border-radius: 50% 50% 0 0; background: #3a3732; }
+  .mugshot .r { position: absolute; left: 30px; right: 30px; top: 66px; height: 26px; z-index: 2; }
+  .kv td:first-child { width: 34%; font-weight: 700; }
+
+  .log td:first-child { width: 92px; white-space: nowrap; font-weight: 700; }
+  .sig { margin-top: 34px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .sig .name { position: relative; margin-top: 46px; padding-top: 4px; border-top: 1px solid #2b2a28; font-size: 13.5px; line-height: 1.45; }
+  .sig .ink { position: absolute; left: 6px; top: -50px; font: 400 44px/1 "Reenie Beanie", cursive; color: var(--pen); transform: rotate(-6deg); }
+
+  .doc-svg { position: absolute; width: 0; height: 0; }
+
+  @media (max-width: 820px) {
+    body { padding: 20px 10px 60px; font-size: 13px; }
+    .page { min-height: 0; padding: 52px 22px 96px 30px; margin-bottom: 26px; --tilt: 0deg !important; }
+    .punch { left: 8px; width: 11px; height: 11px; }
+    .banner { font-size: 11.5px; }
+    .banner.top { top: 16px; } .banner.bot { bottom: 16px; }
+    .foot { left: 22px; right: 22px; bottom: 40px; font-size: 10.5px; }
+    .hdr { font-size: 11.5px; gap: 10px; flex-direction: column; }
+    .hdr .rc { text-align: left; }
+    .stamp { top: 262px; right: 14px; font-size: 30px; padding: 6px 14px 5px; border-width: 4px; }
+    .stamp small { font-size: 9px; }
+    h1 { margin-top: 128px; font-size: 34px; }
+    .sub { font-size: 13px; }
+    h2, h3 { font-size: 13.5px; }
+    .ind { padding-left: 16px; } .ind2 { padding-left: 30px; }
+    ol, ul { margin-left: 18px; }
+    .cls { position: static; margin-top: 28px; }
+    .hand { font-size: 19px; }
+    .hvt { grid-template-columns: 1fr; }
+    .mugshot { width: 170px; }
+    table { font-size: 11.5px; }
+    th, td { padding: 4px 5px; }
+    .rcvd { transform: scale(.8) rotate(var(--r, 3deg)) !important; transform-origin: right top; }
+    .sig { grid-template-columns: 1fr; }
+    .mug { display: none; }
+  }
+  @media print {
+    body { background: none; padding: 0; }
+    .desk { display: none; }
+    .page { box-shadow: none; transform: none; margin: 0 auto; page-break-after: always; }
+  }
+</style>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="desk"></div>
+<svg class="doc-svg" aria-hidden="true">
+  <filter id="marker" x="-5%" y="-30%" width="110%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency=".05 .9" numOctaves="2" seed="3" result="t"/>
+    <feDisplacementMap in="SourceGraphic" in2="t" scale="4.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="stampf" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".75 .55" numOctaves="3" seed="11" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -4.2 2.75" result="m"/>
+    <feComposite in="SourceGraphic" in2="m" operator="in" result="c"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="2" seed="5" result="t"/>
+    <feDisplacementMap in="c" in2="t" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="bleed" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="2" seed="8" result="t"/>
+    <feDisplacementMap in="SourceGraphic" in2="t" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="ring">
+    <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="21" result="t"/>
+    <feDisplacementMap in="SourceGraphic" in2="t" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<section class="page">
+  <div class="staple"></div>
+  <div class="punch a"></div><div class="punch b"></div><div class="punch c"></div>
+  <div class="banner top">TOP SECRET//HURRICANE//NOFORN</div>
+
+  <div class="hdr">
+    <div class="l">
+      HEADQUARTERS, TASK FORCE <span class="r w2">TEMPEST</span><br>
+      <span class="r w4">JOINT SPECIAL OPS ELEMENT</span><br>
+      <span class="r w3">FORWARD OP BASE</span> (FOB EYE)<br>
+      10 NOVEMBER 2026
+    </div>
+    <div class="rc">
+      <span class="copy">COPY 03 OF 07</span><br>
+      <span style="display:inline-block;margin-top:10px">CTRL NO. TS-<span class="r w1">0447</span>-26</span><br>
+      DTG 101830Z NOV 26
+    </div>
+  </div>
+
+  <div class="stamp">CLASSIFIED<small>TOP SECRET</small></div>
+
+  <h1>OPERATION<br>HURRICANE</h1>
+  <div class="sub">OPERATION ORDER 07-26</div>
+
+  <div class="box">
+    <p><span class="pm">(TS//NF)</span> On order, Task Force <span class="r w2">TEMPEST</span> conducts an air assault from FOB EYE onto the northeastern island of the <span class="r w3">ARCHIPELAGO</span>, clears the settlement designated OBJ GALE, and seizes the port facility designated OBJ STORM in order to capture the high-value target known by the alias <span class="r w2">ISOBAR</span> and deny the <span class="r w4">COASTAL LIBERATION FRONT</span> use of the harbor.</p>
+    <p style="margin:0"><span class="pm">(S//NF)</span> D-Day: 12 NOV 26. H-Hour: 0430L. Expected duration: 90 minutes.</p>
+  </div>
+
+  <div class="warn">
+    <b>WARNING:</b> This document contains information affecting the national security of <span class="r w3">REDACTED</span>. Its transmission or the revelation of its contents in any manner to an unauthorized person is prohibited. Access is restricted to personnel read into compartment HURRICANE. Do not reproduce. Do not remove from SCIF <span class="r w1">B-2</span>. Return to the custodian after review.
+  </div>
+
+  <div class="rcvd" style="right:86px;bottom:150px;transform:rotate(4deg)">RECEIVED<b>11 NOV 2026</b>J2 · <span class="r" style="width:3em">OPS</span></div>
+  <div class="hand l" style="--r:-7deg">read in only. no copies</div>
+
+  <div class="cls">
+    Classified By: <span class="r w3">COL A. MERCER</span><br>
+    Derived From: <span class="r w2">TF-SCG</span> Multiple Sources<br>
+    Declassify On: 20511112
+  </div>
+  <div class="foot"><span>OPORD 07-26 (HURRICANE)</span><span>Page 1 of 5</span></div>
+  <div class="banner bot">TOP SECRET//HURRICANE//NOFORN</div>
+</section>
+
+<section class="page">
+  <div class="punch a"></div><div class="punch b"></div><div class="punch c"></div>
+  <div class="banner top">TOP SECRET//HURRICANE//NOFORN</div>
+  <div class="mug" style="right:-70px;top:520px"></div>
+
+  <h2>1. SITUATION</h2>
+  <p class="ind"><b>a. Enemy Forces.</b></p>
+  <p class="ind2"><span class="pm">(S//NF)</span> The <span class="r w4">COASTAL LIBERATION FRONT</span> (CLF) holds the northeastern island with an estimated 40 to 55 fighters. Two rifle squads are garrisoned in the settlement at OBJ GALE, concentrated in buildings 1, 2 and 4. A mechanized section with one armored vehicle guards the port at OBJ STORM. A single squad patrols the ridge north of LZ ALPHA. One armed patrol boat operates east of the port.</p>
+  <p class="ind2"><span class="pm">(TS//NF)</span> HUMINT from source <span class="r w2">KESTREL</span> reports a MANPADS team on the roof of the northern warehouse at OBJ STORM since 07 NOV. The report is uncorroborated. All aircraft will treat the area north of PL LIGHTNING as a missile threat zone.</p>
+  <p class="ind2"><span class="pm">(S//NF)</span> <u>Most likely enemy course of action:</u> CLF defends GALE in place and falls back to the port when contact is made, using the settlement to delay friendly forces while <span class="r w2">ISOBAR</span> is moved to the harbor for extraction by boat.</p>
+  <p class="ind2"><span class="pm">(S//NF)</span> <u>Most dangerous enemy course of action:</u> CLF engages inbound aircraft with MANPADS during the approach to LZ ALPHA and counterattacks the LZ with the ridge squad before friendly forces consolidate.</p>
+  <div class="hand" style="--r:5deg">↑ plan for this one</div>
+
+  <p class="ind"><b>b. Friendly Forces.</b></p>
+  <p class="ind2"><span class="pm">(S//NF)</span> Higher headquarters, <span class="r w3">JOINT TASK FORCE</span>, conducts deception operations along the western coast from D-1 to draw CLF attention away from the northeastern island. Naval element <span class="r w2">SEAWALL</span> blocks the eastern channel from H-30 and is responsible for the patrol boat.</p>
+
+  <p class="ind"><b>c. Attachments and Detachments.</b></p>
+  <p class="ind2"><span class="pm">(S//NF)</span> Two rotary-wing aircraft, callsigns DUSTOFF and RAVEN, are attached from <span class="r w3">AVN DETACHMENT</span> for the duration of the operation. One armored section (1SEC) is attached from <span class="r w2">B COMPANY</span>.</p>
+
+  <h2>2. MISSION</h2>
+  <p class="ind"><span class="pm">(TS//NF)</span> Task Force <span class="r w2">TEMPEST</span> conducts an air assault NLT 120430L NOV 26 to clear OBJ GALE and seize OBJ STORM in order to capture <span class="r w2">ISOBAR</span> alive and deny the CLF use of the northeastern harbor.</p>
+  <div class="hand l" style="--r:-3deg">ALIVE. no exceptions — <span class="scrib">J.R.</span></div>
+
+  <div class="foot"><span>OPORD 07-26 (HURRICANE)</span><span>Page 2 of 5</span></div>
+  <div class="banner bot">TOP SECRET//HURRICANE//NOFORN</div>
+</section>
+
+<section class="page">
+  <div class="punch a"></div><div class="punch b"></div><div class="punch c"></div>
+  <div class="banner top">TOP SECRET//HURRICANE//NOFORN</div>
+
+  <h2>3. EXECUTION</h2>
+  <p class="ind"><b>a. Commander's Intent.</b> <span class="pm">(S//NF)</span> Speed and surprise. We are on the ground before the CLF can move <span class="r w2">ISOBAR</span> to the water. The operation succeeds when <span class="r w2">ISOBAR</span> is in our custody, the harbor is denied, and every element is back across PL THUNDER by H+90.</p>
+
+  <p class="ind"><b>b. Concept of Operations.</b></p>
+  <p class="ind2"><span class="pm">(S//NF)</span> <u>Phase I, Air Assault (H to H+20).</u> DUSTOFF inserts 1st Platoon at LZ ALPHA. RAVEN inserts 2nd Platoon at LZ BRAVO. Both aircraft fly the southern corridor below 200 ft and stay south of PL LIGHTNING. 1SEC crosses the land bridge at NAI 1 and holds the crossing.</p>
+  <p class="ind2"><span class="pm">(S//NF)</span> <u>Phase II, Clear OBJ GALE (H+20 to H+45).</u> The weapons squad (WPN) establishes a support-by-fire position west of GALE and fixes buildings 1 and 2. 1st Platoon clears from the north. 2nd Platoon clears from the south through building 4. Building 3 is a <b>no-fire area</b>; suspected noncombatants.</p>
+  <p class="ind2"><span class="pm">(TS//NF)</span> <u>Phase III, Seize OBJ STORM (H+45 to H+70).</u> 1st Platoon passes through GALE and assaults the port along the coastal road. 2nd Platoon isolates the port from the south. The assault element enters the command building (marked HVT on the overlay) and secures <span class="r w2">ISOBAR</span>. Transmit EYEWALL on capture.</p>
+  <p class="ind2"><span class="pm">(S//NF)</span> <u>Phase IV, Exfil (H+70 to H+90).</u> All elements move south by road along the green route to EXFIL. DUSTOFF lifts <span class="r w2">ISOBAR</span> and any casualties from EXFIL directly to FOB EYE. Transmit LANDFALL when the last element crosses PL THUNDER.</p>
+  <div class="hand" style="--r:6deg">road or air? → FRAGO 2</div>
+
+  <p class="ind"><b>c. Tasks to Subordinate Units.</b></p>
+  <table>
+    <tr><th>Element</th><th>Leader</th><th>Task</th></tr>
+    <tr><td>1PLT</td><td><span class="r w2">LT HAYES</span></td><td>Insert LZ ALPHA. Clear GALE from the north. Assault OBJ STORM.</td></tr>
+    <tr><td>2PLT</td><td><span class="r w2">SFC OKAFOR</span></td><td>Insert LZ BRAVO. Clear building 4. Isolate the port from the south.</td></tr>
+    <tr><td>WPN</td><td><span class="r w2">SSG LINDQVIST</span></td><td>Support by fire on GALE, buildings 1 and 2. Lift fires on order.</td></tr>
+    <tr><td>1SEC</td><td><span class="r w2">SGT DUARTE</span></td><td>Hold the crossing at NAI 1. Block any CLF movement west.</td></tr>
+    <tr><td>DUSTOFF</td><td><span class="r w2">CW3 PRICE</span></td><td>Insert 1PLT. CASEVAC on call. HVT lift from EXFIL.</td></tr>
+    <tr><td>RAVEN</td><td><span class="r w2">CW2 TANAKA</span></td><td>Insert 2PLT. Overwatch south of PL LIGHTNING.</td></tr>
+  </table>
+
+  <p class="ind"><b>d. Coordinating Instructions.</b></p>
+  <ol class="ind" style="margin-left:52px">
+    <li><span class="pm">(S)</span> PL THUNDER marks the limit of the friendly rear area. PL LIGHTNING marks the forward limit of aviation.</li>
+    <li><span class="pm">(S)</span> Abort criteria: loss of either aircraft before H, confirmed MANPADS lock, or <span class="r w2">ISOBAR</span> confirmed off the island.</li>
+    <li><span class="pm">(S)</span> Rules of engagement per <span class="r w3">ROE CARD 4</span>. Positive identification before any engagement inside GALE.</li>
+  </ol>
+
+  <div class="foot"><span>OPORD 07-26 (HURRICANE)</span><span>Page 3 of 5</span></div>
+  <div class="banner bot">TOP SECRET//HURRICANE//NOFORN</div>
+</section>
+
+<section class="page">
+  <div class="punch a"></div><div class="punch b"></div><div class="punch c"></div>
+  <div class="banner top">TOP SECRET//HURRICANE//NOFORN</div>
+
+  <h2>ANNEX A. OPERATIONS OVERLAY</h2>
+  <figure class="photo">
+    <div class="tape a"></div><div class="tape b"></div>
+    <img src="/images/op-hurricane-overlay.webp" alt="Operations overlay for Operation Hurricane on a field device" width="1600" height="1133">
+    <figcaption>FIG. A-1 (TS//NF) Overlay as briefed, 102200L NOV 26. Device <span class="r w1">0447</span>.</figcaption>
+  </figure>
+  <div class="hand l" style="--r:-5deg">AA at port still unconfirmed!!</div>
+
+  <h2>4. SUSTAINMENT</h2>
+  <p class="ind"><span class="pm">(S)</span> Each element carries a basic load plus one. No resupply forward of PL THUNDER. Casualty collection point is EXFIL. DUSTOFF is the only CASEVAC asset; precedence goes to urgent surgical, then <span style="white-space:nowrap"><span class="r w2">ISOBAR</span>.</span></p>
+
+  <h2>5. COMMAND AND SIGNAL</h2>
+  <p class="ind"><span class="pm">(S)</span> The commander, HURRICANE 6, moves with 1st Platoon. The alternate command post is the weapons squad.</p>
+  <table>
+    <tr><th>Item</th><th>Value</th></tr>
+    <tr><td>Command net</td><td>41.5</td></tr>
+    <tr><td>Alternate net</td><td><span class="r w1">38.2</span></td></tr>
+    <tr><td>Challenge / password</td><td><span class="r w2">SQUALL</span> / <span class="r w2">HARBOR</span></td></tr>
+    <tr><td>TYPHOON</td><td>LZ secure</td></tr>
+    <tr><td>EYEWALL</td><td><span class="r w2">ISOBAR</span> in custody</td></tr>
+    <tr><td>LANDFALL</td><td>Exfil complete, all elements south of PL THUNDER</td></tr>
+    <tr><td>DRIFTWOOD</td><td>Abort. Return to FOB EYE</td></tr>
+  </table>
+
+  <div class="foot"><span>OPORD 07-26 (HURRICANE)</span><span>Page 4 of 5</span></div>
+  <div class="banner bot">TOP SECRET//HURRICANE//NOFORN</div>
+</section>
+
+<section class="page">
+  <div class="punch a"></div><div class="punch b"></div><div class="punch c"></div>
+  <div class="banner top">TOP SECRET//HURRICANE//NOFORN</div>
+
+  <h2>ANNEX B. HIGH-VALUE TARGET</h2>
+  <div class="hvt">
+    <div class="mugshot"><span class="r"></span></div>
+    <table class="kv" style="margin:0">
+      <tr><td>Name</td><td><span class="r w4">VIKTOR ANSELM DREY</span></td></tr>
+      <tr><td>Alias</td><td><span class="r w2">ISOBAR</span></td></tr>
+      <tr><td>Role</td><td>CLF finance and logistics chief</td></tr>
+      <tr><td>Last seen</td><td>OBJ STORM, command building, 09 NOV</td></tr>
+      <tr><td>Associates</td><td><span class="r w3">M. KORVATH</span>, <span class="r w2">"BRINE"</span></td></tr>
+      <tr><td>Threat</td><td>Armed. Personal security detail of two to four.</td></tr>
+    </table>
+  </div>
+
+  <h2>ANNEX C. EXECUTION LOG</h2>
+  <p class="ind" style="font-size:13.5px"><span class="pm">(TS//NF)</span> Reconstructed from command net recordings, 12 NOV 26. Appended after the operation.</p>
+  <table class="log">
+    <tr><td>0428</td><td>DUSTOFF and RAVEN wheels up from FOB EYE.</td></tr>
+    <tr><td>0436</td><td>1PLT on the ground at LZ ALPHA. Contact from the ridge squad to the north. <span class="r w2">PFC ADEBAYO</span> wounded, walking.</td></tr>
+    <tr><td>0439</td><td>Ridge squad withdraws east. HURRICANE 6 sends TYPHOON.</td></tr>
+    <tr><td>0441</td><td>2PLT down at LZ BRAVO without contact. 1SEC holding NAI 1.</td></tr>
+    <tr><td>0452</td><td>WPN suppressing buildings 1 and 2. 1PLT enters building 1, two CLF detained.</td></tr>
+    <tr><td>0504</td><td>Civilians confirmed in building 3, about ten adults and children. No-fire area held.</td></tr>
+    <tr><td>0509</td><td>GALE clear. CLF fall back toward the port, as predicted.</td></tr>
+    <tr><td>0514</td><td>Patrol boat attempts to reach the pier. <span class="r w2">SEAWALL</span> turns it back.</td></tr>
+    <tr><td>0517</td><td>1PLT breaches the command building. <span class="r w2">ISOBAR</span> found in the basement records room. HURRICANE 6 sends EYEWALL.</td></tr>
+    <tr><td>0521</td><td>Northern warehouse roof searched. Empty launch tube recovered; no operator found.</td></tr>
+    <tr><td>0548</td><td>All elements at EXFIL. DUSTOFF lifts <span class="r w2">ISOBAR</span> and <span class="r w2">PFC ADEBAYO</span>.</td></tr>
+    <tr><td>0604</td><td>Last element south of PL THUNDER. LANDFALL.</td></tr>
+  </table>
+  <div class="hand" style="--r:-6deg">where did the operator go?</div>
+
+  <p class="ind"><span class="pm">(TS//NF)</span> <b>Assessment.</b> Mission accomplished. <span class="r w2">ISOBAR</span> is in custody and the harbor is denied. One friendly wounded, no civilian casualties. The MANPADS operator remains unaccounted for and is assessed to have left the island before H-Hour, which suggests the operation was compromised in part. See <span class="r w3">COUNTERINTEL REF</span>.</p>
+
+  <div class="sig">
+    <div class="name"><span class="ink"><span class="scrib">J. Ruiz</span></span><span class="r w4">JONATHAN M. RUIZ</span><br>LTC, Commanding<br>Task Force <span class="r w2">TEMPEST</span></div>
+    <div class="name">OFFICIAL:<br><span class="r w3">D. ABERNATHY</span><br>S3, Operations</div>
+  </div>
+  <p style="margin-top:22px;font-size:12.5px;text-align:left">DISTRIBUTION: Copies 01 to 07 numbered. 01 <span class="r w2">CDR</span>, 02 <span class="r w1">S2</span>, 03 J2, 04 <span class="r w2">AVN DET</span>, 05 to 07 <span class="r w3">ARCHIVE</span>.</p>
+
+  <div class="foot"><span>OPORD 07-26 (HURRICANE)</span><span>Page 5 of 5</span></div>
+  <div class="banner bot">TOP SECRET//HURRICANE//NOFORN</div>
+</section>
+</body>
+</html>

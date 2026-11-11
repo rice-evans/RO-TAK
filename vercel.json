@@ -23,6 +23,14 @@
     {
       "source": "/tos/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/op-hurricane",
+      "destination": "/op-hurricane.html"
+    },
+    {
+      "source": "/op-hurricane/",
+      "destination": "/op-hurricane.html"
     }
   ],
   "headers": [

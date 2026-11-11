@@ -75,6 +75,13 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #palette.open { display: flex; }
   #drawbar { bottom: 54px; display: none; }
   #drawbar.open { display: flex; }
+  #drawbar { flex-direction: column; gap: 2px; }
+  #drawbar .drow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+  #dopts:empty { display: none; }
+  #dopts { border-top: 1px solid #2c2c30; padding-top: 2px; }
+  #dopts i { width: 1px; height: 18px; background: #444; margin: 0 4px; }
+  #selFill, #selDash, #selStyle, #selHead { display: none; }
+  #selbar button.on { background: #3b82f6; color: #fff; }
   #toolbar button, #drawbar button { width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: #ddd;
     cursor: pointer; display: flex; align-items: center; justify-content: center; }
   #toolbar button:hover, #drawbar button:hover { background: #333; }
@@ -141,6 +148,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #selbar.open { display: flex; }
   #selRotL, #selRotR { display: none !important; }
   #selbar.rot #selRotL, #selbar.rot #selRotR { display: flex !important; }
+  #selbar.multi > :not(#selDel) { display: none !important; }
   #palette.open ~ #selbar.open, #drawbar.open ~ #selbar.open { display: none; }
   #selNum, #selAng { width: 78px; height: 28px; background: #2a2a2d; border: 0; border-radius: 999px; color: #fff; text-align: center; font-size: 13px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
   #selNum:disabled { opacity: .4; }
@@ -695,7 +703,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="palette"></div>
         <div id="drawbar"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selRotL" title="Rotate left 15°"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></button><button id="selRotR" title="Rotate right 15°"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5"/></svg></button><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"><button id="selDel" title="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div>
+        <div id="selbar"><button id="selRotL" title="Rotate left 15°"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></button><button id="selRotR" title="Rotate right 15°"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5"/></svg></button><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><button id="selFill" title="Fill"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" style="fill:currentColor;fill-opacity:.35"/></svg></button><button id="selDash" title="Dashed"><svg viewBox="0 0 24 24"><path d="M3 12h4M10 12h4M17 12h4"/></svg></button><button id="selStyle" title="Line style"></button><button id="selHead" title="Arrowheads"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"><button id="selDel" title="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code"><button id="joinBtn">Join</button></div>
           <div id="recent"></div>
@@ -749,6 +757,26 @@ const ICONS = {
   num: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
   wp: 'M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   img: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 15l-5-5L5 21',
+  hl: 'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4',
+  conn: 'M5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM7 19h4V7h6M14 4l3 3-3 3',
+  shape: 'M12 3l4 6H8zM3 14h7v7H3zM17.5 21a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z',
+  note: 'M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3zM15 3v4a2 2 0 0 0 2 2h4',
+  frame: 'M22 6H2M22 18H2M6 2v20M18 2v20',
+  lasso: 'M7 22a5 5 0 0 1-2-4M3.3 14A6.8 6.8 0 0 1 2 10c0-4.4 4.5-8 10-8s10 3.6 10 8-4.5 8-10 8a12 12 0 0 1-5-1M5 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  smart: 'M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5',
+  dash: 'M3 12h4M10 12h4M17 12h4',
+  c_s: 'M5 19L19 5',
+  c_e: 'M4 19h8V5h8',
+  c_c: 'M4 19C4 9 20 15 20 5',
+  h0: 'M19 12H5M11 6l-6 6 6 6',
+  h1: 'M5 12h14M13 6l6 6-6 6',
+  s_rect: 'M4 5h16v14H4z',
+  s_ell: 'M12 19c4.4 0 8-3.1 8-7s-3.6-7-8-7-8 3.1-8 7 3.6 7 8 7z',
+  s_tri: 'M12 4l9 16H3z',
+  s_dia: 'M12 3l9 9-9 9-9-9z',
+  s_star: 'M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z',
+  s_hex: 'M7 4h10l5 8-5 8H7l-5-8z',
+  s_call: 'M4 4h16v11H11l-5 5v-5H4z',
   sym: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
 };
 
@@ -759,8 +787,8 @@ let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
-const LAYERS = [['img', 'Images'], ['sym', 'Symbols'], ['draw', 'Drawings'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
-const LAYER_OF = { img: 'img', sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
+const LAYERS = [['img', 'Images'], ['sym', 'Symbols'], ['draw', 'Drawings'], ['note', 'Sticky notes'], ['frame', 'Frames'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
+const LAYER_OF = { img: 'img', sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', shape: 'draw', conn: 'draw', note: 'note', frame: 'frame', text: 'text', num: 'num', wp: 'wp' };
 const hidL = new Set();
 try { (JSON.parse(localStorage.getItem('atak-layers') || '[]') || []).forEach(k => { if (typeof k === 'string') hidL.add(k); }); } catch (e) {}
 const hiddenIt = it => { if (it.k === 'map') return false; const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
@@ -775,6 +803,21 @@ const SET_RANGE = { sym: [1, 300], badge: [0.5, 120] };
 const r1 = n => Math.round(n * 10) / 10;
 let nextNum = 1, numPre = '';
 const TAU = Math.PI * 2;
+const SHP = (() => {
+  const fit = P => { const xs = P.map(q => q[0]), ys = P.map(q => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys); return P.map(q => [(q[0] - x0) / (x1 - x0) - .5, (q[1] - y0) / (y1 - y0) - .5]); };
+  const ring = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+  return {
+    rect: [[-.5, -.5], [.5, -.5], [.5, .5], [-.5, .5]],
+    ell: ring(48, i => [Math.cos(i / 48 * TAU) / 2, Math.sin(i / 48 * TAU) / 2]),
+    tri: [[0, -.5], [.5, .5], [-.5, .5]],
+    dia: [[0, -.5], [.5, 0], [0, .5], [-.5, 0]],
+    star: fit(ring(10, i => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? .4 : 1; return [Math.cos(a) * r, Math.sin(a) * r]; })),
+    hex: [[-.5, 0], [-.25, -.5], [.25, -.5], [.5, 0], [.25, .5], [-.25, .5]],
+    call: [[-.5, -.5], [.5, -.5], [.5, .25], [-.05, .25], [-.3, .5], [-.25, .25], [-.5, .25]],
+  };
+})();
+const SHK = Object.keys(SHP), SHN = { rect: 'Rectangle', ell: 'Circle', tri: 'Triangle', dia: 'Diamond', star: 'Star', hex: 'Hexagon', call: 'Callout' };
+const FF = '"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
 const normA = a => { a = ((a % TAU) + TAU) % TAU; return a > Math.PI ? a - TAU : a; };
 
 const MS = window.ms || (typeof module === 'object' && module && module.exports && (module.exports.ms || module.exports)) || null;
@@ -843,7 +886,7 @@ const unit = () => img ? Math.max(img.width, img.height) / 500 : 1;
 const symS = () => setg.sym * unit();
 const badgeD = () => setg.badge * unit();
 const symR = () => symS() * 0.6;
-const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num' || it.type === 'wp';
+const UPRIGHT = it => it.type === 'sym' || it.type === 'text' || it.type === 'num' || it.type === 'wp' || it.type === 'note';
 function badgeFont(c, d, n) {
   let fs = d * 0.62;
   c.font = `800 ${fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
@@ -868,7 +911,8 @@ mk('img', svg(ICONS.img), 'Add image', () => { if (!lockedOut()) $('imgFile').cl
 sep();
 [['pan', 'Move / select'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
-const DRAWS = [['pen', 'Pen'], ['line', 'Line'], ['arrow', 'Arrow'], ['box', 'Box'], ['fire', 'Fire arc']];
+const DRAWS = [['pen', 'Pen'], ['hl', 'Highlighter'], ['conn', 'Connector'], ['shape', 'Shapes'], ['note', 'Sticky note'], ['frame', 'Frame'], ['fire', 'Fire arc'], ['lasso', 'Lasso select']];
+const DOPT = ['pen', 'shape', 'conn'];
 let lastDraw = 'pen';
 const drawBtn = mk('draw', svg(ICONS.pen), 'Drawing', () => {
   const db = $('drawbar'), was = db.classList.contains('open');
@@ -877,24 +921,36 @@ const drawBtn = mk('draw', svg(ICONS.pen), 'Drawing', () => {
   db.classList.toggle('open', !was);
 });
 $('b-pan').after(drawBtn);
+const dTools = document.createElement('div'), dOpts = document.createElement('div');
+dTools.className = dOpts.className = 'drow'; dOpts.id = 'dopts';
+$('drawbar').append(dTools, dOpts);
 DRAWS.forEach(([t, title]) => {
-  const b = document.createElement('button'); b.id = 'b-' + t; b.title = title; b.innerHTML = svg(ICONS[t]); b.onclick = () => setTool(t);
-  $('drawbar').appendChild(b);
+  const b = document.createElement('button'); b.id = 'b-' + t; b.title = title; b.innerHTML = svg(ICONS[t]);
+  b.onclick = () => { setTool(t); if (DOPT.includes(t)) $('drawbar').classList.add('open'); };
+  dTools.appendChild(b);
 });
 let fillOn = false;
 try { fillOn = localStorage.getItem('atak-fill') === '1'; } catch (e) {}
-const fillBtn = document.createElement('button'); fillBtn.id = 'b-fill'; fillBtn.title = 'Fill boxes';
-fillBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" style="fill:currentColor;fill-opacity:.35"/></svg>';
-const paintFill = () => fillBtn.classList.toggle('on', fillOn);
-fillBtn.onclick = () => {
-  fillOn = !fillOn; paintFill();
-  try { localStorage.setItem('atak-fill', fillOn ? '1' : ''); } catch (e) {}
-  if (sel && sel.type === 'box' && items.includes(sel) && !lockedOut()) {
-    const before = clone(sel); if (fillOn) sel.f = true; else delete sel.f;
-    hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
+const opt = { shape: 'rect', cs: 's', h0: false, h1: true, dash: false, smart: false };
+try { const o = JSON.parse(localStorage.getItem('atak-dopt') || '{}'); if (o && typeof o === 'object') Object.keys(opt).forEach(k => { if (typeof o[k] === typeof opt[k]) opt[k] = o[k]; }); } catch (e) {}
+if (!SHK.includes(opt.shape)) opt.shape = 'rect';
+if (!['s', 'e', 'c'].includes(opt.cs)) opt.cs = 's';
+const saveOpt = () => { try { localStorage.setItem('atak-dopt', JSON.stringify(opt)); localStorage.setItem('atak-fill', fillOn ? '1' : ''); } catch (e) {} };
+const FILL_SVG = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" style="fill:currentColor;fill-opacity:.35"/></svg>';
+function paintOpts() {
+  dOpts.textContent = '';
+  const add = (ic, title, on, fn) => { const b = document.createElement('button'); b.title = title; b.innerHTML = ic.startsWith('<') ? ic : svg(ic); b.classList.toggle('on', !!on); b.onclick = () => { fn(); saveOpt(); paintOpts(); }; dOpts.appendChild(b); };
+  const gap = () => dOpts.appendChild(document.createElement('i'));
+  if (tool === 'pen') add(ICONS.smart, 'Smart shapes', opt.smart, () => { opt.smart = !opt.smart; });
+  if (tool === 'shape') {
+    SHK.forEach(k => add(ICONS['s_' + k], SHN[k], opt.shape === k, () => { opt.shape = k; }));
+    gap(); add(FILL_SVG, 'Fill', fillOn, () => { fillOn = !fillOn; }); add(ICONS.dash, 'Dashed', opt.dash, () => { opt.dash = !opt.dash; });
   }
-};
-$('drawbar').appendChild(fillBtn); paintFill();
+  if (tool === 'conn') {
+    [['s', 'Straight'], ['e', 'Elbow'], ['c', 'Curved']].forEach(([k, n]) => add(ICONS['c_' + k], n, opt.cs === k, () => { opt.cs = k; }));
+    gap(); add(ICONS.h0, 'Start arrow', opt.h0, () => { opt.h0 = !opt.h0; }); add(ICONS.h1, 'End arrow', opt.h1, () => { opt.h1 = !opt.h1; }); add(ICONS.dash, 'Dashed', opt.dash, () => { opt.dash = !opt.dash; });
+  }
+}
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('drawbar').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
 mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
@@ -1086,6 +1142,7 @@ COLORS.forEach(col => {
   s.onclick = () => {
     color = col; paintColor(); $('palette').classList.remove('open');
     if (tool === 'pan' && sel && sel.type !== 'sym' && sel.color !== col && !ro()) { const before = clone(sel); sel.color = col; hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw(); }
+    if (tool === 'pan' && multi.length && !ro()) { const list = multi.filter(i => i.type !== 'sym' && i.type !== 'img' && i.color !== col).map(it => ({ it, before: clone(it) })); list.forEach(x => { x.it.color = col; pushUpd(x.it); }); if (list.length) { hist.push({ t: 'mods', list }); save(); draw(); } }
   };
   $('palette').appendChild(s);
 });
@@ -1149,10 +1206,12 @@ function paintSize() {
 function setTool(t) {
   commitText();
   tool = t;
-  ['pan', 'pen', 'line', 'arrow', 'fire', 'box', 'text', 'num', 'wp', 'sym', 'meas', 'ping', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  ['pan', 'pen', 'hl', 'conn', 'shape', 'note', 'frame', 'fire', 'lasso', 'text', 'num', 'wp', 'sym', 'meas', 'ping', 'eraser'].forEach(x => $('b-' + x).classList.toggle('on', x === t));
+  if (t !== 'pan') multi = [];
   $('drawbar').classList.remove('open');
   const isD = DRAWS.some(d => d[0] === t);
   if (isD) { lastDraw = t; drawBtn.innerHTML = svg(ICONS[t]); }
+  paintOpts();
   drawBtn.classList.toggle('on', isD);
   if (t !== 'sym') closeSym();
   $('numbar').classList.toggle('open', t === 'num');
@@ -1186,7 +1245,157 @@ function boxPts(it) {
   const co = Math.cos(it.rot || 0), si = Math.sin(it.rot || 0);
   return [[-hx, -hy], [hx, -hy], [hx, hy], [-hx, hy]].map(q => [cx + q[0] * co - q[1] * si, cy + q[0] * si + q[1] * co]);
 }
-const ROTATABLE = it => it.type === 'pen' || it.type === 'line' || it.type === 'arrow' || it.type === 'box' || it.type === 'fire' || it.type === 'img';
+const ROTATABLE = it => it.type === 'pen' || it.type === 'line' || it.type === 'arrow' || it.type === 'box' || it.type === 'fire' || it.type === 'img' || it.type === 'shape';
+function shapePts(it) {
+  const cx = (it.a[0] + it.b[0]) / 2, cy = (it.a[1] + it.b[1]) / 2, w = Math.abs(it.b[0] - it.a[0]), h = Math.abs(it.b[1] - it.a[1]), co = Math.cos(it.rot || 0), si = Math.sin(it.rot || 0);
+  return (SHP[it.k] || SHP.rect).map(q => { const x = q[0] * w, y = q[1] * h; return [cx + x * co - y * si, cy + x * si + y * co]; });
+}
+const ATT = { shape: 1, box: 1, note: 1, img: 1, sym: 1, num: 1, wp: 1 };
+function geomOf(t) {
+  if (t.type === 'sym') return { c: [t.x, t.y], r: symR() };
+  if (t.type === 'num' || t.type === 'wp') return { c: [t.x, t.y], r: badgeD() * 0.5 };
+  if (t.type === 'note') return { c: [t.x, t.y], w: t.z, h: t.z, rot: -v.r, poly: SHP.rect };
+  return { c: [(t.a[0] + t.b[0]) / 2, (t.a[1] + t.b[1]) / 2], w: Math.abs(t.b[0] - t.a[0]), h: Math.abs(t.b[1] - t.a[1]), rot: t.type === 'frame' ? 0 : t.rot || 0, poly: SHP[t.type === 'shape' ? t.k : 'rect'] || SHP.rect };
+}
+function toLocal(g, p) {
+  const dx = p[0] - g.c[0], dy = p[1] - g.c[1], co = Math.cos(g.rot), si = Math.sin(g.rot);
+  return [(dx * co + dy * si) / (g.w || 1), (-dx * si + dy * co) / (g.h || 1)];
+}
+function attachAt(p) {
+  for (let i = items.length - 1; i >= 0; i--) {
+    const t = items[i];
+    if (!ATT[t.type] || t.k === 'map' || hiddenIt(t) || (t.type === 'num' && setg.hideNums)) continue;
+    const g = geomOf(t);
+    if (g.r !== undefined) { if (Math.hypot(p[0] - g.c[0], p[1] - g.c[1]) < g.r * 1.3) return { id: t.id, u: [0, 0] }; continue; }
+    const L = toLocal(g, p);
+    if (Math.abs(L[0]) <= 0.5 && Math.abs(L[1]) <= 0.5) return { id: t.id, u: Math.max(Math.abs(L[0]), Math.abs(L[1])) < 0.2 ? [0, 0] : L };
+  }
+  return null;
+}
+function anchor(t, u, toward) {
+  const g = geomOf(t);
+  if (g.r !== undefined) { const dx = toward[0] - g.c[0], dy = toward[1] - g.c[1], l = Math.hypot(dx, dy); return l > g.r ? [g.c[0] + dx / l * g.r, g.c[1] + dy / l * g.r] : g.c.slice(); }
+  let lx = u[0] * g.w, ly = u[1] * g.h;
+  if (Math.hypot(lx, ly) < 1e-9) { const L = toLocal(g, toward); lx = L[0] * g.w; ly = L[1] * g.h; }
+  if (Math.hypot(lx, ly) < 1e-9) return g.c.slice();
+  let best = Infinity; const P = g.poly.map(q => [q[0] * g.w, q[1] * g.h]);
+  for (let i = 0; i < P.length; i++) {
+    const p1 = P[i], p2 = P[(i + 1) % P.length], ex = p2[0] - p1[0], ey = p2[1] - p1[1], D = ex * ly - lx * ey;
+    if (Math.abs(D) < 1e-12) continue;
+    const tt = (ex * p1[1] - ey * p1[0]) / D, sv = (lx * p1[1] - ly * p1[0]) / D;
+    if (tt > 0 && sv >= -1e-9 && sv <= 1 + 1e-9) best = Math.min(best, tt);
+  }
+  if (isFinite(best)) { lx *= best; ly *= best; }
+  const co = Math.cos(g.rot), si = Math.sin(g.rot);
+  return [g.c[0] + lx * co - ly * si, g.c[1] + lx * si + ly * co];
+}
+function tgt(id) {
+  if (!id) return null;
+  const t = items.find(i => i.id === id);
+  return t && ATT[t.type] && t.k !== 'map' && !hiddenIt(t) && !(t.type === 'num' && setg.hideNums) ? t : null;
+}
+function connEnds(it) {
+  const ta = tgt(it.ca), tb = tgt(it.cb), ra = ta ? geomOf(ta).c : it.a, rb = tb ? geomOf(tb).c : it.b;
+  return [ta ? anchor(ta, it.ua || [0, 0], rb) : it.a, tb ? anchor(tb, it.ub || [0, 0], ra) : it.b];
+}
+function connPts(it) {
+  const [A, B] = connEnds(it), dx = B[0] - A[0], dy = B[1] - A[1], hz = Math.abs(dx) >= Math.abs(dy);
+  let q;
+  if (it.s === 'e') q = hz ? [A, [A[0] + dx / 2, A[1]], [A[0] + dx / 2, B[1]], B] : [A, [A[0], A[1] + dy / 2], [B[0], A[1] + dy / 2], B];
+  else if (it.s === 'c') {
+    const c1 = hz ? [A[0] + dx / 2, A[1]] : [A[0], A[1] + dy / 2], c2 = hz ? [B[0] - dx / 2, B[1]] : [B[0], B[1] - dy / 2];
+    q = [];
+    for (let i = 0; i <= 32; i++) { const t = i / 32, m = 1 - t, k0 = m * m * m, k1 = 3 * m * m * t, k2 = 3 * m * t * t, k3 = t * t * t; q.push([k0 * A[0] + k1 * c1[0] + k2 * c2[0] + k3 * B[0], k0 * A[1] + k1 * c1[1] + k2 * c2[1] + k3 * B[1]]); }
+  } else q = [A, B];
+  return q.filter((p, i) => !i || Math.hypot(p[0] - q[i - 1][0], p[1] - q[i - 1][1]) > 1e-6);
+}
+function detach(it, keep) {
+  if (it.type !== 'conn') return;
+  const E = connEnds(it);
+  if (it.ca && !(keep && keep.has(it.ca))) { it.a = E[0]; delete it.ca; delete it.ua; }
+  if (it.cb && !(keep && keep.has(it.cb))) { it.b = E[1]; delete it.cb; delete it.ub; }
+}
+function wrapLines(t, w) {
+  const out = [];
+  String(t).split('\n').forEach(par => { let line = ''; par.split(/\s+/).forEach(wd => { const tl = line ? line + ' ' + wd : wd; if (!line || ctx.measureText(tl).width <= w) line = tl; else { out.push(line); line = wd; } }); out.push(line); });
+  return out;
+}
+function textBlock(t, w, h, max, fill, stroke) {
+  let fs = max, L = [];
+  for (let i = 0; i < 16; i++) { ctx.font = `700 ${fs}px ${FF}`; L = wrapLines(t, w); if (L.length * fs * 1.2 <= h && Math.max(...L.map(l => ctx.measureText(l).width)) <= w) break; fs *= 0.85; }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  const y0 = -(L.length - 1) * fs * 0.6;
+  L.forEach((l, i) => { const y = y0 + i * fs * 1.2; if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = fs / 6; ctx.strokeText(l, 0, y); } ctx.fillStyle = fill; ctx.fillText(l, 0, y); });
+}
+function inFrame(f) {
+  const b = bbox(f);
+  return items.filter(i => i !== f && i.k !== 'map' && i.type !== 'timer' && !hiddenIt(i) && (() => { const q = bbox(i), x = (q[0] + q[2]) / 2, y = (q[1] + q[3]) / 2; return x >= b[0] && x <= b[2] && y >= b[1] && y <= b[3]; })());
+}
+function groupDrag(list, p) {
+  return { group: list.map(it => ({ it, before: clone(it), base: clone(it) })), ids: new Set(list.map(i => i.id)), p0: p, moved: false };
+}
+function frameTitleW(it) { ctx.font = `600 ${13 / v.s}px ${FF}`; return it.n ? ctx.measureText(it.n).width : 0; }
+function rdp(P, eps) {
+  if (P.length < 3) return P.slice();
+  let dm = 0, k = 0;
+  for (let i = 1; i < P.length - 1; i++) { const d = segDist(P[i], P[0], P[P.length - 1]); if (d > dm) { dm = d; k = i; } }
+  if (dm > eps) { const a = rdp(P.slice(0, k + 1), eps), b = rdp(P.slice(k), eps); return a.slice(0, -1).concat(b); }
+  return [P[0], P[P.length - 1]];
+}
+function smartShape(s) {
+  const P = s.pts; if (P.length < 8) return null;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  P.forEach(q => { x0 = Math.min(x0, q[0]); y0 = Math.min(y0, q[1]); x1 = Math.max(x1, q[0]); y1 = Math.max(y1, q[1]); });
+  const W = x1 - x0, H = y1 - y0, dg = Math.hypot(W, H);
+  if (dg * v.s < 24) return null;
+  const A = P[0], B = P[P.length - 1], gap = Math.hypot(B[0] - A[0], B[1] - A[1]), base = { id: s.id, color: s.color, w: s.w };
+  if (gap > dg * 0.25) {
+    let dev = 0; P.forEach(q => { dev = Math.max(dev, segDist(q, A, B)); });
+    return dev < gap * 0.08 ? Object.assign(base, { type: 'conn', s: 's', a: A, b: B }) : null;
+  }
+  if (W * v.s < 12 || H * v.s < 12) return null;
+  const box = { type: 'shape', a: [x0, y0], b: [x1, y1] }, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const rs = P.map(q => Math.hypot((q[0] - cx) / (W / 2), (q[1] - cy) / (H / 2))), m = rs.reduce((a, b) => a + b, 0) / rs.length;
+  const sd = Math.sqrt(rs.reduce((a, r) => a + (r - m) * (r - m), 0) / rs.length) / m;
+  if (sd < 0.075) return Object.assign(base, box, { k: 'ell' });
+  const sp = rdp(P.concat([A]), dg * 0.08).slice(0, -1), n = sp.length;
+  const cor = sp.filter((q, i) => {
+    const a = sp[(i + n - 1) % n], b = sp[(i + 1) % n], u = [q[0] - a[0], q[1] - a[1]], w = [b[0] - q[0], b[1] - q[1]];
+    const lu = Math.hypot(u[0], u[1]), lw = Math.hypot(w[0], w[1]); if (!lu || !lw) return false;
+    return Math.acos(Math.max(-1, Math.min(1, (u[0] * w[0] + u[1] * w[1]) / lu / lw))) > 0.55;
+  });
+  if (cor.length === 3) return Object.assign(base, box, { k: 'tri' });
+  if (cor.length === 4) {
+    const cn = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]], dc = cor.reduce((a, q) => a + Math.min(...cn.map(c => Math.hypot(q[0] - c[0], q[1] - c[1]))), 0) / 4;
+    return Object.assign(base, box, { k: dc < dg * 0.15 ? 'rect' : 'dia' });
+  }
+  if (sd < 0.12) return Object.assign(base, box, { k: 'ell' });
+  return null;
+}
+function lassoSel(L) {
+  if (L.length < 3) { draw(); return; }
+  const got = items.filter(it => it.k !== 'map' && it.type !== 'timer' && !hiddenIt(it) && !(it.type === 'num' && setg.hideNums) && (() => { const b = bbox(it); return inPoly([(b[0] + b[2]) / 2, (b[1] + b[3]) / 2], L); })());
+  setTool('pan');
+  if (got.length === 1) { sel = got[0]; multi = []; } else { sel = null; multi = got; }
+  if (!got.length) toast('Nothing selected');
+  draw();
+}
+function placeNote(p) {
+  const it = { id: uuid(), type: 'note', color, x: p[0], y: p[1], z: 70 * unit() };
+  items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save(); draw(); editText(it);
+}
+function editText(it) {
+  if (lockedOut()) return;
+  commitText();
+  const g = it.type === 'frame' ? [Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1])] : it.type === 'note' ? [it.x, it.y] : [(it.a[0] + it.b[0]) / 2, (it.a[1] + it.b[1]) / 2];
+  const co = Math.cos(v.r), si = Math.sin(v.r), sx = v.x + v.s * (co * g[0] - si * g[1]), sy = v.y + v.s * (si * g[0] + co * g[1]);
+  tp = { edit: it };
+  txt.style.display = 'block'; txt.style.left = sx + 'px'; txt.style.top = sy + 'px';
+  txt.style.transform = it.type === 'frame' ? 'translateY(-100%)' : 'translate(-50%,-50%)';
+  txt.style.color = '#fff'; txt.maxLength = it.type === 'frame' ? 40 : 200;
+  txt.value = (it.type === 'frame' ? it.n : it.t) || '';
+  setTimeout(() => { txt.focus(); txt.select(); }, 0);
+}
 function rotPivot(it) {
   if (it.type === 'pen') { const b = bbox(it), h = it.w / 2; return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2]; }
   return [(it.a[0] + it.b[0]) / 2, (it.a[1] + it.b[1]) / 2];
@@ -1195,7 +1404,7 @@ function rotateFrom(it, b, ang) {
   const pv = rotPivot(b), co = Math.cos(ang), si = Math.sin(ang);
   const rp = q => [pv[0] + (q[0] - pv[0]) * co - (q[1] - pv[1]) * si, pv[1] + (q[0] - pv[0]) * si + (q[1] - pv[1]) * co];
   if (it.type === 'pen') it.pts = b.pts.map(rp);
-  else if (it.type === 'box' || it.type === 'img') it.rot = (b.rot || 0) + ang;
+  else if (it.type === 'box' || it.type === 'img' || it.type === 'shape') it.rot = (b.rot || 0) + ang;
   else { it.a = rp(b.a); it.b = rp(b.b); }
 }
 function rotateSel(ang) {
@@ -1232,8 +1441,9 @@ function itemImg(it) {
 }
 function drawAll() {
   items.forEach(it => { if (it.k === 'map') drawItem(it); });
+  items.forEach(it => { if (it.type === 'frame') drawItem(it); });
   items.forEach(it => { if (it.type === 'img' && it.k !== 'map') drawItem(it); });
-  items.forEach(it => { if (it.type !== 'img') drawItem(it); });
+  items.forEach(it => { if (it.type !== 'img' && it.type !== 'frame') drawItem(it); });
 }
 function drawItem(it) {
   if (hiddenIt(it)) return;
@@ -1272,10 +1482,57 @@ function drawItem(it) {
     ctx.fillStyle = inkFor(it.color); ctx.fillText(it.n, 0, d * 0.04);
     ctx.restore(); return;
   }
+  if (it.type === 'note') {
+    const h = it.z / 2;
+    ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
+    ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
+    ctx.fillStyle = it.color; ctx.fillRect(-h, -h, it.z, it.z);
+    ctx.shadowColor = 'transparent';
+    if (it.t) textBlock(it.t, it.z * 0.84, it.z * 0.84, it.z * 0.2, inkFor(it.color), null);
+    ctx.restore(); return;
+  }
+  if (it.type === 'frame') {
+    const b = bbox(it);
+    ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fillRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
+    ctx.lineWidth = 2 / v.s; ctx.strokeStyle = it.color; ctx.strokeRect(b[0], b[1], b[2] - b[0], b[3] - b[1]);
+    if (it.n) { ctx.font = `600 ${13 / v.s}px ${FF}`; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left'; ctx.lineJoin = 'round'; ctx.lineWidth = 3 / v.s; ctx.strokeStyle = '#000'; ctx.strokeText(it.n, b[0], b[1] - 4 / v.s); ctx.fillStyle = '#fff'; ctx.fillText(it.n, b[0], b[1] - 4 / v.s); }
+    ctx.restore(); return;
+  }
+  if (it.type === 'shape') {
+    const k = shapePts(it), cx = (it.a[0] + it.b[0]) / 2, cy = (it.a[1] + it.b[1]) / 2, w = Math.abs(it.b[0] - it.a[0]), h = Math.abs(it.b[1] - it.a[1]);
+    ctx.beginPath();
+    if (it.k === 'ell') ctx.ellipse(cx, cy, w / 2, h / 2, it.rot || 0, 0, TAU);
+    else { k.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath(); }
+    if (it.f) { ctx.save(); ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore(); }
+    if (it.d) ctx.setLineDash([it.w * 3, it.w * 2.2]);
+    ctx.stroke(); ctx.setLineDash([]);
+    if (it.t) {
+      const cl = it.k === 'call', nar = it.k === 'tri' || it.k === 'dia' || it.k === 'star';
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(it.rot || 0); if (cl) ctx.translate(0, -h * 0.125);
+      textBlock(it.t, w * (nar ? 0.5 : 0.8), h * (cl ? 0.6 : nar ? 0.45 : 0.8), Math.min(w, h) * 0.22, it.color, '#000');
+      ctx.restore();
+    }
+    return;
+  }
+  if (it.type === 'conn') {
+    const q = connPts(it), n = q.length;
+    if (n < 2) return;
+    ctx.lineJoin = 'round';
+    if (it.d) ctx.setLineDash([it.w * 3, it.w * 2.2]);
+    ctx.beginPath(); q.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke(); ctx.setLineDash([]);
+    let L = 0; for (let i = 1; i < n; i++) L += Math.hypot(q[i][0] - q[i - 1][0], q[i][1] - q[i - 1][1]);
+    const hl = Math.min(Math.max(it.w * 7, unit() * 1.6), L * 0.4);
+    ctx.lineJoin = 'miter';
+    if (it.h1) arrowHead(q[n - 1][0], q[n - 1][1], Math.atan2(q[n - 1][1] - q[n - 2][1], q[n - 1][0] - q[n - 2][0]), hl);
+    if (it.h0) arrowHead(q[0][0], q[0][1], Math.atan2(q[0][1] - q[1][1], q[0][0] - q[1][0]), hl);
+    return;
+  }
   if (it.type === 'pen') {
+    if (it.hl) { ctx.save(); ctx.globalAlpha = 0.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }
     ctx.beginPath();
     it.pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
     if (it.pts.length === 1) { const q = it.pts[0], h = (it.w || 1) / 2; ctx.fillRect(q[0] - h, q[1] - h, h * 2, h * 2); } else ctx.stroke();
+    if (it.hl) ctx.restore();
   } else if (it.type === 'line') {
     ctx.beginPath(); ctx.moveTo(it.a[0], it.a[1]); ctx.lineTo(it.b[0], it.b[1]); ctx.stroke();
   } else if (it.type === 'arrow') {
@@ -1296,7 +1553,8 @@ function drawItem(it) {
     const k = boxPts(it);
     ctx.beginPath(); k.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath();
     if (it.f) { ctx.save(); ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore(); }
-    ctx.stroke();
+    if (it.d) ctx.setLineDash([it.w * 3, it.w * 2.2]);
+    ctx.stroke(); ctx.setLineDash([]);
   } else if (it.type === 'text') {
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
@@ -1505,7 +1763,16 @@ function draw() {
   drawGridMarks();
   drawMeas();
   drawPings();
-  if (cur) drawItem(cur);
+  if (cur) {
+    if (cur.type === 'lasso') { ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 1.5 / v.s; ctx.setLineDash([5 / v.s, 4 / v.s]); ctx.fillStyle = 'rgba(59,130,246,.08)'; ctx.beginPath(); cur.pts.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); }
+    else drawItem(cur);
+  }
+  multi = multi.filter(i => items.includes(i) && !hiddenIt(i));
+  if (multi.length) {
+    ctx.save(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2 / v.s; ctx.setLineDash([6 / v.s, 4 / v.s]);
+    multi.forEach(it => { const b = bbox(it), pad = 5 / v.s; ctx.save(); if (UPRIGHT(it)) { ctx.translate(it.x, it.y); ctx.rotate(-v.r); ctx.translate(-it.x, -it.y); } ctx.strokeRect(b[0] - pad, b[1] - pad, b[2] - b[0] + 2 * pad, b[3] - b[1] + 2 * pad); ctx.restore(); });
+    ctx.restore();
+  }
   if (sel && (!items.includes(sel) || hiddenIt(sel) || (sel.type === 'num' && setg.hideNums))) sel = null;
   if (sel) {
     const b = bbox(sel), pad = 5 / v.s;
@@ -1516,6 +1783,10 @@ function draw() {
       const g = fireGeom(sel);
       if (g) { ctx.setLineDash([]); ctx.fillStyle = '#141416'; [g.aa, g.pa, g.ab, g.pb].forEach(q => { ctx.beginPath(); ctx.arc(q[0], q[1], 6 / v.s, 0, TAU); ctx.fill(); ctx.stroke(); }); }
     }
+    if (sel.type === 'conn' && tool === 'pan') {
+      ctx.setLineDash([]); ctx.fillStyle = '#141416';
+      connEnds(sel).forEach(q => { ctx.beginPath(); ctx.arc(q[0], q[1], 6 / v.s, 0, TAU); ctx.fill(); ctx.stroke(); });
+    }
     if (ROTATABLE(sel) && tool === 'pan') {
       const hp = rotHandle(sel);
       ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(hp[0], hp[1] + 14 / v.s); ctx.lineTo(hp[0], hp[1]); ctx.stroke();
@@ -1523,15 +1794,24 @@ function draw() {
     }
     ctx.restore();
   }
-  $('selbar').classList.toggle('open', !!sel && tool === 'pan');
-  $('stage').classList.toggle('hassel', !!sel && tool === 'pan');
+  const anySel = (!!sel || multi.length > 0) && tool === 'pan';
+  $('selbar').classList.toggle('open', anySel);
+  $('selbar').classList.toggle('multi', !sel && multi.length > 0);
+  $('stage').classList.toggle('hassel', anySel);
+  const shw = (id, on) => { $(id).style.display = on ? 'flex' : 'none'; };
+  shw('selFill', sel && (sel.type === 'shape' || sel.type === 'box')); $('selFill').classList.toggle('on', !!(sel && sel.f));
+  shw('selDash', sel && (sel.type === 'shape' || sel.type === 'box' || sel.type === 'conn')); $('selDash').classList.toggle('on', !!(sel && sel.d));
+  shw('selStyle', sel && sel.type === 'conn'); shw('selHead', sel && sel.type === 'conn');
+  if (sel && sel.type === 'conn' && $('selStyle').dataset.s !== sel.s) { $('selStyle').dataset.s = sel.s; $('selStyle').innerHTML = svg(ICONS['c_' + (sel.s || 's')]); }
+  if (sel && sel.type === 'conn') $('selHead').classList.toggle('on', !!(sel.h0 || sel.h1));
   paintSelNum(); paintNav(); _drawSide();
   $('selbar').classList.toggle('rot', !!sel && ROTATABLE(sel));
   $('selAng').style.display = sel && sel.type === 'fire' ? 'block' : 'none';
   if (sel && sel.type === 'fire' && document.activeElement !== $('selAng')) $('selAng').value = Math.round(sel.ang || 45);
   $('selLbl').style.display = sel && (sel.type === 'num' || sel.type === 'wp') ? 'block' : 'none';
   if (sel && (sel.type === 'num' || sel.type === 'wp') && document.activeElement !== $('selLbl')) { $('selLbl').maxLength = sel.type === 'wp' ? 24 : 8; $('selLbl').value = sel.n; }
-  $('selEdit').style.display = sel && sel.type === 'sym' && /^\d{20}$/.test(sel.sidc) ? 'flex' : 'none';
+  $('selEdit').style.display = sel && ((sel.type === 'sym' && /^\d{20}$/.test(sel.sidc)) || sel.type === 'note' || sel.type === 'shape' || sel.type === 'frame') ? 'flex' : 'none';
+  if (sel) $('selEdit').title = sel.type === 'sym' ? 'Edit symbol' : sel.type === 'frame' ? 'Rename' : 'Edit text';
   if (sbEdit && sel !== sbEdit) closeSym();
   paintMini();
 }
@@ -1576,8 +1856,9 @@ function inPoly(p, k) {
   return c;
 }
 function topHit(p, tol) {
-  for (let i = items.length - 1; i >= 0; i--) if (items[i].type !== 'img' && hit(items[i], p, tol)) return i;
+  for (let i = items.length - 1; i >= 0; i--) if (items[i].type !== 'img' && items[i].type !== 'frame' && hit(items[i], p, tol)) return i;
   for (let i = items.length - 1; i >= 0; i--) if (items[i].type === 'img' && hit(items[i], p, tol)) return i;
+  for (let i = items.length - 1; i >= 0; i--) if (items[i].type === 'frame' && hit(items[i], p, tol)) return i;
   return -1;
 }
 function hit(it, p, tol) {
@@ -1602,6 +1883,18 @@ function hit(it, p, tol) {
     return [[it.a, it.b], [it.a, g.aa], [it.a, g.pa], [it.b, g.ab], [it.b, g.pb]].some(q => segDist(p, q[0], q[1]) < r);
   }
   if (it.type === 'img') return it.k !== 'map' && inPoly(p, boxPts(it));
+  if (it.type === 'shape') { const k = shapePts(it); return ((it.f || it.t) && inPoly(p, k)) || k.some((q, i) => segDist(p, q, k[(i + 1) % k.length]) < tol + it.w / 2); }
+  if (it.type === 'conn') { const q = connPts(it); for (let i = 0; i < q.length - 1; i++) if (segDist(p, q[i], q[i + 1]) < tol + it.w / 2) return true; return false; }
+  if (it.type === 'note') {
+    const dx = p[0] - it.x, dy = p[1] - it.y, co = Math.cos(v.r), si_ = Math.sin(v.r), lx = co * dx - si_ * dy, ly = si_ * dx + co * dy;
+    return Math.abs(lx) < it.z / 2 + tol && Math.abs(ly) < it.z / 2 + tol;
+  }
+  if (it.type === 'frame') {
+    const b = bbox(it), ft = 18 / v.s;
+    if (p[0] >= b[0] - tol && p[0] <= b[0] + frameTitleW(it) + tol && p[1] >= b[1] - ft - tol && p[1] <= b[1] + tol) return true;
+    const k = [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]];
+    return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + 3 / v.s);
+  }
   if (it.type === 'box') {
     const k = boxPts(it);
     return (it.f && inPoly(p, k)) || k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
@@ -1653,7 +1946,8 @@ c.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) { commitText(); endDrag(); cur = null; erasing = false; pan = null; startPinch(); draw(); return; }
   if (ptrs.size > 2 || ignore) return;
-  if (ro() && tool !== 'pan' && tool !== 'meas' && tool !== 'ping' && e.button === 0) { toast('Room is locked'); return; }
+  $('drawbar').classList.remove('open');
+  if (ro() && tool !== 'pan' && tool !== 'meas' && tool !== 'ping' && tool !== 'lasso' && e.button === 0) { toast('Room is locked'); return; }
   if (tool !== 'text') commitText();
   c.setPointerCapture(e.pointerId);
   if (calib && calib.stage === 'tap' && e.button === 0) {
@@ -1673,9 +1967,15 @@ c.addEventListener('pointerdown', e => {
       const hp = rotHandle(sel);
       if (Math.hypot(p[0] - hp[0], p[1] - hp[1]) < tol * 1.2 + 7 / v.s) { const pv = rotPivot(sel); drag = { it: sel, before: clone(sel), rot: true, pv, a0: Math.atan2(p[1] - pv[1], p[0] - pv[0]), moved: false }; return; }
     }
+    if (sel && sel.type === 'conn' && items.includes(sel) && !lockedOut()) {
+      const k = connEnds(sel).findIndex(q => Math.hypot(p[0] - q[0], p[1] - q[1]) < tol * 1.2 + 7 / v.s);
+      if (k > -1) { drag = { it: sel, before: clone(sel), end: k, moved: false }; return; }
+    }
     const hi = topHit(p, tol), h = hi < 0 ? null : items[hi];
+    if (multi.length && h && multi.includes(h)) { drag = groupDrag(multi, p); return; }
+    multi = [];
     sel = h;
-    if (h) { drag = { it: h, before: clone(h), p0: p, moved: false }; draw(); return; }
+    if (h) { if (h.type === 'frame') { drag = groupDrag([h].concat(inFrame(h)), p); } else drag = { it: h, before: clone(h), p0: p, moved: false }; draw(); return; }
     draw();
   }
   if (e.button === 1 || e.button === 2 || tool === 'pan') {
@@ -1685,7 +1985,12 @@ c.addEventListener('pointerdown', e => {
   }
   if (e.button !== 0) return;
   const p = world(e), w = SIZES[si] * unit();
-  if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
+  if (tool === 'pen' || tool === 'hl') { cur = { id: uuid(), type: 'pen', color, w: tool === 'hl' ? w * 4 : w, pts: [p] }; if (tool === 'hl') cur.hl = true; }
+  else if (tool === 'shape') { cur = { id: uuid(), type: 'shape', k: opt.shape, color, w, a: p, b: p }; if (fillOn) cur.f = true; if (opt.dash) cur.d = true; }
+  else if (tool === 'conn') { cur = { id: uuid(), type: 'conn', color, w, s: opt.cs, a: p, b: p }; if (opt.h0) cur.h0 = true; if (opt.h1) cur.h1 = true; if (opt.dash) cur.d = true; const t = attachAt(p); if (t) { cur.ca = t.id; cur.ua = t.u; } }
+  else if (tool === 'frame') cur = { id: uuid(), type: 'frame', color, a: p, b: p, n: '' };
+  else if (tool === 'lasso') cur = { type: 'lasso', pts: [p] };
+  else if (tool === 'note') placeNote(p);
   else if (tool === 'line' || tool === 'box' || tool === 'arrow') { cur = { id: uuid(), type: tool, color, w, a: p, b: p }; if (tool === 'box' && fillOn) cur.f = true; }
   else if (tool === 'fire') cur = { id: uuid(), type: 'fire', color, w, ang: fireAng, a: p, b: p };
   else if (tool === 'text') openText(e);
@@ -1715,7 +2020,16 @@ c.addEventListener('pointermove', e => {
       let a = Math.atan2(p[1] - drag.pv[1], p[0] - drag.pv[0]) - drag.a0;
       if (!e.altKey) a = Math.round(a / (Math.PI / 36)) * (Math.PI / 36);
       rotateFrom(drag.it, drag.before, a);
-    } else moveFrom(drag.it, drag.before, p[0] - drag.p0[0], p[1] - drag.p0[1]);
+    } else if (drag.group) {
+      if (!drag.moved) drag.group.forEach(g => { if (g.it.type === 'conn') { detach(g.it, drag.ids); g.base = clone(g.it); } });
+      drag.group.forEach(g => moveFrom(g.it, g.base, p[0] - drag.p0[0], p[1] - drag.p0[1]));
+    } else if (drag.end !== undefined) {
+      const it = drag.it; drag.lp = p;
+      if (drag.end) { it.b = p; delete it.cb; delete it.ub; } else { it.a = p; delete it.ca; delete it.ua; }
+    } else {
+      if (!drag.moved && drag.it.type === 'conn') { detach(drag.it); drag.base = clone(drag.it); }
+      moveFrom(drag.it, drag.base || drag.before, p[0] - drag.p0[0], p[1] - drag.p0[1]);
+    }
     drag.moved = true; draw(); return;
   }
   if (pan) {
@@ -1727,7 +2041,7 @@ c.addEventListener('pointermove', e => {
   if (tool === 'meas') { measMove(e); return; }
   if (!cur) return;
   const p = world(e);
-  if (cur.type === 'pen') cur.pts.push(p); else cur.b = p;
+  if (cur.type === 'pen' || cur.type === 'lasso') cur.pts.push(p); else cur.b = p;
   draw();
 });
 
@@ -1745,9 +2059,19 @@ function endPointer(e) {
   if (erasing) { erasing = false; return; }
   if (tool === 'meas') { measUp(e); return; }
   if (cur) {
-    const real = cur.type === 'pen' || cur.a[0] !== cur.b[0] || cur.a[1] !== cur.b[1];
-    if (real) { items.push(cur); hist.push({ t: 'add', it: cur }); pushAdd(cur); }
-    cur = null; save(); draw();
+    if (cur.type === 'lasso') { const L = cur.pts; cur = null; lassoSel(L); return; }
+    let it = cur; cur = null;
+    if (it.type === 'shape' || it.type === 'frame') {
+      const x0 = Math.min(it.a[0], it.b[0]), y0 = Math.min(it.a[1], it.b[1]), x1 = Math.max(it.a[0], it.b[0]), y1 = Math.max(it.a[1], it.b[1]);
+      if ((x1 - x0) * v.s < 8 && (y1 - y0) * v.s < 8) { const hw = (it.type === 'frame' ? 120 : 25) * unit(), hh = (it.type === 'frame' ? 80 : 25) * unit(); it.a = [it.a[0] - hw, it.a[1] - hh]; it.b = [it.a[0] + 2 * hw, it.a[1] + 2 * hh]; }
+      else { it.a = [x0, y0]; it.b = [x1, y1]; }
+      if (it.type === 'frame') it.n = 'Frame ' + (items.filter(i => i.type === 'frame').length + 1);
+    }
+    if (it.type === 'pen' && !it.hl && opt.smart) it = smartShape(it) || it;
+    if (it.type === 'conn') { const t = attachAt(it.b); if (t && t.id !== it.ca) { it.cb = t.id; it.ub = t.u; } }
+    const real = it.type === 'pen' || it.type === 'shape' || it.type === 'frame' || it.a[0] !== it.b[0] || it.a[1] !== it.b[1];
+    if (real) { items.push(it); hist.push({ t: 'add', it }); pushAdd(it); }
+    save(); draw();
   }
 }
 c.addEventListener('pointerup', endPointer);
@@ -1765,7 +2089,7 @@ c.addEventListener('wheel', e => {
   draw(); save();
 }, { passive: false });
 
-let sel = null, drag = null, fireAng = 45;
+let sel = null, drag = null, fireAng = 45, multi = [];
 const clone = o => JSON.parse(JSON.stringify(o));
 function bbox(it) {
   if (it.type === 'pen') {
@@ -1781,6 +2105,10 @@ function bbox(it) {
     const k = boxPts(it), h = it.w / 2;
     return [Math.min(...k.map(q => q[0])) - h, Math.min(...k.map(q => q[1])) - h, Math.max(...k.map(q => q[0])) + h, Math.max(...k.map(q => q[1])) + h];
   }
+  if (it.type === 'shape') { const k = shapePts(it), h = it.w / 2; return [Math.min(...k.map(q => q[0])) - h, Math.min(...k.map(q => q[1])) - h, Math.max(...k.map(q => q[0])) + h, Math.max(...k.map(q => q[1])) + h]; }
+  if (it.type === 'conn') { const k = connPts(it), h = it.w / 2; return [Math.min(...k.map(q => q[0])) - h, Math.min(...k.map(q => q[1])) - h, Math.max(...k.map(q => q[0])) + h, Math.max(...k.map(q => q[1])) + h]; }
+  if (it.type === 'note') { const h = it.z / 2; return [it.x - h, it.y - h, it.x + h, it.y + h]; }
+  if (it.type === 'frame') return [Math.min(it.a[0], it.b[0]), Math.min(it.a[1], it.b[1]), Math.max(it.a[0], it.b[0]), Math.max(it.a[1], it.b[1])];
   if (it.type === 'line' || it.type === 'arrow') {
     const h = it.w / 2;
     return [Math.min(it.a[0], it.b[0]) - h, Math.min(it.a[1], it.b[1]) - h, Math.max(it.a[0], it.b[0]) + h, Math.max(it.a[1], it.b[1]) + h];
@@ -1797,12 +2125,13 @@ function bbox(it) {
 }
 function moveFrom(it, b, dx, dy) {
   if (it.type === 'pen') it.pts = b.pts.map(q => [q[0] + dx, q[1] + dy]);
-  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow' || it.type === 'fire' || it.type === 'img') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
+  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow' || it.type === 'fire' || it.type === 'img' || it.type === 'shape' || it.type === 'conn' || it.type === 'frame') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
   else { it.x = b.x + dx; it.y = b.y + dy; }
 }
 function gdim(it) {
   if (it.type === 'sym') return symS();
   if (it.type === 'num' || it.type === 'wp') return badgeD();
+  if (it.type === 'note') return it.z;
   if (it.type === 'text') { ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; return ctx.measureText(it.t).width; }
   if (it.type === 'pen') {
     let a = Infinity, b = Infinity, x = -Infinity, y = -Infinity;
@@ -1818,24 +2147,51 @@ function scaleSel(f) {
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
-  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow' || sel.type === 'fire' || sel.type === 'img') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow' || sel.type === 'fire' || sel.type === 'img' || sel.type === 'shape' || sel.type === 'conn' || sel.type === 'frame') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'note') sel.z = Math.min(1e5, Math.max(2, sel.z * f));
   else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
   hist.push({ t: 'mod', it: sel, before });
   pushUpd(sel); save(); draw();
 }
 function endDrag() {
   if (!drag) return;
-  if (drag.moved) { hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it); save(); }
+  if (drag.moved) {
+    if (drag.group) { hist.push({ t: 'mods', list: drag.group.map(g => ({ it: g.it, before: g.before })) }); drag.group.forEach(g => pushUpd(g.it)); }
+    else {
+      if (drag.end !== undefined && drag.lp) { const t = attachAt(drag.lp); if (t) { if (drag.end) { drag.it.cb = t.id; drag.it.ub = t.u; } else { drag.it.ca = t.id; drag.it.ua = t.u; } } }
+      hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it);
+    }
+    save();
+  }
   drag = null;
 }
 $('selDel').onclick = () => {
-  if (!sel || lockedOut()) return;
-  const i = items.indexOf(sel); if (i < 0) return;
-  hist.push({ t: 'del', it: sel, i }); pushDel([sel.id]); items.splice(i, 1); sel = null; save(); draw();
+  if (lockedOut()) return;
+  const list = (multi.length ? multi : sel ? [sel] : []).map(it => ({ it, i: items.indexOf(it) })).filter(x => x.i > -1 && x.it.k !== 'map').sort((a, b) => a.i - b.i);
+  if (!list.length) return;
+  for (let j = list.length - 1; j >= 0; j--) items.splice(list[j].i, 1);
+  hist.push(list.length === 1 ? { t: 'del', it: list[0].it, i: list[0].i } : { t: 'dels', list });
+  const ids = list.map(x => x.it.id); for (let j = 0; j < ids.length; j += 100) pushDel(ids.slice(j, j + 100));
+  sel = null; multi = []; save(); draw();
 };
+const selMod = fn => { if (!sel || lockedOut()) return; const before = clone(sel); fn(sel); hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw(); };
+$('selFill').onclick = () => selMod(s => { if (s.f) delete s.f; else s.f = true; });
+$('selDash').onclick = () => selMod(s => { if (s.d) delete s.d; else s.d = true; });
+$('selStyle').onclick = () => selMod(s => { s.s = { s: 'e', e: 'c', c: 's' }[s.s] || 'e'; });
+$('selHead').onclick = () => selMod(s => { const k = (s.h0 ? 2 : 0) + (s.h1 ? 1 : 0), n = { 0: 1, 1: 3, 2: 1, 3: 0 }[k]; delete s.h0; delete s.h1; if (n & 2) s.h0 = true; if (n & 1) s.h1 = true; });
+addEventListener('keydown', e => {
+  if (miroId || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.target.isContentEditable || document.documentElement.classList.contains('land')) return;
+  if ((e.key === 'Delete' || e.key === 'Backspace') && tool === 'pan' && (sel || multi.length)) { e.preventDefault(); $('selDel').click(); }
+  else if (e.key === 'Escape' && (sel || multi.length)) { sel = null; multi = []; draw(); }
+});
+c.addEventListener('dblclick', e => {
+  if (tool !== 'pan' || lockedOut()) return;
+  const i = topHit(world(e), (TOUCH ? 18 : 10) / v.s), it = i < 0 ? null : items[i];
+  if (it && (it.type === 'note' || it.type === 'shape' || it.type === 'frame')) editText(it);
+});
 $('selRotL').onclick = () => rotateSel(-Math.PI / 12);
 $('selRotR').onclick = () => rotateSel(Math.PI / 12);
-$('selEdit').onclick = () => { if (sel && sel.type === 'sym') openSym(sel); };
+$('selEdit').onclick = () => { if (!sel) return; if (sel.type === 'sym') openSym(sel); else editText(sel); };
 const selNum = $('selNum');
 function paintSelNum() {
   if (!sel || document.activeElement === selNum) return;
@@ -1963,12 +2319,15 @@ function openText(e) {
 function commitText() {
   if (!tp) return;
   let t = txt.value.trim();
-  if (t && isBad(t)) { toast('That text is not allowed'); t = ''; }
-  if (t) {
+  if (t && isBad(t)) { toast('That text is not allowed'); t = tp.edit ? null : ''; }
+  if (tp.edit) {
+    const it = tp.edit, k = it.type === 'frame' ? 'n' : 't';
+    if (t !== null && items.includes(it) && (it[k] || '') !== t) { const before = clone(it); if (t) it[k] = t; else delete it[k]; hist.push({ t: 'mod', it, before }); pushUpd(it); save(); }
+  } else if (t) {
     const it = { id: uuid(), type: 'text', color, t, x: tp.p[0], y: tp.p[1], fs: 18 * unit() };
     items.push(it); hist.push({ t: 'add', it }); pushAdd(it); save();
   }
-  tp = null; txt.style.display = 'none'; txt.value = '';
+  tp = null; txt.style.display = 'none'; txt.value = ''; txt.style.transform = ''; txt.removeAttribute('maxlength');
   draw();
 }
 txt.onkeydown = e => {
@@ -1986,6 +2345,8 @@ function undo() {
   else if (h.t === 'clear') { items = h.list; pushAdd(h.list); }
   else if (h.t === 'import') { const ids = h.list.map(i => i.id), gone = new Set(ids); items = items.filter(i => !gone.has(i.id)); for (let i = 0; i < ids.length; i += 100) pushDel(ids.slice(i, i + 100)); }
   else if (h.t === 'mod') { for (const k in h.it) delete h.it[k]; Object.assign(h.it, h.before); pushUpd(h.it); }
+  else if (h.t === 'mods') h.list.forEach(x => { for (const k in x.it) delete x.it[k]; Object.assign(x.it, x.before); pushUpd(x.it); });
+  else if (h.t === 'dels') { h.list.forEach(x => items.splice(Math.min(x.i, items.length), 0, x.it)); pushAdd(h.list.map(x => x.it)); }
   save(); draw();
 }
 function clearAll() {
@@ -2991,7 +3352,39 @@ function cleanItemRaw(d, id) {
   const color = typeof d.color === 'string' && /^#[0-9a-f]{3,8}$/i.test(d.color) ? d.color : '#ff7a1a';
   if (d.type === 'pen') {
     if (!Array.isArray(d.pts) || !d.pts.length || d.pts.length > 5000 || !d.pts.every(pt) || !num(d.w)) return null;
-    return { id, type: 'pen', color, w: d.w, pts: d.pts };
+    const o = { id, type: 'pen', color, w: d.w, pts: d.pts };
+    if (d.hl === true) o.hl = true;
+    return o;
+  }
+  if (d.type === 'shape') {
+    if (!pt(d.a) || !pt(d.b) || !num(d.w) || !SHK.includes(d.k)) return null;
+    const o = { id, type: 'shape', k: d.k, color, w: d.w, a: d.a, b: d.b };
+    if (num(d.rot) && d.rot) o.rot = d.rot % TAU;
+    if (d.f === true) o.f = true;
+    if (d.d === true) o.d = true;
+    if (typeof d.t === 'string' && d.t.trim()) o.t = d.t.slice(0, 200);
+    return o;
+  }
+  if (d.type === 'conn') {
+    if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
+    const okId = x => typeof x === 'string' && /^[A-Za-z0-9-]{1,64}$/.test(x), okU = u => Array.isArray(u) && u.length === 2 && num(u[0]) && num(u[1]) && Math.abs(u[0]) <= 1 && Math.abs(u[1]) <= 1;
+    const o = { id, type: 'conn', color, w: d.w, s: ['s', 'e', 'c'].includes(d.s) ? d.s : 's', a: d.a, b: d.b };
+    ['h0', 'h1', 'd'].forEach(k => { if (d[k] === true) o[k] = true; });
+    if (okId(d.ca)) { o.ca = d.ca; o.ua = okU(d.ua) ? d.ua : [0, 0]; }
+    if (okId(d.cb)) { o.cb = d.cb; o.ub = okU(d.ub) ? d.ub : [0, 0]; }
+    return o;
+  }
+  if (d.type === 'note') {
+    if (!num(d.x) || !num(d.y) || !num(d.z) || d.z <= 0 || d.z > 1e6) return null;
+    const o = { id, type: 'note', color, x: d.x, y: d.y, z: d.z };
+    if (typeof d.t === 'string' && d.t.trim()) o.t = d.t.slice(0, 200);
+    return o;
+  }
+  if (d.type === 'frame') {
+    if (!pt(d.a) || !pt(d.b) || d.a[0] === d.b[0] || d.a[1] === d.b[1]) return null;
+    const o = { id, type: 'frame', color, a: d.a, b: d.b };
+    if (typeof d.n === 'string' && d.n.trim()) o.n = d.n.slice(0, 40);
+    return o;
   }
   if (d.type === 'fire') {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
@@ -3004,6 +3397,7 @@ function cleanItemRaw(d, id) {
     const o = { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
     if (d.type === 'box' && num(d.rot) && d.rot) o.rot = d.rot % TAU;
     if (d.type === 'box' && d.f === true) o.f = true;
+    if (d.type === 'box' && d.d === true) o.d = true;
     return o;
   }
   if (d.type === 'img') {
