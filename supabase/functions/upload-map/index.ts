@@ -25,6 +25,8 @@ Deno.serve(async (req) => {
     if (file.size > 12e6) return json({ error: "Image is too large (12 MB max)" }, 413);
     const { data: r } = await db.from("rooms").select("code").eq("code", room).maybeSingle();
     if (!r) return json({ error: "Room not found" }, 404);
+    const { data: list } = await db.storage.from("maps").list(room, { limit: 200 });
+    if ((list?.length ?? 0) >= 100) return json({ error: "This room has reached its upload limit" }, 429);
 
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (!MOD_KEY) return json({ error: "Image check is unavailable, try again later" }, 503);

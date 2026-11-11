@@ -123,7 +123,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 
   #txt { position: absolute; display: none; font: 600 18px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
     border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
-  #file, #imgFile { display: none; }
+  #file, #imgFile, #mapFile { display: none; }
 
   html.web, html.web body { width: 100%; height: 100%; background: #0b0d10; overscroll-behavior: none; }
   html.web body { position: fixed; inset: 0; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
@@ -280,6 +280,9 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   #side.tab-tm #tmNew { display: flex; }
   #side.tab-ly #lyList { display: flex; }
   #side.tab-pp #ppList { display: flex; }
+  #side.tab-mp #mpList { display: flex; }
+  #mpList .pe { color: #aaa; font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 6px 2px 2px; }
+  #mpList > .sb { align-self: flex-start; margin-top: 4px; }
   #avs { cursor: pointer; }
   .srowi .pav { width: 22px; height: 22px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; }
   .srowi .pn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-weight: 600; }
@@ -684,7 +687,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="coord"></div>
         <canvas id="mm"></canvas>
         <div id="tchips"></div>
-        <div id="side"><div id="sideTabs"><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button data-tab="ly">Layers</button><button data-tab="pp">People</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="lyList" class="sl"></div><div id="ppList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
+        <div id="side"><div id="sideTabs"><button data-tab="mp">Maps</button><button data-tab="wp">Waypoints</button><button data-tab="tm">Timers</button><button data-tab="ly">Layers</button><button data-tab="pp">People</button><button id="sideX" title="Close">✕</button></div><div id="wpList" class="sl"></div><div id="tmList" class="sl"></div><div id="lyList" class="sl"></div><div id="ppList" class="sl"></div><div id="mpList" class="sl"></div><div id="tmNew"><input id="tnName" type="text" maxlength="24" placeholder="Name" autocomplete="off"><input id="tnMin" type="number" min="0" max="1440" placeholder="min"><input id="tnSec" type="number" min="0" max="59" placeholder="sec"><button id="tnAdd" class="sb">Add</button><div id="tnQuick"></div></div></div>
         <div id="gridbar"><span id="gbMsg"></span><input id="gbIn" placeholder="XXXX XXXX" autocomplete="off" spellcheck="false" inputmode="numeric"><button id="gbOk">OK</button><button id="gbX" title="Cancel">✕</button></div>
         <div id="nav"><div id="compass" title="North — tap to turn the map north-up"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="rgba(20,20,22,.92)" stroke="#333" stroke-width="1.5"/><path d="M24 7l6 17H18z" fill="#ef4444"/><path d="M24 41l-6-17h12z" fill="#ddd"/><text x="24" y="21" font-size="8" font-weight="800" text-anchor="middle" fill="#fff" font-family="IBM Plex Sans, system-ui, sans-serif">N</text></svg></div><div id="navbtns"><button id="rotL" title="Rotate map left 15°">↺</button><button id="rotR" title="Rotate map right 15°">↻</button><button id="ctrBtn" title="Center the map"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button></div><div id="navbtns2"><button id="numTog" title="Show / hide building numbers">#</button><button id="wpBtn" title="Waypoints"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></button><button id="tmBtn" title="Timers"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></button><button id="lyBtn" title="Layers"><svg viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M22 17.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="M22 12.65l-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></button></div><div id="hdg"></div></div>
         <div id="numbar"><button id="nMinus" title="Previous number">−</button><input id="nPre" type="text" maxlength="3" placeholder="Prefix" title="Optional prefix, e.g. B"><input id="nVal" type="number" min="0" max="99999" title="Next number"><button id="nPlus" title="Next number">+</button></div>
@@ -712,6 +715,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 </div>
 <input type="file" id="file" accept="image/*">
 <input type="file" id="imgFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+<input type="file" id="mapFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
 
 <script>
 const IS_ELECTRON = !!window.rotak;
@@ -728,7 +732,7 @@ const c = $('c'); let ctx = c.getContext('2d');
 const COLORS = ['#ff7a1a', '#ef4444', '#facc15', '#22c55e', '#3b82f6', '#ffffff', '#111111'];
 const SIZES = [0.3, 0.6, 1.2];
 const ICONS = {
-  open: 'M5 12h14M12 5v14',
+  open: 'M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20',
   pan: 'M12 2v20M2 12h20M15 19l-3 3-3-3M9 5l3-3 3 3M19 9l3 3-3 3M5 9l-3 3 3 3',
   pen: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4',
   line: 'M5 19L19 5',
@@ -759,7 +763,7 @@ const LAYERS = [['img', 'Images'], ['sym', 'Symbols'], ['draw', 'Drawings'], ['t
 const LAYER_OF = { img: 'img', sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
 const hidL = new Set();
 try { (JSON.parse(localStorage.getItem('atak-layers') || '[]') || []).forEach(k => { if (typeof k === 'string') hidL.add(k); }); } catch (e) {}
-const hiddenIt = it => { const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
+const hiddenIt = it => { if (it.k === 'map') return false; const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
 const layerOn = k => k === 'num' ? !setg.hideNums : !hidL.has(k);
 function toggleLayer(k) {
   if (k === 'num') { toggleNums(); return; }
@@ -859,7 +863,7 @@ function mk(id, html, title, fn) {
 const svg = d => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
 const sep = () => { const s = document.createElement('div'); s.className = 'sep'; tb.appendChild(s); };
 
-mk('open', svg(ICONS.open), 'Open map', () => hostOnly() ? toast('Only the host can change the map') : room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
+mk('open', svg(ICONS.open), 'Maps', () => openSide('mp'));
 mk('img', svg(ICONS.img), 'Add image', () => { if (!lockedOut()) $('imgFile').click(); });
 sep();
 [['pan', 'Move / select'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
@@ -1227,7 +1231,8 @@ function itemImg(it) {
   return im;
 }
 function drawAll() {
-  items.forEach(it => { if (it.type === 'img') drawItem(it); });
+  items.forEach(it => { if (it.k === 'map') drawItem(it); });
+  items.forEach(it => { if (it.type === 'img' && it.k !== 'map') drawItem(it); });
   items.forEach(it => { if (it.type !== 'img') drawItem(it); });
 }
 function drawItem(it) {
@@ -1596,7 +1601,7 @@ function hit(it, p, tol) {
     const r = tol + it.w / 2;
     return [[it.a, it.b], [it.a, g.aa], [it.a, g.pa], [it.b, g.ab], [it.b, g.pb]].some(q => segDist(p, q[0], q[1]) < r);
   }
-  if (it.type === 'img') return inPoly(p, boxPts(it));
+  if (it.type === 'img') return it.k !== 'map' && inPoly(p, boxPts(it));
   if (it.type === 'box') {
     const k = boxPts(it);
     return (it.f && inPoly(p, k)) || k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
@@ -2584,7 +2589,7 @@ let kickArm = { id: '', t: 0 };
 function paintSide(force) {
   if (!sideEl.classList.contains('open')) return;
   const wps = items.filter(i => i.type === 'wp'), tms = timerList();
-  const sig = sideTab + JSON.stringify(wps.map(w => [w.id, w.n, Math.round(w.x), Math.round(w.y), w.color])) + JSON.stringify(tms.map(t => [t.id, t.n, t.d, t.end, t.left])) + (grid ? JSON.stringify(grid) : '') + JSON.stringify(peers) + JSON.stringify(hostPeople) + (room || '') + [...hidL].join() + setg.hideNums;
+  const sig = sideTab + JSON.stringify(wps.map(w => [w.id, w.n, Math.round(w.x), Math.round(w.y), w.color])) + JSON.stringify(tms.map(t => [t.id, t.n, t.d, t.end, t.left])) + (grid ? JSON.stringify(grid) : '') + JSON.stringify(peers) + JSON.stringify(hostPeople) + (room || '') + [...hidL].join() + setg.hideNums + JSON.stringify(items.filter(i => i.k === 'map').map(m => [m.id, m.n])) + (img ? img.width + 'x' + img.height : '') + imgCount();
   if (!force && sig === sideSig) return;
   if (!force && sideEl.contains(document.activeElement) && /INPUT/.test(document.activeElement.tagName)) return;
   sideSig = sig;
@@ -2618,6 +2623,16 @@ function paintSide(force) {
     const t = document.createElement('span'); t.textContent = label;
     b.append(t, document.createElement('i')); b.onclick = () => toggleLayer(k); ll.appendChild(b);
   });
+  const ml = $('mpList'); ml.textContent = '';
+  const mrow = (label, btns) => { const r = document.createElement('div'); r.className = 'srowi'; const n = document.createElement('span'); n.className = 'pn'; n.textContent = label; r.appendChild(n); btns.forEach(b => r.appendChild(b)); ml.appendChild(r); };
+  if (img) {
+    mrow(room ? 'Main map' : (name && name !== 'RO-TAK' ? name : 'Main map'), [
+      mkb('Go', '', () => fitRect([0, 0, img.width, img.height])),
+      mkb('Replace', 'alt', e => { if (hostOnly()) return toast('Only the host can change maps'); const b = e.currentTarget; if (!room || !roomHasMap || b.dataset.arm) { delete b.dataset.arm; $('file').click(); return; } b.dataset.arm = 1; b.textContent = 'Clears room?'; setTimeout(() => { delete b.dataset.arm; b.textContent = 'Replace'; }, 3000); })]);
+    items.filter(i => i.k === 'map').forEach(m => mrow(m.n, [mkb('Go', '', () => fitRect(bbox(m))), mkb('✕', 'alt', () => delMap(m), 'Delete map')]));
+    const info = document.createElement('div'); info.className = 'pe'; info.textContent = mapCount() + '/' + MAP_MAX + ' maps · ' + imgCount() + '/' + IMG_MAX + ' images'; ml.appendChild(info);
+  }
+  ml.appendChild(mkb('Add map', '', () => { if (hostOnly()) return toast('Only the host can change maps'); if (img && mapCount() >= MAP_MAX) return toast('Map limit reached (' + MAP_MAX + ')'); (img ? $('mapFile') : $('file')).click(); }));
   const pl = $('ppList'); pl.textContent = '';
   const prow = (name, tag, off) => {
     const r = document.createElement('div'); r.className = 'srowi' + (off ? ' off' : '');
@@ -2997,6 +3012,7 @@ function cleanItemRaw(d, id) {
     if (!ok) return null;
     const o = { id, type: 'img', p: d.p, a: d.a, b: d.b };
     if (num(d.rot) && d.rot) o.rot = d.rot % TAU;
+    if (d.k === 'map') { o.k = 'map'; o.n = typeof d.n === 'string' && d.n.trim() ? d.n.slice(0, 24) : 'Map'; delete o.rot; }
     return o;
   }
   if (d.type === 'sym') {
@@ -3161,6 +3177,7 @@ const fileUrl = f => new Promise(res => { const fr = new FileReader(); fr.onload
 async function addImages(list) {
   const files = [...list].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type)).slice(0, 10);
   if (!files.length || lockedOut()) return;
+  if (imgCount() >= IMG_MAX) return toast('Image limit reached (' + IMG_MAX + ')');
   const my = room, r = c.getBoundingClientRect(), ctr = toWorld(r.width / 2, r.height / 2), span = Math.min(r.width, r.height) * 0.4 / v.s;
   let n = 0;
   for (const f0 of files) {
@@ -3175,6 +3192,7 @@ async function addImages(list) {
     const it = { id: uuid(), type: 'img', p, a: [cx - hw, cy - hh], b: [cx + hw, cy + hh] };
     if (v.r) it.rot = -v.r;
     const ok = cleanItem(it, it.id); if (!ok) continue;
+    if (imgCount() >= IMG_MAX) { toast('Image limit reached (' + IMG_MAX + ')'); break; }
     items.push(ok); hist.push({ t: 'add', it: ok }); pushAdd(ok); n++;
     if (!my) { try { localStorage.setItem('atak', JSON.stringify({ items, v, name })); } catch (e) { toast('Too big to keep after closing'); } }
     setTool('pan'); sel = ok; draw();
@@ -3182,6 +3200,57 @@ async function addImages(list) {
   if (n) toast(n === 1 ? 'Image added' : n + ' images added');
 }
 $('imgFile').onchange = e => { addImages(e.target.files); e.target.value = ''; };
+const IMG_MAX = 50, MAP_MAX = 10;
+const imgCount = () => items.filter(i => i.type === 'img').length + (img ? 1 : 0);
+const mapCount = () => items.filter(i => i.k === 'map').length + (img ? 1 : 0);
+const mapName = (f, i) => { const t = String(f.name || '').replace(/\.[^.]+$/, '').replace(/[^A-Za-z0-9 _-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 24); return t && !isBad(t) ? t : 'Map ' + i; };
+function rightEdge() {
+  let x = img ? img.width : 0;
+  items.forEach(it => { if (it.type !== 'timer') { try { x = Math.max(x, bbox(it)[2]); } catch (e) {} } });
+  return x;
+}
+function fitRect(b) {
+  stopFollow();
+  const r = c.getBoundingClientRect(), T = 46, w = b[2] - b[0], h = b[3] - b[1];
+  if (!(w > 0 && h > 0)) return;
+  const s = Math.min(r.width * 0.94 / w, (r.height - T) * 0.94 / h);
+  v = { s, r: 0, x: (r.width - w * s) / 2 - b[0] * s, y: T + (r.height - T - h * s) / 2 - b[1] * s };
+  save(); draw();
+}
+async function addMaps(list) {
+  if (!img) { const f = [...list][0]; if (f) loadFile(f); return; }
+  if (hostOnly()) return toast('Only the host can change maps');
+  const files = [...list].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type));
+  if (!files.length || lockedOut()) return;
+  const my = room, H = img.height;
+  let n = 0;
+  for (const f0 of files) {
+    if (mapCount() >= MAP_MAX) { toast('Map limit reached (' + MAP_MAX + ')'); break; }
+    if (imgCount() >= IMG_MAX) { toast('Image limit reached (' + IMG_MAX + ')'); break; }
+    let s;
+    try { s = await shrinkTo(f0, 4096); } catch (e) { toast('Could not read that image'); continue; }
+    if (s.f.size > 12e6) { toast('Image is too large (12 MB max)'); continue; }
+    if (my) toast('Checking map...');
+    const p = my ? await uploadImage(s.f) : await fileUrl(s.f);
+    if (room !== my) return;
+    if (!p) continue;
+    const x0 = rightEdge() + H * 0.05, w = H * s.w / s.h;
+    const it = cleanItem({ id: uuid(), type: 'img', k: 'map', n: mapName(f0, mapCount() + 1), p, a: [x0, 0], b: [x0 + w, H] }, uuid());
+    if (!it) continue;
+    items.push(it); hist.push({ t: 'add', it }); pushAdd(it); n++;
+    if (!my) { try { localStorage.setItem('atak', JSON.stringify({ items, v, name })); } catch (e) { toast('Too big to keep after closing'); } }
+    fitRect(bbox(it));
+  }
+  if (n) toast(n === 1 ? 'Map added' : n + ' maps added');
+  paintSide(true);
+}
+function delMap(it) {
+  if (hostOnly()) return toast('Only the host can change maps');
+  if (lockedOut()) return;
+  const i = items.indexOf(it); if (i < 0) return;
+  hist.push({ t: 'del', it, i }); pushDel([it.id]); items.splice(i, 1); save(); draw(); paintSide(true);
+}
+$('mapFile').onchange = e => { addMaps(e.target.files); e.target.value = ''; };
 async function uploadMap(f, cr) {
   showErr('');
   const my = room;
