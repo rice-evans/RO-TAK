@@ -1999,17 +1999,32 @@ addEventListener('keydown', e => {
 
 function setTitle() { $('title').textContent = room ? room.replace(/-/g, ' ').toUpperCase() + (roomLocked ? ' · LOCKED' : '') : name; }
 function setImg(src, opt = {}) {
-  const i = new Image();
-  i.onload = () => {
-    if (opt.solo && room) return;
-    img = i;
-    if (opt.reset) { items = []; hist = []; }
-    if (opt.fit) fit();
-    if (opt.reset && !room) save();
-    setTitle();
-    draw();
-  };
-  i.src = src;
+  return new Promise(res => {
+    const i = new Image();
+    i.onload = () => {
+      if (opt.solo && room) return res(false);
+      img = i;
+      if (opt.reset) { items = []; hist = []; }
+      if (opt.fit) fit();
+      if (opt.reset && !room) save();
+      setTitle();
+      draw();
+      res(true);
+    };
+    i.onerror = () => res(false);
+    i.src = src;
+  });
+}
+function seedSyms() {
+  if (!img) return;
+  const z = symS(), g = z * 1.9, x0 = img.width + g, y0 = g * 0.6;
+  const rows = [['10', '121100', 5], ['10', '120500', 2], ['30', '120500', 2], ['01', '110100', 2], ['01', '110200', 2]];
+  const list = [];
+  rows.forEach(([set, icon, n], r) => ['3', '6'].forEach((si, side) => {
+    for (let i = 0; i < n; i++) list.push({ id: uuid(), type: 'sym', sidc: sidc20(si, set, { icon }), std: '2525', o: {}, x: x0 + side * 5.7 * g + i * g, y: y0 + r * g, s: z });
+  }));
+  list.forEach(it => { items.push(it); hist.push({ t: 'add', it }); });
+  pushAdd(list); save(); draw();
 }
 function loadFile(f) {
   if (!f || !f.type.startsWith('image/')) return;
@@ -2021,7 +2036,7 @@ function loadFile(f) {
   const fr = new FileReader();
   fr.onload = () => {
     try { localStorage.setItem('atak-map', fr.result); } catch (e) { try { localStorage.removeItem('atak-map'); } catch (_) {} }
-    setImg(fr.result, { reset: true, fit: true });
+    setImg(fr.result, { reset: true, fit: true }).then(ok => { if (ok && !room) seedSyms(); });
   };
   fr.readAsDataURL(f);
 }
@@ -3185,9 +3200,10 @@ async function uploadMap(f, cr) {
   const path = out.path;
   curPath = path; roomHasMap = true;
   items = []; hist = [];
-  setImg(URL.createObjectURL(f), { fit: true });
+  const loaded = setImg(URL.createObjectURL(f), { fit: true });
   const d = await db().from('marks').delete().eq('room', room);
   if (d.error) fail(d.error);
+  if (await loaded && room === my) seedSyms();
   setCredit(cr || null); setGrid(null, true);
   let u = await db().from('rooms').update({ map_path: path, credit: cr ? JSON.stringify(cr) : null, grid: null }).eq('code', room);
   if (u.error && /credit|grid/i.test(u.error.message || '')) u = await db().from('rooms').update({ map_path: path }).eq('code', room);
