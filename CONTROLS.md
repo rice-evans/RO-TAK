@@ -9,6 +9,7 @@
 | Click-through on / off | `Mod+Shift+A` |
 | Show / hide | `Mod+Shift+H` |
 | Scale overlay | `Mod+Shift+Up` / `Mod+Shift+Down` |
+| Scale buttons and text | `Mod+Shift+Plus` / `Mod+Shift+Minus` |
 | Opacity | `Mod+Shift+Left` / `Mod+Shift+Right` |
 | Quit | `Mod+Shift+Q` |
 | Move the phone | Drag the frame or the header |

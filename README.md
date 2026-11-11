@@ -1,5 +1,7 @@
 <div align="center">
 
+<p><a href="https://drive.google.com/drive/folders/1aNht4-3zNclrdiIk4wFi7Pp6pz-_BBuo"><img src="https://img.shields.io/badge/BRM5_MAPS-GOOGLE_DRIVE-22c55e?style=for-the-badge&labelColor=444444&logo=googledrive&logoColor=white" alt="BRM5 map images on Google Drive"></a></p>
+
 <img src="images/op-silent-talon.webp" alt="Op Silent Talon: an example plan drawn in RO-TAK" width="100%">
 
 # RO-TAK
