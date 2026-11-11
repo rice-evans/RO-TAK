@@ -1614,7 +1614,7 @@ function hit(it, p, tol) {
 function erase(p) {
   const tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
   const i = topHit(p, tol);
-  if (i < 0) return;
+  if (i < 0 || items[i].type === 'img') return;
   hist.push({ t: 'del', it: items[i], i });
   pushDel([items[i].id]);
   items.splice(i, 1);
