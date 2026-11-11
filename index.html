@@ -123,7 +123,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 
   #txt { position: absolute; display: none; font: 600 18px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: rgba(0,0,0,.45);
     border: 0; outline: 1px dashed #fff; padding: 0 4px; min-width: 80px; user-select: text; -webkit-user-select: text; }
-  #file { display: none; }
+  #file, #imgFile { display: none; }
 
   html.web, html.web body { width: 100%; height: 100%; background: #0b0d10; overscroll-behavior: none; }
   html.web body { position: fixed; inset: 0; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
@@ -134,6 +134,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   html.web #clock { left: calc(14px + env(safe-area-inset-left)); }
   html.web #toolbar, html.web #palette, html.web #drawbar, html.web #menu { left: 0; right: 0; margin: 0 auto; transform: none; width: max-content; max-width: calc(100% - 16px); }
   html.web #toolbar { bottom: calc(10px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
+  @media (pointer: coarse) and (max-width: 440px) { html.web #toolbar button { width: 37px; height: 37px; } }
   html.web #palette, html.web #drawbar { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); flex-wrap: wrap; justify-content: center; }
   html.web #menu { bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); overflow: auto; touch-action: pan-y; }
   #selbar { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; align-items: center; gap: 4px; padding: 4px; background: rgba(20,20,22,.94); border-radius: 999px; }
@@ -609,7 +610,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     </div>
   </main>
   <nav class="legal"><button type="button" data-lg="privacy">Privacy policy</button><button type="button" data-lg="terms">Terms of service</button><button type="button" id="lintro">Introduction</button><a href="https://emergency-protocols.vercel.app/" target="_blank" rel="noopener">My Projects</a></nav>
-  <span class="updated">Updated on 10th November 2026</span>
+  <span class="updated">Updated on 11th November 2026</span>
 <div id="intro" hidden>
   <div class="in-bg" aria-hidden="true"></div>
   <header class="in-top"><span class="in-brand">RO-TAK</span><button type="button" id="inSkip">Plan with RO-TAK</button></header>
@@ -691,7 +692,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
         <div id="palette"></div>
         <div id="drawbar"></div>
         <div id="sympanel"></div>
-        <div id="selbar"><button id="selRotL" title="Rotate left 15°"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></button><button id="selRotR" title="Rotate right 15°"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5"/></svg></button><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"></div>
+        <div id="selbar"><button id="selRotL" title="Rotate left 15°"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></svg></button><button id="selRotR" title="Rotate right 15°"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5"/></svg></button><button id="selEdit" title="Edit symbol"><svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5ZM15 5l4 4"/></svg></button><input id="selLbl" type="text" maxlength="8" title="Badge label"><input id="selAng" type="number" min="5" max="85" step="1" inputmode="numeric" title="Angle"><input id="selNum" type="number" min="0.1" step="any" inputmode="decimal" title="Size"><button id="selDel" title="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div>
         <div id="menu">
           <div id="join"><input id="nameIn" placeholder="Name" maxlength="16"><input id="roomIn" placeholder="Room code"><button id="joinBtn">Join</button></div>
           <div id="recent"></div>
@@ -710,6 +711,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   <img id="frame" draggable="false" alt="">
 </div>
 <input type="file" id="file" accept="image/*">
+<input type="file" id="imgFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
 
 <script>
 const IS_ELECTRON = !!window.rotak;
@@ -742,6 +744,7 @@ const ICONS = {
   menu: 'M4 6h16M4 12h16M4 18h16',
   num: 'M4 9h16M4 15h16M10 3L8 21M16 3l-2 18',
   wp: 'M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  img: 'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM21 15l-5-5L5 21',
   sym: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
 };
 
@@ -752,8 +755,8 @@ let v = { x: 0, y: 0, s: 1, r: 0 };
 let cur = null, pan = null, erasing = false, tp = null, dpr = 1;
 const setg = { sym: 56, badge: 16, hideNums: false, showGrid: true };
 try { const o = JSON.parse(localStorage.getItem('atak-set') || '{}'); if (o.sym > 0) setg.sym = o.sym; if (o.badge > 0) setg.badge = o.badge; setg.hideNums = !!o.hideNums; setg.showGrid = o.showGrid !== false; } catch (e) {}
-const LAYERS = [['sym', 'Symbols'], ['draw', 'Drawings'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
-const LAYER_OF = { sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
+const LAYERS = [['img', 'Images'], ['sym', 'Symbols'], ['draw', 'Drawings'], ['text', 'Text'], ['num', 'Numbers'], ['wp', 'Waypoints']];
+const LAYER_OF = { img: 'img', sym: 'sym', pen: 'draw', line: 'draw', arrow: 'draw', fire: 'draw', box: 'draw', text: 'text', num: 'num', wp: 'wp' };
 const hidL = new Set();
 try { (JSON.parse(localStorage.getItem('atak-layers') || '[]') || []).forEach(k => { if (typeof k === 'string') hidL.add(k); }); } catch (e) {}
 const hiddenIt = it => { const k = LAYER_OF[it.type]; return !!k && k !== 'num' && hidL.has(k); };
@@ -857,6 +860,7 @@ const svg = d => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
 const sep = () => { const s = document.createElement('div'); s.className = 'sep'; tb.appendChild(s); };
 
 mk('open', svg(ICONS.open), 'Open map', () => hostOnly() ? toast('Only the host can change the map') : room && roomHasMap ? confirmTap('open', () => $('file').click()) : $('file').click());
+mk('img', svg(ICONS.img), 'Add image', () => { if (!lockedOut()) $('imgFile').click(); });
 sep();
 [['pan', 'Move / select'], ['text', 'Text'], ['num', 'Number badge'], ['wp', 'Waypoint'], ['sym', 'Symbols'], ['meas', 'Measure bearing'], ['ping', 'Ping'], ['eraser', 'Erase']]
   .forEach(([t, title]) => mk(t, svg(ICONS[t]), title, () => setTool(t)));
@@ -873,6 +877,20 @@ DRAWS.forEach(([t, title]) => {
   const b = document.createElement('button'); b.id = 'b-' + t; b.title = title; b.innerHTML = svg(ICONS[t]); b.onclick = () => setTool(t);
   $('drawbar').appendChild(b);
 });
+let fillOn = false;
+try { fillOn = localStorage.getItem('atak-fill') === '1'; } catch (e) {}
+const fillBtn = document.createElement('button'); fillBtn.id = 'b-fill'; fillBtn.title = 'Fill boxes';
+fillBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" style="fill:currentColor;fill-opacity:.35"/></svg>';
+const paintFill = () => fillBtn.classList.toggle('on', fillOn);
+fillBtn.onclick = () => {
+  fillOn = !fillOn; paintFill();
+  try { localStorage.setItem('atak-fill', fillOn ? '1' : ''); } catch (e) {}
+  if (sel && sel.type === 'box' && items.includes(sel) && !lockedOut()) {
+    const before = clone(sel); if (fillOn) sel.f = true; else delete sel.f;
+    hist.push({ t: 'mod', it: sel, before }); pushUpd(sel); save(); draw();
+  }
+};
+$('drawbar').appendChild(fillBtn); paintFill();
 sep();
 mk('color', '<i></i>', 'Color', () => { $('menu').classList.remove('open'); $('drawbar').classList.remove('open'); closeSym(); $('palette').classList.toggle('open'); });
 mk('size', '<i></i>', 'Size', () => { si = (si + 1) % SIZES.length; paintSize(); });
@@ -1164,7 +1182,7 @@ function boxPts(it) {
   const co = Math.cos(it.rot || 0), si = Math.sin(it.rot || 0);
   return [[-hx, -hy], [hx, -hy], [hx, hy], [-hx, hy]].map(q => [cx + q[0] * co - q[1] * si, cy + q[0] * si + q[1] * co]);
 }
-const ROTATABLE = it => it.type === 'pen' || it.type === 'line' || it.type === 'arrow' || it.type === 'box' || it.type === 'fire';
+const ROTATABLE = it => it.type === 'pen' || it.type === 'line' || it.type === 'arrow' || it.type === 'box' || it.type === 'fire' || it.type === 'img';
 function rotPivot(it) {
   if (it.type === 'pen') { const b = bbox(it), h = it.w / 2; return [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2]; }
   return [(it.a[0] + it.b[0]) / 2, (it.a[1] + it.b[1]) / 2];
@@ -1173,7 +1191,7 @@ function rotateFrom(it, b, ang) {
   const pv = rotPivot(b), co = Math.cos(ang), si = Math.sin(ang);
   const rp = q => [pv[0] + (q[0] - pv[0]) * co - (q[1] - pv[1]) * si, pv[1] + (q[0] - pv[0]) * si + (q[1] - pv[1]) * co];
   if (it.type === 'pen') it.pts = b.pts.map(rp);
-  else if (it.type === 'box') it.rot = (b.rot || 0) + ang;
+  else if (it.type === 'box' || it.type === 'img') it.rot = (b.rot || 0) + ang;
   else { it.a = rp(b.a); it.b = rp(b.b); }
 }
 function rotateSel(ang) {
@@ -1201,8 +1219,26 @@ function fireArms(deg) {
   const t = Math.min(85, Math.max(5, deg || 45)) * Math.PI / 180;
   return [[Math.PI + t, 0.5], [Math.PI - t, 0.5], [-t, 0.5], [t, 0.5]];
 }
+const imgCache = new Map();
+const imgUrl = p => p.startsWith('data:') ? p : SUPABASE_URL + '/storage/v1/object/public/maps/' + p.split('/').map(encodeURIComponent).join('/');
+function itemImg(it) {
+  let im = imgCache.get(it.p);
+  if (!im) { im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => draw(); im.src = imgUrl(it.p); imgCache.set(it.p, im); }
+  return im;
+}
+function drawAll() {
+  items.forEach(it => { if (it.type === 'img') drawItem(it); });
+  items.forEach(it => { if (it.type !== 'img') drawItem(it); });
+}
 function drawItem(it) {
   if (hiddenIt(it)) return;
+  if (it.type === 'img') {
+    const cx = (it.a[0] + it.b[0]) / 2, cy = (it.a[1] + it.b[1]) / 2, w = Math.abs(it.b[0] - it.a[0]), h = Math.abs(it.b[1] - it.a[1]), im = itemImg(it);
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(it.rot || 0);
+    if (im.complete && im.naturalWidth) ctx.drawImage(im, -w / 2, -h / 2, w, h);
+    else { ctx.fillStyle = 'rgba(20,20,22,.7)'; ctx.fillRect(-w / 2, -h / 2, w, h); }
+    ctx.restore(); return;
+  }
   ctx.lineCap = 'butt'; ctx.lineJoin = it.type === 'pen' ? 'bevel' : 'miter'; ctx.miterLimit = 4;
   ctx.strokeStyle = ctx.fillStyle = it.color;
   ctx.lineWidth = it.w || 1;
@@ -1253,7 +1289,9 @@ function drawItem(it) {
     arrowHead(g.aa[0], g.aa[1], g.na, Math.min(h0, g.la * 0.6)); arrowHead(g.ab[0], g.ab[1], g.nb, Math.min(h0, g.lb * 0.6));
   } else if (it.type === 'box') {
     const k = boxPts(it);
-    ctx.beginPath(); k.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); k.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.closePath();
+    if (it.f) { ctx.save(); ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore(); }
+    ctx.stroke();
   } else if (it.type === 'text') {
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(-v.r);
     ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
@@ -1458,7 +1496,7 @@ function draw() {
   { const k = dpr * v.s, co = Math.cos(v.r), si_ = Math.sin(v.r); ctx.setTransform(k * co, k * si_, -k * si_, k * co, dpr * v.x, dpr * v.y); }
   if (img) ctx.drawImage(img, 0, 0);
   drawGrid();
-  items.forEach(drawItem);
+  drawAll();
   drawGridMarks();
   drawMeas();
   drawPings();
@@ -1527,6 +1565,16 @@ function segDist(p, a, b) {
   t = Math.max(0, Math.min(1, t));
   return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
 }
+function inPoly(p, k) {
+  let c = false;
+  for (let i = 0, j = k.length - 1; i < k.length; j = i++) if ((k[i][1] > p[1]) !== (k[j][1] > p[1]) && p[0] < (k[j][0] - k[i][0]) * (p[1] - k[i][1]) / (k[j][1] - k[i][1]) + k[i][0]) c = !c;
+  return c;
+}
+function topHit(p, tol) {
+  for (let i = items.length - 1; i >= 0; i--) if (items[i].type !== 'img' && hit(items[i], p, tol)) return i;
+  for (let i = items.length - 1; i >= 0; i--) if (items[i].type === 'img' && hit(items[i], p, tol)) return i;
+  return -1;
+}
 function hit(it, p, tol) {
   if (hiddenIt(it)) return false;
   if (it.type === 'sym') return Math.hypot(p[0] - it.x, p[1] - it.y) < symR() + tol;
@@ -1548,9 +1596,10 @@ function hit(it, p, tol) {
     const r = tol + it.w / 2;
     return [[it.a, it.b], [it.a, g.aa], [it.a, g.pa], [it.b, g.ab], [it.b, g.pb]].some(q => segDist(p, q[0], q[1]) < r);
   }
+  if (it.type === 'img') return inPoly(p, boxPts(it));
   if (it.type === 'box') {
     const k = boxPts(it);
-    return k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
+    return (it.f && inPoly(p, k)) || k.some((q, i) => segDist(p, q, k[(i + 1) % 4]) < tol + it.w / 2);
   }
   ctx.font = `700 ${it.fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`;
   const tw = ctx.measureText(it.t).width, dx = p[0] - it.x, dy = p[1] - it.y, co = Math.cos(v.r), si_ = Math.sin(v.r);
@@ -1559,15 +1608,12 @@ function hit(it, p, tol) {
 }
 function erase(p) {
   const tol = (matchMedia('(pointer: coarse)').matches ? 18 : 10) / v.s;
-  for (let i = items.length - 1; i >= 0; i--) {
-    if (hit(items[i], p, tol)) {
-      hist.push({ t: 'del', it: items[i], i });
-      pushDel([items[i].id]);
-      items.splice(i, 1);
-      save(); draw();
-      return;
-    }
-  }
+  const i = topHit(p, tol);
+  if (i < 0) return;
+  hist.push({ t: 'del', it: items[i], i });
+  pushDel([items[i].id]);
+  items.splice(i, 1);
+  save(); draw();
 }
 
 const ptrs = new Map();
@@ -1622,8 +1668,7 @@ c.addEventListener('pointerdown', e => {
       const hp = rotHandle(sel);
       if (Math.hypot(p[0] - hp[0], p[1] - hp[1]) < tol * 1.2 + 7 / v.s) { const pv = rotPivot(sel); drag = { it: sel, before: clone(sel), rot: true, pv, a0: Math.atan2(p[1] - pv[1], p[0] - pv[0]), moved: false }; return; }
     }
-    let h = null;
-    for (let i = items.length - 1; i >= 0; i--) if (hit(items[i], p, tol)) { h = items[i]; break; }
+    const hi = topHit(p, tol), h = hi < 0 ? null : items[hi];
     sel = h;
     if (h) { drag = { it: h, before: clone(h), p0: p, moved: false }; draw(); return; }
     draw();
@@ -1636,7 +1681,7 @@ c.addEventListener('pointerdown', e => {
   if (e.button !== 0) return;
   const p = world(e), w = SIZES[si] * unit();
   if (tool === 'pen') cur = { id: uuid(), type: 'pen', color, w, pts: [p] };
-  else if (tool === 'line' || tool === 'box' || tool === 'arrow') cur = { id: uuid(), type: tool, color, w, a: p, b: p };
+  else if (tool === 'line' || tool === 'box' || tool === 'arrow') { cur = { id: uuid(), type: tool, color, w, a: p, b: p }; if (tool === 'box' && fillOn) cur.f = true; }
   else if (tool === 'fire') cur = { id: uuid(), type: 'fire', color, w, ang: fireAng, a: p, b: p };
   else if (tool === 'text') openText(e);
   else if (tool === 'sym') placeSym(p);
@@ -1723,6 +1768,10 @@ function bbox(it) {
     it.pts.forEach(q => { a = Math.min(a, q[0]); b = Math.min(b, q[1]); x = Math.max(x, q[0]); y = Math.max(y, q[1]); });
     return [a - it.w / 2, b - it.w / 2, x + it.w / 2, y + it.w / 2];
   }
+  if (it.type === 'img') {
+    const k = boxPts(it);
+    return [Math.min(...k.map(q => q[0])), Math.min(...k.map(q => q[1])), Math.max(...k.map(q => q[0])), Math.max(...k.map(q => q[1]))];
+  }
   if (it.type === 'box') {
     const k = boxPts(it), h = it.w / 2;
     return [Math.min(...k.map(q => q[0])) - h, Math.min(...k.map(q => q[1])) - h, Math.max(...k.map(q => q[0])) + h, Math.max(...k.map(q => q[1])) + h];
@@ -1743,7 +1792,7 @@ function bbox(it) {
 }
 function moveFrom(it, b, dx, dy) {
   if (it.type === 'pen') it.pts = b.pts.map(q => [q[0] + dx, q[1] + dy]);
-  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow' || it.type === 'fire') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
+  else if (it.type === 'line' || it.type === 'box' || it.type === 'arrow' || it.type === 'fire' || it.type === 'img') { it.a = [b.a[0] + dx, b.a[1] + dy]; it.b = [b.b[0] + dx, b.b[1] + dy]; }
   else { it.x = b.x + dx; it.y = b.y + dy; }
 }
 function gdim(it) {
@@ -1764,7 +1813,7 @@ function scaleSel(f) {
   const before = clone(sel), bb = bbox(sel), cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
   const sc = q => [cx + (q[0] - cx) * f, cy + (q[1] - cy) * f];
   if (sel.type === 'pen') sel.pts = sel.pts.map(sc);
-  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow' || sel.type === 'fire') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
+  else if (sel.type === 'line' || sel.type === 'box' || sel.type === 'arrow' || sel.type === 'fire' || sel.type === 'img') { sel.a = sc(sel.a); sel.b = sc(sel.b); }
   else sel.fs = Math.min(5000, Math.max(2, sel.fs * f));
   hist.push({ t: 'mod', it: sel, before });
   pushUpd(sel); save(); draw();
@@ -1774,6 +1823,11 @@ function endDrag() {
   if (drag.moved) { hist.push({ t: 'mod', it: drag.it, before: drag.before }); pushUpd(drag.it); save(); }
   drag = null;
 }
+$('selDel').onclick = () => {
+  if (!sel || lockedOut()) return;
+  const i = items.indexOf(sel); if (i < 0) return;
+  hist.push({ t: 'del', it: sel, i }); pushDel([sel.id]); items.splice(i, 1); sel = null; save(); draw();
+};
 $('selRotL').onclick = () => rotateSel(-Math.PI / 12);
 $('selRotR').onclick = () => rotateSel(Math.PI / 12);
 $('selEdit').onclick = () => { if (sel && sel.type === 'sym') openSym(sel); };
@@ -2235,18 +2289,18 @@ const LEGAL = {
   privacy: ['Privacy policy', [
     ['p up', 'Last updated 10 November 2026.'],
     ['h', 'What I collect'],
-    ['p', "Browsing the site only collects anonymous visit counts, described under Analytics, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the map you upload, everything drawn on it, the name you join with and a one-way hash of a key that marks you as the room's host."],
+    ['p', "Browsing the site only collects anonymous visit counts, described under Analytics, and I don't set cookies. There are no accounts. If you join a room, I store the room code, the maps and images you upload, everything drawn on it, the name you join with and a one-way hash of a key that marks you as the room's host."],
     ['h', 'Rooms'],
-    ['p', "Rooms are not private. There are no accounts, and room codes can be looked up, so anyone can read a room's map and marks. Anyone with a room code can also join and edit it unless the host locks it. Uploaded maps are stored publicly, so anyone with the link to the file can open it. Don't put anything private in a room."],
+    ['p', "Rooms are not private. There are no accounts, and room codes can be looked up, so anyone can read a room's map and marks. Anyone with a room code can also join and edit it unless the host locks it. Uploaded maps and images are stored publicly, so anyone with the link to the file can open it. Don't put anything private in a room."],
     ['p', "Pings are sent live to the people in the room and are not stored. If you lead a room, your map position is sent live the same way and is not stored."],
     ['p', "To limit spam, creating a room stores a one-way hash of your network address for 24 hours. The address itself is not stored and the hash cannot be turned back into it."],
     ['p', "Joining a room stores a one-way hash of a random key kept in your browser and a one-way hash of your network address. The host uses these to make people editors and to kick them. A kick blocks that key and that network from the room. Both are deleted with the room, and the hashes cannot be turned back into the key or the address."],
     ['h', 'Deletion'],
-    ['p', 'A room is deleted automatically, along with its marks, map file, member list and kicks, once nobody has been connected to it for 24 hours. I can also delete one sooner on request.'],
+    ['p', 'A room is deleted automatically, along with its marks, map and image files, member list and kicks, once nobody has been connected to it for 24 hours. I can also delete one sooner on request.'],
     ['h', 'Without a room'],
     ['p', "If you don't join a room, your map and marks stay in your browser and are never sent to me."],
     ['h', 'Checks'],
-    ['p', 'Uploaded maps are checked automatically for explicit content. The image is sent to OpenAI for this and is not kept by me. Images that fail are not stored. Text you type, such as names, labels and room codes, is checked against a word list in your browser and in my database. Text that fails is not stored.'],
+    ['p', 'Uploaded maps and images are checked automatically for explicit content. The image is sent to OpenAI for this and is not kept by me. Images that fail are not stored. Text you type, such as names, labels and room codes, is checked against a word list in your browser and in my database. Text that fails is not stored.'],
     ['h', 'Analytics'],
     ['p', 'The website uses Vercel Web Analytics to count visits. It records the page, the site you came from, your country, browser, operating system and device type. It uses no cookies and does not store your IP address. Visits are only linked by a code that resets every day, so you cannot be followed across days. The desktop app sends no analytics.'],
     ['h', 'Saved on your device'],
@@ -2635,7 +2689,7 @@ async function exportImage() {
     ctx.drawImage(img, 0, 0);
     drawGrid([W / E, H / E], [6, 6, W / E - 6, H / E - 6]);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    items.forEach(drawItem);
+    drawAll();
     if (credit) {
       const fs = Math.max(12, Math.round(Math.max(W, H) / 90));
       ctx.font = `600 ${fs}px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif`; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
@@ -2919,6 +2973,15 @@ function cleanItemRaw(d, id) {
     if (!pt(d.a) || !pt(d.b) || !num(d.w)) return null;
     const o = { id, type: d.type, color, w: d.w, a: d.a, b: d.b };
     if (d.type === 'box' && num(d.rot) && d.rot) o.rot = d.rot % TAU;
+    if (d.type === 'box' && d.f === true) o.f = true;
+    return o;
+  }
+  if (d.type === 'img') {
+    if (typeof d.p !== 'string' || !pt(d.a) || !pt(d.b) || d.a[0] === d.b[0] || d.a[1] === d.b[1]) return null;
+    const ok = room ? new RegExp('^' + room + '/[0-9]{1,16}\\.(png|jpg|webp|gif)$').test(d.p) : d.p.length < 4e6 && /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(d.p);
+    if (!ok) return null;
+    const o = { id, type: 'img', p: d.p, a: d.a, b: d.b };
+    if (num(d.rot) && d.rot) o.rot = d.rot % TAU;
     return o;
   }
   if (d.type === 'sym') {
@@ -3061,6 +3124,49 @@ async function shrinkImage(f) {
   const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.88));
   return b ? new File([b], 'map.jpg', { type: 'image/jpeg' }) : f;
 }
+async function shrinkTo(f, max) {
+  const bmp = await createImageBitmap(f), k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  if (k === 1 && f.size <= 2.5e6) return { f, w: bmp.width, h: bmp.height };
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  let b = await new Promise(r => c.toBlob(r, 'image/webp', 0.85));
+  if (!b || b.type !== 'image/webp') b = await new Promise(r => c.toBlob(r, 'image/png'));
+  return { f: b ? new File([b], 'image.' + (b.type === 'image/webp' ? 'webp' : 'png'), { type: b.type }) : f, w: c.width, h: c.height };
+}
+async function uploadImage(f) {
+  try {
+    const fd = new FormData(); fd.append('room', room); fd.append('file', f);
+    const r = await fetch(SUPABASE_URL + '/functions/v1/upload-map', { method: 'POST', headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }, body: fd });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok || typeof out.path !== 'string') throw new Error(out.error || 'Upload failed');
+    return out.path;
+  } catch (e) { toast(e.message || 'Upload failed'); return ''; }
+}
+const fileUrl = f => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(''); fr.readAsDataURL(f); });
+async function addImages(list) {
+  const files = [...list].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type)).slice(0, 10);
+  if (!files.length || lockedOut()) return;
+  const my = room, r = c.getBoundingClientRect(), ctr = toWorld(r.width / 2, r.height / 2), span = Math.min(r.width, r.height) * 0.4 / v.s;
+  let n = 0;
+  for (const f0 of files) {
+    let s;
+    try { s = await shrinkTo(f0, my ? 2048 : 1280); } catch (e) { toast('Could not read that image'); continue; }
+    if (s.f.size > 12e6) { toast('Image is too large (12 MB max)'); continue; }
+    if (my) toast('Checking image...');
+    const p = my ? await uploadImage(s.f) : await fileUrl(s.f);
+    if (room !== my) return;
+    if (!p) continue;
+    const k = span / Math.max(s.w, s.h), hw = s.w * k / 2, hh = s.h * k / 2, off = n * span * 0.08, cx = ctr[0] + off, cy = ctr[1] + off;
+    const it = { id: uuid(), type: 'img', p, a: [cx - hw, cy - hh], b: [cx + hw, cy + hh] };
+    if (v.r) it.rot = -v.r;
+    const ok = cleanItem(it, it.id); if (!ok) continue;
+    items.push(ok); hist.push({ t: 'add', it: ok }); pushAdd(ok); n++;
+    if (!my) { try { localStorage.setItem('atak', JSON.stringify({ items, v, name })); } catch (e) { toast('Too big to keep after closing'); } }
+    setTool('pan'); sel = ok; draw();
+  }
+  if (n) toast(n === 1 ? 'Image added' : n + ' images added');
+}
+$('imgFile').onchange = e => { addImages(e.target.files); e.target.value = ''; };
 async function uploadMap(f, cr) {
   showErr('');
   const my = room;

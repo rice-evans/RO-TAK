@@ -1,5 +1,5 @@
 Contact: https://github.com/rice-evans/RO-TAK/security/advisories/new
-Expires: 2027-11-09T00:00:00Z
+Expires: 2027-11-10T00:00:00Z
 Preferred-Languages: en
 Canonical: https://ro-tak.vercel.app/.well-known/security.txt
 Policy: https://github.com/rice-evans/RO-TAK/blob/main/SECURITY.md
