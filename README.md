@@ -27,7 +27,7 @@
 </p>
 
 <p>
-<a href="https://github.com/rice-evans/RO-TAK/releases">Releases</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/SECURITY.md">Security</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE">License</a>
+<a href="https://github.com/rice-evans/RO-TAK/releases">Releases</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/CONTROLS.md">Controls</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/SECURITY.md">Security</a> · <a href="https://github.com/rice-evans/RO-TAK/blob/main/LICENSE">License</a>
 </p>
 
 <p>If you enjoy RO-TAK, be sure to star the GitHub repository, and post photos in respective Discord servers and @ me!</p>
@@ -37,7 +37,7 @@
 ## What it does and does not do
 
 - Runs on its own. It does not read, inject into or modify any game.
-- No accounts and no analytics.
+- No accounts and no cookies. The website counts anonymous visits with Vercel Web Analytics. The desktop app sends no analytics.
 - Rooms sync through Supabase and are deleted after 24 hours with nobody connected.
 - Rooms are not private. Anyone can read a room's map and marks, so do not put anything secret in one.
 - Uploaded maps are checked with OpenAI's moderation endpoint before they are stored.
