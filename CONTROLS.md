@@ -62,3 +62,4 @@
 | Measure bearing | Click two points for bearing and distance |
 | Ping | Flash a spot for everyone in the room |
 | Eraser | Erase drawings. Images are only deleted by selecting them |
+| 9-lines and notes | Click the line on the left edge for MEDEVAC and CAS 9-lines and a notes pad |

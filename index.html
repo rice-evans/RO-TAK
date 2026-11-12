@@ -274,6 +274,51 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
   .tchip { font: 600 11px "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: #fff; background: rgba(20,20,22,.94); padding: 2px 9px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
   .tchip.done { background: #ef4444; animation: tpulse 1s infinite; }
   @keyframes tpulse { 50% { opacity: .55; } }
+  #nl { position: absolute; left: 0; top: 0; bottom: 0; width: min(380px, 78%); z-index: 30; display: flex; flex-direction: column; background: rgba(18,18,20,.97); color: #ddd; transform: translateX(-100%); transition: transform .22s ease; box-shadow: 0 0 0 rgba(0,0,0,0); }
+  #nl.open { transform: none; box-shadow: 8px 0 24px rgba(0,0,0,.45); }
+  #nlGrip { position: absolute; top: 50%; right: -18px; width: 18px; height: 72px; margin-top: -36px; border: 0; background: transparent; cursor: pointer; padding: 0; touch-action: none; }
+  #nlGrip::before { content: ""; position: absolute; left: 6px; top: 16px; width: 4px; height: 40px; border-radius: 3px; background: rgba(255,255,255,.55); box-shadow: 0 0 0 1px rgba(0,0,0,.35); transition: background .15s; }
+  #nlGrip:hover::before { background: #fff; }
+  #nl.open #nlGrip { right: -16px; }
+  #nlTabs { display: flex; gap: 6px; padding: 10px 10px 8px; }
+  #nlTabs button { flex: 1; height: 28px; border: 0; border-radius: 6px; background: #2a2a2d; color: #ddd; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #nlTabs button.on { background: #3b82f6; color: #fff; }
+  #nlTabs #nlX { flex: none; width: 28px; padding: 0; background: #333; }
+  #nlBody { flex: 1; overflow-y: auto; padding: 0 10px; touch-action: pan-y; }
+  .nlr { display: grid; grid-template-columns: 22px 1fr; gap: 2px 8px; padding: 7px 0; border-bottom: 1px solid #222; }
+  .nlr > b { grid-row: span 2; align-self: start; margin-top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #2a2a2d; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .nlr > span { font-size: 11px; font-weight: 600; color: #9a9aa0; }
+  .nlf { display: flex; flex-wrap: wrap; gap: 4px; }
+  #nl input, #nl textarea { height: 28px; flex: 1; min-width: 0; background: #2a2a2d; border: 0; border-radius: 6px; color: #fff; padding: 0 8px; font-size: 12px; font-family: inherit; outline: none; user-select: text; -webkit-user-select: text; }
+  #nl textarea { height: auto; min-height: 64px; padding: 7px 8px; resize: vertical; line-height: 1.4; }
+  #nl .nlnotes { width: 100%; min-height: calc(100% - 12px); margin-top: 2px; }
+  .nlc { display: flex; align-items: center; gap: 4px; background: #2a2a2d; border-radius: 6px; padding: 0 4px 0 8px; height: 28px; font-size: 11px; color: #ccc; }
+  .nlc input { width: 34px; flex: none !important; height: 22px !important; padding: 0 4px !important; text-align: center; background: #141416 !important; }
+  .nlo { height: 26px; padding: 0 9px; border: 0; border-radius: 6px; background: #2a2a2d; color: #ccc; font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  .nlo.on { background: #3b82f6; color: #fff; }
+  .nlpk { flex: none; width: 28px; height: 28px; border: 0; border-radius: 6px; background: #333; color: #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .nlpk.on { background: #3b82f6; color: #fff; }
+  .nlpk svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #nlFoot { display: flex; gap: 6px; padding: 8px 10px 10px; }
+  #nlFoot button { flex: 1; height: 30px; border: 0; border-radius: 6px; background: #3b82f6; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; }
+  #nlFoot button.alt { background: #333; }
+  #nlFoot button.arm { background: #ef4444; }
+  html.miro #nl { display: none; }
+  #nlEdge { display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 29; pointer-events: none; overflow: visible; }
+  #nlEdge path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  #nlEdge .vis { stroke: rgba(255,255,255,.6); stroke-width: 3.5; filter: drop-shadow(0 0 1px rgba(0,0,0,.6)); transition: stroke .15s; }
+  #nlEdge .hit { stroke: transparent; stroke-width: 30; pointer-events: stroke; cursor: pointer; }
+  #nlEdge:hover .vis { stroke: #fff; }
+  html.desk #nlEdge { display: block; }
+  html.desk #nlGrip { display: none; }
+  html.desk #nl.open #nlGrip { display: block; }
+  html.desk.miro #nlEdge, html.desk #stage.nlopen #nlEdge { display: none; }
+  html.desk #nl { top: 46px; }
+  html.desk #nlTabs, html.desk #nlBody, html.desk #nlFoot { padding-left: 18px; }
+  html.desk #nlFoot { padding-bottom: 16px; padding-left: 24px; }
+  html.web #nlTabs { padding-top: calc(10px + env(safe-area-inset-top)); }
+  html.web #nlFoot { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+  @media (pointer: coarse) { #nl input, #nlTabs button, .nlpk { height: 40px; font-size: 16px; } .nlpk { width: 40px; } .nlo { height: 36px; font-size: 13px; } .nlc { height: 40px; font-size: 13px; } .nlc input { height: 30px !important; width: 42px; } #nlFoot button { height: 40px; font-size: 14px; } #nlGrip { right: -26px; width: 26px; } #nlGrip::before { left: 9px; } #nl { width: min(400px, 62%); } }
   #side { position: absolute; left: 50%; transform: translateX(-50%); bottom: 54px; display: none; flex-direction: column; gap: 6px; padding: 8px; width: 420px; max-width: calc(100% - 16px); max-height: calc(100% - 130px); overflow-y: auto; touch-action: pan-y; background: rgba(20,20,22,.94); border-radius: 10px; color: #ddd; font-size: 12px; z-index: 3; }
   #side.open { display: flex; }
   html.web #side { left: 0; right: 0; margin: 0 auto; transform: none; bottom: calc(var(--tb, 44px) + 18px + env(safe-area-inset-bottom)); max-height: calc(100% - var(--tb, 44px) - 90px); }
@@ -624,7 +669,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
     </div>
   </main>
   <nav class="legal"><button type="button" data-lg="privacy">Privacy policy</button><button type="button" data-lg="terms">Terms of service</button><button type="button" id="lintro">Introduction</button><a href="https://emergency-protocols.vercel.app/" target="_blank" rel="noopener">My Projects</a></nav>
-  <span class="updated">Updated on 11th November 2026</span>
+  <span class="updated">Updated on 12th November 2026</span>
 <div id="intro" hidden>
   <div class="in-bg" aria-hidden="true"></div>
   <header class="in-top"><span class="in-brand">RO-TAK</span><button type="button" id="inSkip">Plan with RO-TAK</button></header>
@@ -692,6 +737,7 @@ try { if (document.documentElement.className === 'web' && !navigator.standalone 
 
       <div id="stage">
         <canvas id="c"></canvas>
+        <svg id="nlEdge" viewBox="0 0 680.8 327.46" preserveAspectRatio="none" aria-hidden="true"><path class="vis" d="M10.7 124.2 L10.7 128.2 L10.6 132.2 L10.5 136.1 L10.5 140.1 L10.4 144.1 L10.4 148.1 L10.3 152.1 L10.3 156.1 L10.3 160.0 L10.3 164.0 L10.3 168.0 L10.3 172.0 L10.3 176.0 L10.3 179.9 L10.3 183.9 L10.4 187.9 L10.4 191.9 L10.5 195.9 L10.5 199.8 L10.6 203.8"/><path class="hit" d="M10.7 124.2 L10.7 128.2 L10.6 132.2 L10.5 136.1 L10.5 140.1 L10.4 144.1 L10.4 148.1 L10.3 152.1 L10.3 156.1 L10.3 160.0 L10.3 164.0 L10.3 168.0 L10.3 172.0 L10.3 176.0 L10.3 179.9 L10.3 183.9 L10.4 187.9 L10.4 191.9 L10.5 195.9 L10.5 199.8 L10.6 203.8"/></svg><aside id="nl"><button id="nlGrip" type="button" title="9-lines and notes"></button><div id="nlTabs"><button data-t="m">MEDEVAC</button><button data-t="c">CAS</button><button data-t="n">Notes</button><button id="nlX" type="button" title="Close">✕</button></div><div id="nlBody"></div><div id="nlFoot"><button id="nlCopy" type="button">Copy</button><button id="nlClear" class="alt" type="button">Clear</button></div></aside>
         <iframe id="miroFrame" class="mf on" title="Miro board" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
         <div class="pill" id="clock">--:--</div>
         <div id="credit"></div>
@@ -3755,6 +3801,122 @@ const TOUR = [
   ['Rooms', 'Open the menu, enter a room code and join. Copy the invite link to bring people in. Lead the room and anyone can follow your view.'],
 ];
 if (IS_ELECTRON) TOUR.unshift(['Size', MOD + '+Shift+Up / Down makes the whole overlay bigger or smaller. ' + MOD + '+Shift+Plus / Minus scales just the buttons and text.']);
+const NL = {
+  m: [
+    ['1', 'Pickup site', 'grid'],
+    ['2', 'Frequency and callsign', 'text', '41.5 DUSTOFF'],
+    ['3', 'Patients by precedence', 'count', [['A', 'Urgent'], ['B', 'Urgent surgical'], ['C', 'Priority'], ['D', 'Routine'], ['E', 'Convenience']]],
+    ['4', 'Special equipment', 'one', [['A', 'None'], ['B', 'Hoist'], ['C', 'Extraction'], ['D', 'Ventilator']]],
+    ['5', 'Patients by type', 'count', [['L', 'Litter'], ['A', 'Ambulatory']]],
+    ['6', 'Security at pickup site', 'one', [['N', 'No enemy'], ['P', 'Possible enemy'], ['E', 'Enemy, caution'], ['X', 'Enemy, escort']]],
+    ['7', 'Marking', 'one', [['A', 'Panels'], ['B', 'Pyro'], ['C', 'Smoke'], ['D', 'None'], ['E', 'Other']]],
+    ['8', 'Nationality and status', 'many', [['A', 'Friendly mil'], ['B', 'Friendly civ'], ['C', 'Other mil'], ['D', 'Other civ'], ['E', 'EPW']]],
+    ['9', 'CBRN', 'one', [['-', 'None'], ['C', 'Chemical'], ['B', 'Biological'], ['R', 'Radiological'], ['N', 'Nuclear']]],
+  ],
+  c: [
+    ['', 'Control type', 'one', [['1', 'Type 1'], ['2', 'Type 2'], ['3', 'Type 3']]],
+    ['1', 'IP / BP', 'text'],
+    ['2', 'Heading and offset', 'text', '270 LEFT'],
+    ['3', 'Distance', 'text', '6.5 NM'],
+    ['4', 'Target elevation', 'text', '120 FT'],
+    ['5', 'Target description', 'text'],
+    ['6', 'Target location', 'grid'],
+    ['7', 'Mark type and code', 'text', 'LASER 1688'],
+    ['8', 'Friendlies', 'text', 'S 800M'],
+    ['9', 'Egress', 'text'],
+    ['R', 'Remarks and restrictions', 'area'],
+  ],
+};
+const nlEl = $('nl');
+let nlTab = 'm', nlPick = null, nlD = { m: {}, c: {}, n: '' };
+try { const o = JSON.parse(localStorage.getItem('atak-9line') || 'null'); if (o && typeof o === 'object') { nlD = { m: o.m && typeof o.m === 'object' ? o.m : {}, c: o.c && typeof o.c === 'object' ? o.c : {}, n: typeof o.n === 'string' ? o.n : '' }; if (['m', 'c', 'n'].includes(o.t)) nlTab = o.t; } } catch (e) {}
+const nlSave = () => { try { localStorage.setItem('atak-9line', JSON.stringify(Object.assign({ t: nlTab }, nlD))); } catch (e) {} };
+const PICK_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="1.5"/></svg>';
+function nlPaint() {
+  nlEl.querySelectorAll('#nlTabs button[data-t]').forEach(b => b.classList.toggle('on', b.dataset.t === nlTab));
+  const body = $('nlBody'); body.textContent = '';
+  $('nlFoot').style.display = nlTab === 'n' ? 'none' : 'flex';
+  if (nlTab === 'n') {
+    const t = document.createElement('textarea'); t.className = 'nlnotes'; t.value = nlD.n; t.maxLength = 20000;
+    t.oninput = () => { nlD.n = t.value; nlSave(); };
+    body.appendChild(t); return;
+  }
+  const D = nlD[nlTab];
+  NL[nlTab].forEach(([n, label, type, ex], i) => {
+    const k = 'l' + i, r = document.createElement('div'); r.className = 'nlr';
+    const num = document.createElement('b'); num.textContent = n || '–'; const lab = document.createElement('span'); lab.textContent = label;
+    const f = document.createElement('div'); f.className = 'nlf';
+    r.append(num, lab, f);
+    if (type === 'text' || type === 'grid') {
+      const inp = document.createElement('input'); inp.type = 'text'; inp.maxLength = 60; inp.value = typeof D[k] === 'string' ? D[k] : ''; if (typeof ex === 'string') inp.placeholder = ex;
+      inp.oninput = () => { D[k] = inp.value; nlSave(); };
+      f.appendChild(inp);
+      if (type === 'grid') {
+        const pk = document.createElement('button'); pk.type = 'button'; pk.className = 'nlpk' + (nlPick && nlPick.k === k && nlPick.t === nlTab ? ' on' : ''); pk.title = 'Pick on map'; pk.innerHTML = PICK_SVG;
+        pk.onclick = () => { if (!grid) return toast('Calibrate the grid first'); nlPick = nlPick && nlPick.k === k ? null : { t: nlTab, k }; if (nlPick) toast('Tap the map'); nlPaint(); };
+        f.appendChild(pk);
+      }
+    } else if (type === 'area') {
+      const t = document.createElement('textarea'); t.maxLength = 500; t.value = typeof D[k] === 'string' ? D[k] : '';
+      t.oninput = () => { D[k] = t.value; nlSave(); };
+      f.appendChild(t);
+    } else if (type === 'count') {
+      const v = D[k] && typeof D[k] === 'object' ? D[k] : (D[k] = {});
+      ex.forEach(([c, l]) => {
+        const w = document.createElement('label'); w.className = 'nlc'; w.append(c + ' ' + l);
+        const inp = document.createElement('input'); inp.type = 'number'; inp.min = 0; inp.max = 99; inp.inputMode = 'numeric'; inp.value = v[c] || '';
+        inp.oninput = () => { const x = Math.max(0, Math.min(99, parseInt(inp.value, 10) || 0)); if (x) v[c] = x; else delete v[c]; nlSave(); };
+        w.appendChild(inp); f.appendChild(w);
+      });
+    } else {
+      ex.forEach(([c, l]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'nlo'; b.textContent = (c === '-' ? '' : c + ' ') + l;
+        const on = type === 'many' ? Array.isArray(D[k]) && D[k].includes(c) : D[k] === c;
+        b.classList.toggle('on', on);
+        b.onclick = () => {
+          if (type === 'many') { const a = Array.isArray(D[k]) ? D[k] : []; D[k] = a.includes(c) ? a.filter(x => x !== c) : a.concat(c); }
+          else D[k] = D[k] === c ? '' : c;
+          nlSave(); nlPaint();
+        };
+        f.appendChild(b);
+      });
+    }
+    body.appendChild(r);
+  });
+}
+function nlText() {
+  const D = nlD[nlTab], out = [nlTab === 'm' ? 'MEDEVAC 9-LINE' : 'CAS 9-LINE'];
+  NL[nlTab].forEach(([n, label, type, ex], i) => {
+    const v = D['l' + i]; let t = '';
+    if (type === 'count') t = v && typeof v === 'object' ? ex.filter(([c]) => v[c]).map(([c]) => v[c] + c).join(' ') : '';
+    else if (type === 'many') t = Array.isArray(v) ? ex.filter(([c]) => v.includes(c)).map(([c, l]) => c + ' ' + l).join(', ') : '';
+    else if (type === 'one') { const o = ex.find(([c]) => c === v); t = o ? (o[0] === '-' ? o[1] : o[0] + ' ' + o[1]) : ''; }
+    else t = typeof v === 'string' ? v.trim() : '';
+    out.push((n ? 'LINE ' + n : label) + ': ' + (t ? t.toUpperCase() : 'N/A'));
+  });
+  return out.join('\n');
+}
+function nlOpen(on) { nlEl.classList.toggle('open', on); $('stage').classList.toggle('nlopen', on); if (!on) { nlPick = null; if (document.activeElement && nlEl.contains(document.activeElement)) document.activeElement.blur(); } else nlPaint(); }
+$('nlGrip').onclick = () => nlOpen(!nlEl.classList.contains('open'));
+$('nlEdge').querySelector('.hit').addEventListener('click', () => nlOpen(true));
+$('nlEdge').addEventListener('pointerdown', e => e.stopPropagation());
+$('nlX').onclick = () => nlOpen(false);
+nlEl.querySelectorAll('#nlTabs button[data-t]').forEach(b => b.onclick = () => { nlTab = b.dataset.t; nlPick = null; nlSave(); nlPaint(); });
+nlEl.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape') nlOpen(false); });
+nlEl.addEventListener('pointerdown', e => e.stopPropagation());
+nlEl.addEventListener('wheel', e => e.stopPropagation());
+$('nlCopy').onclick = async () => { const t = nlText(); try { await navigator.clipboard.writeText(t); toast('Copied'); } catch (e) { toast('Could not copy'); } };
+$('nlClear').onclick = () => {
+  const b = $('nlClear');
+  if (!b.classList.contains('arm')) { b.classList.add('arm'); b.textContent = 'Clear?'; setTimeout(() => { b.classList.remove('arm'); b.textContent = 'Clear'; }, 3000); return; }
+  b.classList.remove('arm'); b.textContent = 'Clear'; nlD[nlTab] = {}; nlPick = null; nlSave(); nlPaint();
+};
+c.addEventListener('pointerdown', e => {
+  if (!nlPick || e.button !== 0) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  if (grid) { nlD[nlPick.t]['l' + nlPick.k.slice(1)] = fmt8(toGrid(world(e))); nlSave(); toast('Grid set'); }
+  nlPick = null; nlPaint();
+}, true);
 let tourAt = 0;
 function tourEnd() { $('tour').style.display = 'none'; try { localStorage.setItem('atak-tour', '1'); } catch (e) {} }
 function tourShow(i) {
